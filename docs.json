@@ -1,104 +1,14 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "maple",
   "name": "Product Graph API Documentation",
+  "description": "Documentation for the Product Graph API",
   "colors": {
-    "primary": "#2563EB",
-    "light": "#3B82F6",
-    "dark": "#1D4ED8"
+    "primary": "#6B7280",
+    "light": "#9CA3AF",
+    "dark": "#4B5563"
   },
   "favicon": "/favicon.svg",
-  "navigation": [
-    {
-      "group": "Overview",
-      "pages": [
-        "introduction",
-        "quickstart"
-      ]
-    },
-    {
-      "group": "Product Graph API",
-      "pages": [
-        {
-          "group": "Getting Started",
-          "pages": [
-            "product-graph/index",
-            "product-graph/overview",
-            "product-graph/authentication",
-            "product-graph/credits",
-            "product-graph/multilanguage"
-          ]
-        },
-        {
-          "group": "Core API",
-          "pages": [
-            "product-graph/search",
-            "product-graph/brand",
-            "product-graph/product-data",
-            "product-graph/historical-data"
-          ]
-        },
-        {
-          "group": "Advanced Features",
-          "pages": [
-            "product-graph/analytics",
-            "product-graph/webhooks",
-            "product-graph/best-practices",
-            "product-graph/error-handling"
-          ]
-        }
-      ]
-    },
-    {
-      "group": "API Reference",
-      "pages": [
-        "api-reference/introduction",
-        {
-          "group": "Products",
-          "pages": [
-            "api-reference/products/get-all-products",
-            "api-reference/products/create-a-new-product",
-            "api-reference/products/get-product-by-id",
-            "api-reference/products/update-product",
-            "api-reference/products/delete-product",
-            "api-reference/products/request-product-translation",
-            "api-reference/products/get-product-history"
-          ]
-        },
-        {
-          "group": "Search",
-          "pages": [
-            "api-reference/search/search-for-products",
-            "api-reference/search/get-search-results"
-          ]
-        },
-        {
-          "group": "Brands",
-          "pages": [
-            "api-reference/brands/get-brand-by-id",
-            "api-reference/brands/search-for-brands"
-          ]
-        },
-        {
-          "group": "Credits",
-          "pages": [
-            "api-reference/credits/get-credit-balance"
-          ]
-        },
-        {
-          "group": "Webhooks",
-          "pages": [
-            "api-reference/webhooks/create-webhook",
-            "api-reference/webhooks/list-webhooks",
-            "api-reference/webhooks/get-webhook-details",
-            "api-reference/webhooks/update-webhook",
-            "api-reference/webhooks/delete-webhook"
-          ]
-        }
-      ]
-    }
-  ],
-  "openapi": "/api-reference/openapi.json",
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
@@ -116,26 +26,136 @@
       "href": "https://dashboard.productgraph.org"
     }
   },
-  "anchors": [
-    {
-      "anchor": "Developer Portal",
-      "href": "https://productgraph.org/developer",
-      "icon": "browser"
+  "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Developer Portal",
+          "href": "https://productgraph.org/developer",
+          "icon": "browser"
+        },
+        {
+          "anchor": "API Status",
+          "href": "https://status.productgraph.org",
+          "icon": "server"
+        },
+        {
+          "anchor": "Support",
+          "href": "https://support.productgraph.org",
+          "icon": "headset"
+        }
+      ]
     },
-    {
-      "anchor": "API Status",
-      "href": "https://status.productgraph.org",
-      "icon": "server"
-    },
-    {
-      "anchor": "Support",
-      "href": "https://support.productgraph.org",
-      "icon": "headset"
+    "groups": [
+      {
+        "group": "Overview",
+        "pages": [
+          "introduction",
+          "quickstart"
+        ]
+      },
+      {
+        "group": "Product Graph API",
+        "pages": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "product-graph/index",
+              "product-graph/overview",
+              "product-graph/authentication",
+              "product-graph/credits",
+              "product-graph/multilanguage"
+            ]
+          },
+          {
+            "group": "Core API",
+            "pages": [
+              "product-graph/search",
+              "product-graph/brand",
+              "product-graph/product-data",
+              "product-graph/historical-data"
+            ]
+          },
+          {
+            "group": "Advanced Features",
+            "pages": [
+              "product-graph/analytics",
+              "product-graph/webhooks",
+              "product-graph/best-practices",
+              "product-graph/error-handling"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "API Reference",
+        "pages": [
+          "api-reference/introduction",
+          {
+            "group": "Products",
+            "pages": [
+              "api-reference/products/get-all-products",
+              "api-reference/products/create-a-new-product",
+              "api-reference/products/get-product-by-id",
+              "api-reference/products/update-product",
+              "api-reference/products/delete-product",
+              "api-reference/products/request-product-translation",
+              "api-reference/products/get-product-history"
+            ]
+          },
+          {
+            "group": "Search",
+            "pages": [
+              "api-reference/search/search-for-products",
+              "api-reference/search/get-search-results"
+            ]
+          },
+          {
+            "group": "Brands",
+            "pages": [
+              "api-reference/brands/get-brand-by-id",
+              "api-reference/brands/search-for-brands"
+            ]
+          },
+          {
+            "group": "Credits",
+            "pages": [
+              "api-reference/credits/get-credit-balance"
+            ]
+          },
+          {
+            "group": "Webhooks",
+            "pages": [
+              "api-reference/webhooks/create-webhook",
+              "api-reference/webhooks/list-webhooks",
+              "api-reference/webhooks/get-webhook-details",
+              "api-reference/webhooks/update-webhook",
+              "api-reference/webhooks/delete-webhook"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "api": {
+    "openapi": "/api-reference/openapi.json",
+    "playground": {
+      "display": "interactive"
     }
-  ],
-  "footerSocials": {
-    "x": "https://x.com/productgraph",
-    "github": "https://github.com/productgraph",
-    "linkedin": "https://linkedin.com/company/productgraph"
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/productgraph",
+      "github": "https://github.com/productgraph",
+      "linkedin": "https://linkedin.com/company/productgraph"
+    }
+  },
+  "styling": {
+    "eyebrows": "section",
+    "codeblocks": "system"
+  },
+  "appearance": {
+    "default": "system",
+    "strict": true
   }
 }
