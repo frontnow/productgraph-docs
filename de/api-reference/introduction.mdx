@@ -1,0 +1,493 @@
+---
+title: 'API-Referenz Einführung'
+description: 'Umfassende Referenz für die Endpunkte der Product Graph API'
+icon: 'code'
+---
+
+# API-Referenz
+
+Dieser Abschnitt bietet eine detaillierte Referenzdokumentation für alle Endpunkte der Product Graph API. Jeder Endpunkt enthält Anfrageparameter, Antwortformate und Beispielcode, um Ihnen bei der effektiven Integration mit unserer API zu helfen.
+
+<Tabs>
+  <Tab title="Was enthalten ist">
+    - Vollständige Dokumentation für alle API-Endpunkte
+    - Anfrageparameter und Validierungsregeln
+    - Antwortschemas mit Beispieldaten
+    - Interaktiver API-Playground zum Testen
+    - Codebeispiele in mehreren Programmiersprachen
+    - Fehlercodes und Fehlerbehebung
+  </Tab>
+  <Tab title="Authentifizierung">
+    Alle API-Endpunkte erfordern einen API-Schlüssel. Fügen Sie ihn in Ihren Anfrage-Header ein:
+    
+    ```bash
+    X-API-Key: your-api-key
+    ```
+    
+    Ihr API-Schlüssel ist im [API-Dashboard](https://dashboard.productgraph.org/api-keys) verfügbar.
+    Wechseln Sie Ihre Schlüssel regelmäßig aus Sicherheitsgründen.
+  </Tab>
+  <Tab title="Ratenbegrenzungen">
+    - Kostenloses Kontingent: 60 Anfragen/Minute, 1.000 Anfragen/Tag
+    - Professional-Kontingent: 300 Anfragen/Minute, 10.000 Anfragen/Tag
+    - Enterprise-Kontingent: Angepasste Limits
+    
+    Wenn ein Limit überschritten wird, erhalten Sie eine Antwort `429 Too Many Requests`.
+  </Tab>
+</Tabs>
+
+## API-Basis-URLs
+
+Die Product Graph API ist unter folgenden Basis-URLs verfügbar:
+
+<CodeGroup>
+```bash Produktion
+https://api.productgraph.org/v1
+```
+
+```bash Sandbox
+https://sandbox.productgraph.org/v1
+```
+</CodeGroup>
+
+<Note>
+  Verwenden Sie die Sandbox-Umgebung zum Testen und Entwickeln. Sie stellt Beispieldaten bereit, die Ihr Produktions-Guthaben nicht verbrauchen. Die Sandbox spiegelt die Funktionalität der Produktions-API wider, gibt jedoch synthetische Daten zurück.
+</Note>
+
+## Beispiel einer API-Anfrage
+
+Hier ist ein vollständiges Beispiel einer Produktsuchanfrage:
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.productgraph.org/v1/search" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "bluetooth lautsprecher",
+    "languages": ["en", "fr"],
+    "filter": {
+      "price_range": {"min": 50, "max": 200},
+      "brand": ["JBL", "Sony", "Bose"]
+    },
+    "sort": {"field": "relevance", "direction": "desc"},
+    "page": 1,
+    "limit": 20
+  }'
+```
+
+```javascript JavaScript
+const options = {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'your-api-key',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    query: 'bluetooth lautsprecher',
+    languages: ['en', 'fr'],
+    filter: {
+      price_range: {min: 50, max: 200},
+      brand: ['JBL', 'Sony', 'Bose']
+    },
+    sort: {field: 'relevance', direction: 'desc'},
+    page: 1,
+    limit: 20
+  })
+};
+
+fetch('https://api.productgraph.org/v1/search', options)
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Fehler:', error));
+```
+
+```python Python
+import requests
+import json
+
+url = "https://api.productgraph.org/v1/search"
+headers = {
+    "X-API-Key": "your-api-key",
+    "Content-Type": "application/json"
+}
+payload = {
+    "query": "bluetooth lautsprecher",
+    "languages": ["en", "fr"],
+    "filter": {
+        "price_range": {"min": 50, "max": 200},
+        "brand": ["JBL", "Sony", "Bose"]
+    },
+    "sort": {"field": "relevance", "direction": "desc"},
+    "page": 1,
+    "limit": 20
+}
+
+response = requests.post(url, headers=headers, data=json.dumps(payload))
+data = response.json()
+print(data)
+```
+</CodeGroup>
+
+## Arbeiten mit asynchronen Operationen
+
+Viele Product Graph API-Operationen (insbesondere Suchen und Batch-Updates) arbeiten asynchron:
+
+1. Sie übermitteln eine Anfrage und erhalten eine Job-ID
+2. Der Job wird im Hintergrund verarbeitet
+3. Sie können den Job-Status mit der Job-ID überprüfen
+4. Nach Abschluss können Sie die Ergebnisse abrufen
+
+<Steps>
+  <Step title="Anfrage übermitteln">
+    ```bash
+    curl -X POST "https://api.productgraph.org/v1/search" \
+      -H "X-API-Key: your-api-key" \
+      -H "Content-Type: application/json" \
+      -d '{"query": "gaming laptop"}'
+    ```
+    
+    Antwort:
+    ```json
+    {
+      "job_id": "srch_123abc456def",
+      "status": "queued",
+      "created_at": "2023-04-15T12:34:56Z"
+    }
+    ```
+  </Step>
+  <Step title="Job-Status überprüfen">
+    ```bash
+    curl -X GET "https://api.productgraph.org/v1/jobs/srch_123abc456def" \
+      -H "X-API-Key: your-api-key"
+    ```
+    
+    Antwort:
+    ```json
+    {
+      "job_id": "srch_123abc456def",
+      "status": "processing",
+      "progress": 45,
+      "created_at": "2023-04-15T12:34:56Z",
+      "updated_at": "2023-04-15T12:35:10Z"
+    }
+    ```
+  </Step>
+  <Step title="Ergebnisse abrufen">
+    ```bash
+    curl -X GET "https://api.productgraph.org/v1/search/srch_123abc456def" \
+      -H "X-API-Key: your-api-key"
+    ```
+    
+    Die Antwort enthält die Suchergebnisse.
+  </Step>
+</Steps>
+
+Für Produktionsanwendungen empfehlen wir die Verwendung von [Webhooks](/de/product-graph/webhooks), um Benachrichtigungen zu erhalten, wenn Jobs abgeschlossen sind, anstatt regelmäßig abzufragen.
+
+## Endpunkt-Kategorien
+
+Die Product Graph API umfasst die folgenden Hauptkategorien von Endpunkten:
+
+<CardGroup cols={2}>
+  <Card title="Produkte" icon="box" href="/de/api-reference/products/get-all-products">
+    Endpunkte zum Abrufen, Erstellen und Aktualisieren von Produktinformationen
+  </Card>
+  <Card title="Marken" icon="tag" href="/de/api-reference/brands/get-brand-by-id">
+    Endpunkte für den Zugriff auf Markendaten
+  </Card>
+  <Card title="Suche" icon="magnifying-glass" href="/de/api-reference/search/search-for-products">
+    Leistungsstarke Suchfunktionen zum Finden von Produkten
+  </Card>
+  <Card title="Guthaben" icon="coins" href="/de/api-reference/credits/get-credit-balance">
+    Endpunkte zur Verwaltung Ihrer API-Nutzungsguthaben
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/de/api-reference/webhooks/create-webhook">
+    Endpunkte zur Verwaltung von Ereignisbenachrichtigungen
+  </Card>
+</CardGroup>
+
+## Gemeinsame Anfrageparameter
+
+Viele API-Endpunkte teilen gemeinsame Parameter:
+
+<ResponseField name="languages" type="array">
+  Die Sprachen, in denen Sie Daten zurückgegeben haben möchten, unter Verwendung von ISO 639-1-Codes.
+  
+  Beispiel: `["en", "de", "fr"]`
+</ResponseField>
+
+<ResponseField name="include" type="array">
+  Optionale Datenfelder, die in die Antwort aufgenommen werden sollen.
+  
+  Beispiel: `["attributes", "images", "reviews"]`
+</ResponseField>
+
+<ResponseField name="format" type="string">
+  Antwortformattyp (Standard ist "complete").
+  
+  Optionen: `"complete"`, `"minimal"`, `"ids_only"`
+</ResponseField>
+
+## Datenmodelle
+
+Die API verwendet standardisierte Datenmodelle über alle Endpunkte hinweg. Im Folgenden sind die wichtigsten Datenstrukturen aufgeführt, denen Sie begegnen werden:
+
+<AccordionGroup>
+  <Accordion title="Produkt-Modell">
+  ```json
+  {
+    "id": "prod_98765",
+    "name": {
+      "en": "Sony WH-1000XM4 Wireless Noise-Canceling Headphones",
+      "de": "Sony WH-1000XM4 Kabellose Noise-Cancelling-Kopfhörer"
+    },
+    "gtin": "4548736112001",
+    "url": "https://example.com/products/sony-wh1000xm4",
+    "price": 349.99,
+    "brand": {
+      "id": "brand_sony",
+      "name": "Sony"
+    },
+    "content": {
+      "description": {
+        "en": "Industry-leading noise cancellation technology...",
+        "de": "Branchenführende Geräuschunterdrückungstechnologie..."
+      }
+    },
+    "attributes": {
+      "color": "Black",
+      "weight": "254g",
+      "battery_life": "30 hours",
+      "bluetooth_version": "5.0"
+    },
+    "images": [
+      {
+        "url": "https://example.com/images/sony-wh1000xm4-main.jpg",
+        "type": "primary",
+        "width": 1200,
+        "height": 800
+      }
+    ],
+    "created_at": "2023-01-15T10:30:00Z",
+    "updated_at": "2023-03-22T14:15:30Z"
+  }
+  ```
+  </Accordion>
+
+  <Accordion title="Marken-Modell">
+  ```json
+  {
+    "id": "brand_sony",
+    "name": "Sony",
+    "searchable_aliases": ["sony corporation", "sony electronics"],
+    "established": 1946,
+    "headquarters": {
+      "city": "Tokyo",
+      "country": "Japan"
+    },
+    "logo_url": "https://example.com/logos/sony_logo_primary.svg",
+    "website": "https://www.sony.com",
+    "social_media": {
+      "twitter": "https://twitter.com/Sony",
+      "facebook": "https://facebook.com/Sony",
+      "instagram": "https://instagram.com/sony"
+    },
+    "created_at": "2023-01-10T08:15:00Z",
+    "updated_at": "2023-02-05T11:20:45Z"
+  }
+  ```
+  </Accordion>
+  
+  <Accordion title="Suchergebnisse-Modell">
+  ```json
+  {
+    "results": [
+      {
+        "id": "prod_98765",
+        "name": {
+          "en": "Sony WH-1000XM4 Wireless Noise-Canceling Headphones"
+        },
+        "brand": {
+          "id": "brand_sony",
+          "name": "Sony"
+        },
+        "relevance_score": 0.95
+      },
+      {
+        "id": "prod_12345",
+        "name": {
+          "en": "Sony WH-1000XM5 Wireless Noise-Canceling Headphones"
+        },
+        "brand": {
+          "id": "brand_sony",
+          "name": "Sony"
+        },
+        "relevance_score": 0.92
+      }
+    ],
+    "pagination": {
+      "total": 42,
+      "page": 1,
+      "limit": 10,
+      "next_page": 2,
+      "prev_page": null
+    },
+    "meta": {
+      "search_time_ms": 156,
+      "query": "noise canceling headphones"
+    }
+  }
+  ```
+  </Accordion>
+</AccordionGroup>
+
+## Fehlerbehandlung
+
+Die API verwendet standardmäßige HTTP-Statuscodes und bietet detaillierte Fehlermeldungen, um Ihnen bei der Fehlersuche zu helfen:
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "error": {
+    "code": "invalid_language",
+    "message": "The requested language 'xyz' is not supported.",
+    "documentation_url": "https://productgraph.org/docs/errors#invalid_language",
+    "request_id": "req_7a8b9c0d1e2f"
+  }
+}
+```
+
+```json 401 Unauthorized
+{
+  "error": {
+    "code": "invalid_api_key",
+    "message": "The API key provided is invalid or has been revoked.",
+    "documentation_url": "https://productgraph.org/docs/errors#invalid_api_key",
+    "request_id": "req_1a2b3c4d5e6f"
+  }
+}
+```
+
+```json 429 Too Many Requests
+{
+  "error": {
+    "code": "rate_limit_exceeded",
+    "message": "You have exceeded the rate limit of 60 requests per minute.",
+    "documentation_url": "https://productgraph.org/docs/errors#rate_limit_exceeded",
+    "request_id": "req_2b3c4d5e6f7g",
+    "retry_after": 30
+  }
+}
+```
+</CodeGroup>
+
+Wir empfehlen die Implementierung von exponentiellem Backoff für das Wiederholen fehlgeschlagener Anfragen. Weitere Informationen zur Fehlerbehandlung finden Sie im [Leitfaden zur Fehlerbehandlung](/de/product-graph/error-handling).
+
+## Client-Bibliotheken
+
+Wir bieten offizielle Client-Bibliotheken, um die Integration mit der Product Graph API zu vereinfachen:
+
+<CardGroup cols={3}>
+  <Card title="JavaScript" icon="js" href="https://github.com/productgraph/productgraph-js">
+    npm install productgraph
+  </Card>
+  <Card title="Python" icon="python" href="https://github.com/productgraph/productgraph-python">
+    pip install productgraph
+  </Card>
+  <Card title="PHP" icon="php" href="https://github.com/productgraph/productgraph-php">
+    composer require productgraph/productgraph-php
+  </Card>
+</CardGroup>
+
+Beispiel mit dem JavaScript-Client:
+
+```javascript
+import { ProductGraphClient } from 'productgraph';
+
+const client = new ProductGraphClient('your-api-key');
+
+// Nach Produkten suchen
+client.search({
+  query: 'bluetooth lautsprecher',
+  languages: ['en', 'fr']
+})
+.then(job => {
+  // Job-Status prüfen und Ergebnisse abrufen
+  return client.getSearchResults(job.job_id);
+})
+.then(results => {
+  console.log(results);
+})
+.catch(error => {
+  console.error('Fehler:', error);
+});
+```
+
+## API-Versionierung
+
+Die Product Graph API verwendet Versionierung, um Rückwärtskompatibilität zu gewährleisten:
+
+- Alle Endpunkte enthalten die Version im URL-Pfad (`/v1/`)
+- Bahnbrechende Änderungen werden in neuen API-Versionen eingeführt
+- Wir pflegen jede Version für mindestens 12 Monate, nachdem eine neue Version veröffentlicht wurde
+- Mitteilungen über veraltete Funktionen werden mindestens 6 Monate im Voraus bereitgestellt
+
+## OpenAPI-Spezifikation
+
+Unsere API ist vollständig mit einer OpenAPI-Spezifikation dokumentiert. Sie können diese Spezifikation verwenden, um Client-Bibliotheken zu generieren, Endpunkte zu erkunden und Anfrage- und Antwortformate zu verstehen.
+
+<Card title="OpenAPI-Spezifikation" icon="file-code" href="/api-reference/openapi.json">
+  Vollständige OpenAPI-Spezifikation anzeigen
+</Card>
+
+## Verwendung des API-Playgrounds
+
+In dieser Referenz finden Sie interaktive API-Playgrounds, in denen Sie jeden Endpunkt direkt in Ihrem Browser ausprobieren können. So verwenden Sie diese:
+
+1. Geben Sie Ihren API-Schlüssel im Authentifizierungsbereich ein
+2. Legen Sie die erforderlichen Parameter für den Endpunkt fest
+3. Klicken Sie auf "Ausführen", um die Anfrage auszuführen
+4. Sehen Sie sich die Antwort und Header an
+5. Kopieren Sie den generierten Code für Ihre bevorzugte Sprache
+
+<img 
+  src="https://example.com/images/api-playground-screenshot.png" 
+  alt="API Playground Screenshot" 
+  className="mt-4 rounded-lg border border-gray-200 dark:border-gray-700"
+/>
+
+## Best Practices
+
+<Check>Verwenden Sie die korrekten HTTP-Methoden für jeden Endpunkt</Check>
+<Check>Implementieren Sie ordnungsgemäße Fehlerbehandlung mit Wiederholungslogik</Check>
+<Check>Schließen Sie nur die Sprachen ein, die Sie benötigen, um die Antwortgröße zu optimieren</Check>
+<Check>Verwenden Sie Webhooks für asynchrone Verarbeitung anstelle von Polling</Check>
+<Check>Speichern und wiederverwendenR Sie Produkt-IDs, anstatt wiederholt zu suchen</Check>
+<Check>Implementieren Sie clientseitiges Caching, um API-Aufrufe zu reduzieren</Check>
+<Check>Setzen Sie angemessene Timeouts für API-Anfragen (wir empfehlen 30 Sekunden)</Check>
+
+## Zusätzliche Ressourcen
+
+<CardGroup cols={2}>
+  <Card title="Best Practices" icon="lightbulb" href="/de/product-graph/best-practices">
+    Tipps zur Optimierung Ihrer API-Integration
+  </Card>
+  <Card title="Authentifizierung" icon="key" href="/de/product-graph/authentication">
+    Erfahren Sie mehr über Authentifizierungsmethoden
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/de/product-graph/webhooks">
+    Echtzeit-Benachrichtigungen einrichten
+  </Card>
+  <Card title="Ratenbegrenzungen" icon="gauge-high" href="/de/product-graph/authentication#rate-limits">
+    API-Ratenbegrenzungen verstehen
+  </Card>
+</CardGroup>
+
+## Brauchen Sie Hilfe?
+
+Unser Entwickler-Support-Team steht bereit, um Ihnen bei Integrationsfragen zu helfen:
+
+- E-Mail: [api-support@productgraph.org](mailto:api-support@productgraph.org)
+- Entwicklerforum: [community.productgraph.org](https://community.productgraph.org)
+- Sprechstunden: Jeden Mittwoch um 11 Uhr ET (Anmeldung im Entwicklerportal)

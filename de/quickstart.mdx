@@ -1,22 +1,22 @@
 ---
-title: 'Schnellstartanleitung'
-description: 'Beginnen Sie die Integration mit der Product Graph API in wenigen Minuten'
+title: 'Quickstart-Leitfaden'
+description: 'Beginnen Sie in wenigen Minuten mit der Integration der Product Graph API'
 icon: 'rocket'
 ---
 
-# Product Graph API Schnellstart
+# Product Graph API Quickstart
 
-Diese Anleitung hilft Ihnen, in nur wenigen Minuten mit der Product Graph API zu starten. Folgen Sie diesen Schritten, um sich zu authentifizieren, Ihre ersten API-Aufrufe zu tätigen und mit dem Aufbau Ihrer Integration zu beginnen, um auf umfassende Produktdaten in mehreren Sprachen zuzugreifen.
+Dieser Leitfaden hilft Ihnen, in nur wenigen Minuten mit der Product Graph API zu beginnen. Folgen Sie diesen Schritten, um sich zu authentifizieren, Ihre ersten API-Aufrufe zu tätigen und mit dem Aufbau Ihrer Integration zu beginnen, um auf umfassende Produktdaten in mehreren Sprachen zuzugreifen.
 
 ## Was Sie mit der Product Graph API tun können
 
 Die ProductGraph API ermöglicht Ihnen:
 
-- **Zugriff auf vereinheitlichte Produktinformationen** über Kategorien und Marken hinweg
-- **Abrufen von Produktdaten in mehreren Sprachen** mit einem einzigen API-Aufruf
-- **Suche nach Produkten** nach Namen, GTIN, URL oder Marke
+- **Zugriff auf einheitliche Produktinformationen** über Kategorien und Marken hinweg
+- **Abruf von Produktdaten in mehreren Sprachen** mit einem einzigen API-Aufruf
+- **Suche nach Produkten** nach Name, GTIN, URL oder Marke
 - **Verfolgung von Produktdatenänderungen** im Laufe der Zeit
-- **Empfangen von Benachrichtigungen** bei Aktualisierung von Produktdaten
+- **Erhalt von Benachrichtigungen** bei Aktualisierung von Produktdaten
 
 ## Schritt 1: API-Zugangsdaten erhalten
 
@@ -25,22 +25,22 @@ Die ProductGraph API ermöglicht Ihnen:
     Besuchen Sie das [Product Graph Dashboard](https://dashboard.productgraph.org) und registrieren Sie sich für ein Konto.
     
     <Note>
-      Bei der Anmeldung werden Sie nach Ihrem primären Anwendungsfall gefragt. Dies hilft uns, Ihre Erfahrung zu optimieren.
+      Während der Registrierung werden Sie nach Ihrem primären Anwendungsfall gefragt. Dies hilft uns, Ihre Erfahrung zu optimieren.
     </Note>
   </Step>
   <Step title="Plan auswählen">
-    Wählen Sie einen Plan, der Ihren Bedürfnissen entspricht:
+    Wählen Sie einen Plan, der zu Ihren Bedürfnissen passt:
     
-    - **Kostenlos für Entwickler**: 1.000 Guthaben/Monat, 100 Anfragen/Stunde
-    - **Business**: 100.000 Guthaben/Monat, 1.000 Anfragen/Stunde
-    - **Enterprise**: Unbegrenztes Guthaben, benutzerdefinierte Ratenlimits
+    - **Free Developer**: 1.000 Credits/Monat, 100 Anfragen/Stunde
+    - **Business**: 100.000 Credits/Monat, 1.000 Anfragen/Stunde
+    - **Enterprise**: Unbegrenzte Credits, benutzerdefinierte Rate-Limits
     
     <Tip>
-      Jede API-Operation kostet eine bestimmte Anzahl an Guthaben. Eine einfache Produktsuche kostet beispielsweise 1 Guthaben, während eine vollständige mehrsprachige Produktanreicherung 10 Guthaben kosten könnte.
+      Jede API-Operation kostet eine bestimmte Anzahl von Credits. Zum Beispiel kostet eine einfache Produktsuche 1 Credit, während eine vollständige mehrsprachige Produktanreicherung 10 Credits kosten könnte.
     </Tip>
   </Step>
   <Step title="API-Schlüssel generieren">
-    Navigieren Sie in Ihrem Dashboard zum Bereich "API-Schlüssel" und klicken Sie auf "Neuen Schlüssel generieren".
+    Navigieren Sie in Ihrem Dashboard zum Abschnitt "API-Schlüssel" und klicken Sie auf "Neuen Schlüssel generieren".
     
     <Warning>
       Halten Sie Ihren API-Schlüssel sicher! Geben Sie ihn nicht in clientseitigem Code oder öffentlichen Repositories preis.
@@ -50,7 +50,7 @@ Die ProductGraph API ermöglicht Ihnen:
 
 ## Schritt 2: Ihren ersten API-Aufruf tätigen
 
-Lassen Sie uns einen einfachen API-Aufruf ausprobieren, um Ihre Einrichtung zu überprüfen. Wir werden die Details Ihres API-Kontos und Guthabens abrufen.
+Probieren wir einen einfachen API-Aufruf aus, um Ihre Einrichtung zu überprüfen. Wir werden die Details Ihres API-Kontos und Credits abrufen.
 
 <CodeGroup>
 ```bash cURL
@@ -67,7 +67,7 @@ fetch("https://api.productgraph.org/v1/credits", {
   }
 })
 .then(response => response.json())
-.then(data => console.log("Guthabeninformationen:", data))
+.then(data => console.log("Credits-Informationen:", data))
 .catch(error => console.error("Fehler:", error));
 ```
 
@@ -80,7 +80,7 @@ headers = {"X-API-Key": api_key}
 
 response = requests.get(url, headers=headers)
 data = response.json()
-print(f"Guthabeninformationen: {data}")
+print(f"Credits-Informationen: {data}")
 ```
 </CodeGroup>
 
@@ -104,7 +104,7 @@ Sie sollten eine Antwort wie diese erhalten:
 
 ## Schritt 3: Nach Produkten suchen
 
-Jetzt versuchen wir etwas Nützlicheres - die Suche nach Produkten in der Product Graph-Datenbank. Dieses Beispiel zeigt, wie Sie eine Suche nach Sony-Funkkopfhörern mit mehrsprachiger Unterstützung durchführen:
+Nun lassen Sie uns etwas Nützlicheres versuchen - die Suche nach Produkten in der Product Graph-Datenbank. Dieses Beispiel zeigt, wie Sie eine Suche nach Sony-Funkkopfhörern mit mehrsprachiger Unterstützung durchführen:
 
 <CodeGroup>
 ```bash cURL
@@ -157,7 +157,7 @@ fetch("https://api.productgraph.org/v1/search", {
 .then(data => {
   console.log("Suchauftrag initiiert:", data);
   // Hinweis: Product Graph verwendet asynchrone Verarbeitung für komplexe Suchen
-  // Speichern Sie die job_id, um später die Ergebnisse zu überprüfen
+  // Speichern Sie die job_id, um die Ergebnisse später zu überprüfen
 })
 .catch(error => console.error("Fehler:", error));
 ```
@@ -191,11 +191,11 @@ response = requests.post(
 data = response.json()
 print(f"Suchauftrag initiiert: {data}")
 # Hinweis: Product Graph verwendet asynchrone Verarbeitung für komplexe Suchen
-# Speichern Sie die job_id, um später die Ergebnisse zu überprüfen
+# Speichern Sie die job_id, um die Ergebnisse später zu überprüfen
 ```
 </CodeGroup>
 
-Sie erhalten eine Antwort mit einer Auftrags-ID für die Suchanfrage:
+Sie erhalten eine Antwort mit einer Job-ID für die Suchanfrage:
 
 ```json
 {
@@ -209,7 +209,7 @@ Sie erhalten eine Antwort mit einer Auftrags-ID für die Suchanfrage:
 
 ## Schritt 4: Suchergebnisse abrufen
 
-Die Product Graph API verarbeitet Suchvorgänge für komplexe Abfragen asynchron. So können Sie den Status überprüfen und Ihre Ergebnisse abrufen:
+Die Product Graph API verarbeitet Suchoperationen asynchron für komplexe Abfragen. So überprüfen Sie den Status und rufen Ihre Ergebnisse ab:
 
 <CodeGroup>
 ```bash cURL
@@ -230,7 +230,7 @@ fetch(`https://api.productgraph.org/v1/search/${jobId}`, {
   if (data.status === "completed") {
     // Verarbeiten Sie die Produktergebnisse
     data.results.forEach(product => {
-      console.log(`Produkt: ${product.name.de || product.name.en}`);
+      console.log(`Produkt: ${product.name.en}`);
       console.log(`Verfügbar in Sprachen: ${Object.keys(product.name).join(", ")}`);
       console.log(`GTIN: ${product.gtin}`);
     });
@@ -253,7 +253,7 @@ results = response.json()
 if results["status"] == "completed":
     # Verarbeiten Sie die Produktergebnisse
     for product in results["results"]:
-        print(f"Produkt: {product['name'].get('de', product['name']['en'])}")
+        print(f"Produkt: {product['name']['en']}")
         print(f"Verfügbar in Sprachen: {', '.join(product['name'].keys())}")
         print(f"GTIN: {product['gtin']}")
 else:
@@ -325,7 +325,7 @@ Beispiel für abgeschlossene Suchergebnisse:
 
 ## Schritt 5: Detaillierte Produktinformationen abrufen
 
-Nachdem Sie Produkte durch die Suche identifiziert haben, können Sie umfassende Informationen über ein bestimmtes Produkt abrufen:
+Nachdem Sie Produkte durch die Suche identifiziert haben, können Sie umfassende Informationen zu einem bestimmten Produkt abrufen:
 
 <CodeGroup>
 ```bash cURL
@@ -375,7 +375,7 @@ print(f"Produktdetails: {product}")
 
 ## Schritt 6: Webhooks implementieren (Optional)
 
-Für Produktionsanwendungen können Sie anstelle des Abfragens von Suchergebnissen Webhooks einrichten, um benachrichtigt zu werden, wenn asynchrone Operationen abgeschlossen sind:
+Für Produktionsanwendungen können Sie, anstatt nach Suchergebnissen zu pollen, Webhooks einrichten, um benachrichtigt zu werden, wenn asynchrone Operationen abgeschlossen sind:
 
 <CodeGroup>
 ```bash cURL
@@ -385,7 +385,7 @@ curl -X POST "https://api.productgraph.org/v1/webhooks" \
   -d '{
     "url": "https://your-callback-url.com/webhook",
     "events": ["search.completed", "product.updated", "product.translated"],
-    "description": "Mein App-Webhook für ProductGraph-Updates",
+    "description": "My app webhook for ProductGraph updates",
     "active": true,
     "secret": "your-webhook-secret"
   }'
@@ -395,7 +395,7 @@ curl -X POST "https://api.productgraph.org/v1/webhooks" \
 const webhookData = {
   url: "https://your-callback-url.com/webhook",
   events: ["search.completed", "product.updated", "product.translated"],
-  description: "Mein App-Webhook für ProductGraph-Updates",
+  description: "My app webhook for ProductGraph updates",
   active: true,
   secret: "your-webhook-secret"
 };
@@ -421,7 +421,7 @@ Eine erfolgreiche Antwort enthält Ihre Webhook-ID:
   "id": "wh_1a2b3c4d5e6f",
   "url": "https://your-callback-url.com/webhook",
   "events": ["search.completed", "product.updated", "product.translated"],
-  "description": "Mein App-Webhook für ProductGraph-Updates",
+  "description": "My app webhook for ProductGraph updates",
   "active": true,
   "created_at": "2025-03-14T11:45:30Z"
 }
@@ -431,7 +431,7 @@ Erfahren Sie mehr über die [Webhook-Implementierung](/de/product-graph/webhooks
 
 ## Arbeiten mit mehrsprachiger Unterstützung
 
-Eine der Hauptstärken von Product Graph ist die mehrsprachige Unterstützung. So können Sie eine Produktübersetzung anfordern:
+Eine der Hauptstärken von Product Graph ist die mehrsprachige Unterstützung. So fordern Sie Produktübersetzungen an:
 
 <CodeGroup>
 ```bash cURL
@@ -467,11 +467,11 @@ fetch(`https://api.productgraph.org/v1/products/${productId}/translate`, {
 ```
 </CodeGroup>
 
-Sie erhalten eine Übersetzungsauftrags-ID, die Sie ähnlich wie bei Suchergebnissen zur Statusüberprüfung verwenden können.
+Sie erhalten eine Übersetzungs-Job-ID, mit der Sie den Status überprüfen können, ähnlich wie bei Suchergebnissen.
 
 ## Nächste Schritte
 
-Nachdem Sie Ihre ersten API-Aufrufe mit Product Graph getätigt haben, sind hier einige vorgeschlagene nächste Schritte:
+Nachdem Sie Ihre ersten API-Aufrufe mit Product Graph gemacht haben, hier einige vorgeschlagene nächste Schritte:
 
 <CardGroup cols={2}>
   <Card title="Produktdaten-API erkunden" icon="box" href="/de/product-graph/product-data">
@@ -481,9 +481,9 @@ Nachdem Sie Ihre ersten API-Aufrufe mit Product Graph getätigt haben, sind hier
     Implementieren Sie anspruchsvolle mehrsprachige Funktionen in Ihrer Anwendung
   </Card>
   <Card title="Markeninformationen" icon="tag" href="/de/product-graph/brand">
-    Zugriff auf und Nutzung umfassender Markendaten
+    Greifen Sie auf umfassende Markendaten zu und nutzen Sie diese
   </Card>
-  <Card title="Historische Verfolgung" icon="clock" href="/de/product-graph/historical-data">
+  <Card title="Historisches Tracking" icon="clock" href="/de/product-graph/historical-data">
     Verfolgen Sie, wie sich Produktdaten im Laufe der Zeit ändern
   </Card>
 </CardGroup>
@@ -494,17 +494,17 @@ Nachdem Sie Ihre ersten API-Aufrufe mit Product Graph getätigt haben, sind hier
   <Card title="Mehrsprachiger E-Commerce" icon="globe" href="https://github.com/productgraph/multilingual-catalog">
     Verbessern Sie Ihren Online-Shop mit mehrsprachigen Produktinformationen, die automatisch über Sprachen hinweg synchronisiert bleiben
   </Card>
-  <Card title="Produktinhaltsverwaltung" icon="database" href="https://github.com/productgraph/pcm-integration">
-    Integrieren Sie Product Graph in Ihr bestehendes PIM/PCM-System, um Produktinhalte zu verbessern und zu bereichern
+  <Card title="Produktinhaltsmanagement" icon="database" href="https://github.com/productgraph/pcm-integration">
+    Integrieren Sie Product Graph mit Ihrem bestehenden PIM/PCM-System, um Produktinhalte zu verbessern und anzureichern
   </Card>
-  <Card title="Marktplatzintegration" icon="shop" href="https://github.com/productgraph/marketplace-connector">
+  <Card title="Marketplace-Integration" icon="shop" href="https://github.com/productgraph/marketplace-connector">
     Standardisieren und verbessern Sie Produktdaten über mehrere Marktplätze und Vertriebskanäle hinweg
   </Card>
   <Card title="SEO-Optimierung" icon="chart-line" href="https://github.com/productgraph/seo-enhancer">
-    Verbessern Sie die SEO von Produktseiten mit erweiterten, mehrsprachigen Produktinhalten
+    Verbessern Sie die SEO von Produktseiten mit verbessertem, mehrsprachigem Produktinhalt
   </Card>
 </CardGroup>
 
 <Note>
-  Möchten Sie einen bestimmten Anwendungsfall besprechen? Treten Sie unserer [Entwicklergemeinschaft](https://community.productgraph.org) bei oder [vereinbaren Sie eine Beratung](https://productgraph.org/consultation) mit unseren Integrationsspezialisten.
+  Möchten Sie einen bestimmten Anwendungsfall besprechen? Treten Sie unserer [Entwickler-Community](https://community.productgraph.org) bei oder [vereinbaren Sie eine Beratung](https://productgraph.org/consultation) mit unseren Integrationsspezialisten.
 </Note>

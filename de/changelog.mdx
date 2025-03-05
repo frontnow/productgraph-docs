@@ -1,15 +1,15 @@
 ---
 title: 'Änderungsprotokoll'
-description: 'Bemerkenswerte Änderungen und Updates der Product Graph API'
+description: 'Wesentliche Änderungen und Updates der Product Graph API'
 icon: 'clock-rotate-left'
 ---
 
 # Product Graph API Änderungsprotokoll
 
-Diese Seite dokumentiert bedeutende Updates und Änderungen an der Product Graph API. Wir verbessern unsere API ständig, um bessere Funktionalität, Leistung und Entwicklererfahrung zu bieten.
+Diese Seite dokumentiert wichtige Updates und Änderungen an der Product Graph API. Wir verbessern unsere API ständig, um bessere Funktionalität, Leistung und Entwicklererfahrung zu bieten.
 
 <Note>
-  Informationen zur Abwärtskompatibilität und zu Deprecation-Richtlinien finden Sie in unserer [API-Versionierungsrichtlinie](/de/product-graph/best-practices#api-versioning).
+  Informationen zur Rückwärtskompatibilität und zu Richtlinien bezüglich veralteter Funktionen finden Sie in unserer [API-Versionierungsrichtlinie](/de/product-graph/best-practices#api-versionierung).
 </Note>
 
 ## Version 1.6.0
@@ -41,7 +41,7 @@ Diese Seite dokumentiert bedeutende Updates und Änderungen an der Product Graph
 </Update>
 
 <Update label="12. April 2023" description="v1.6.0">
-### Erweiterte Filter-Operatoren in der Such-API
+### Erweiterte Filteroperatoren in der Such-API
   Suchfilter unterstützen jetzt erweiterte Operatoren, darunter Bereichsabfragen, Negation und ODER-Bedingungen.
   
   ```javascript
@@ -73,7 +73,7 @@ Diese Seite dokumentiert bedeutende Updates und Änderungen an der Product Graph
 
 <Update label="22. März 2023" description="v1.5.0">
 ### Historische Daten-API
-  Einführung unserer neuen Historischen Daten-API, mit der Sie Änderungen an Produktinformationen im Laufe der Zeit verfolgen können.
+  Wir stellen unsere neue API für historische Daten vor, mit der Sie Änderungen an Produktinformationen im Laufe der Zeit verfolgen können.
   
   ```bash
   # Historische Versionen eines Produkts abrufen
@@ -85,8 +85,8 @@ Diese Seite dokumentiert bedeutende Updates und Änderungen an der Product Graph
 </Update>
 
 <Update label="20. März 2023" description="v1.5.0">
-### Markenanalytik und -einblicke
-  Die Marken-API bietet jetzt Analytik und Einblicke zu Marken in unserer Datenbank.
+### Markenanalyse und -einblicke
+  Die Marken-API bietet jetzt Analysen und Einblicke zu Marken in unserer Datenbank.
   
   ```json
   {
@@ -98,8 +98,8 @@ Diese Seite dokumentiert bedeutende Updates und Änderungen an der Product Graph
       "language_coverage": ["en", "de", "fr", "es", "it", "ja"],
       "top_categories": [
         {"name": "Audio", "count": 432},
-        {"name": "Televisions", "count": 185},
-        {"name": "Cameras", "count": 126}
+        {"name": "Fernseher", "count": 185},
+        {"name": "Kameras", "count": 126}
       ]
     }
   }
@@ -135,11 +135,11 @@ Diese Seite dokumentiert bedeutende Updates und Änderungen an der Product Graph
 </Update>
 
 <Update label="8. Februar 2023" description="v1.4.0">
-### Massenoperationen-API
-  Neue Endpunkte für Operationen mit hohem Volumen:
+### Massen-Operationen-API
+  Neue Endpunkte für Operationen mit großem Volumen:
   
   ```bash
-  # Produkte in Masse abrufen
+  # Massenhafte Produktabfrage
   curl -X POST "https://api.productgraph.org/v1/products/bulk/get" \
     -H "X-API-Key: your-api-key" \
     -H "Content-Type: application/json" \
@@ -193,14 +193,14 @@ Diese Seite dokumentiert bedeutende Updates und Änderungen an der Product Graph
   - Optimierte Datenbankabfragen
   - Globale CDN-Integration
   
-  Diese Verbesserungen stehen automatisch allen API-Nutzern zur Verfügung, ohne dass Integrationsänderungen erforderlich sind.
+  Diese Verbesserungen stehen automatisch allen API-Benutzern zur Verfügung, ohne dass Integrationsänderungen erforderlich sind.
 </Update>
 
 ## Version 1.2.0
 
 <Update label="14. Dezember 2022" description="v1.2.0">
 ### Bildanalyse-API
-  Neue Bildanalyse-Funktionen, die detaillierte Informationen zu Produktbildern liefern:
+  Neue Bildanalysefunktionen, die detaillierte Informationen über Produktbilder liefern:
   
   ```json
   {
@@ -222,17 +222,17 @@ Diese Seite dokumentiert bedeutende Updates und Änderungen an der Product Graph
   }
   ```
   
-  Diese Funktion hilft dabei, bessere Produktlisten mit genauen Farbinformationen und Qualitätsbewertung zu erstellen.
+  Diese Funktion hilft, bessere Produktlisten mit genauen Farbinformationen und Qualitätsbewertung zu erstellen.
 </Update>
 
 ## Version 1.1.0
 
 <Update label="5. November 2022" description="v1.1.0">
 ### Erweiterte Sprachunterstützung
-  Wir haben Unterstützung für 15 neue Sprachen hinzugefügt, wodurch sich die Gesamtzahl auf 30 Sprachen erhöht:
+  Wir haben Unterstützung für 15 neue Sprachen hinzugefügt, was unsere Gesamtzahl auf 30 Sprachen erhöht:
   
-  - Neu hinzugefügt: Arabisch, Türkisch, Niederländisch, Schwedisch, Norwegisch, Finnisch, Dänisch, Polnisch, Tschechisch, Ungarisch, Griechisch, Rumänisch, Thai, Indonesisch und Malaysisch
-  - Bestehend: Englisch, Deutsch, Französisch, Spanisch, Italienisch, Portugiesisch, Russisch, Japanisch, Koreanisch, Chinesisch (Vereinfacht), Chinesisch (Traditionell), Hindi, Vietnamesisch, Ukrainisch und Hebräisch
+  - Hinzugefügt: Arabisch, Türkisch, Niederländisch, Schwedisch, Norwegisch, Finnisch, Dänisch, Polnisch, Tschechisch, Ungarisch, Griechisch, Rumänisch, Thai, Indonesisch und Malaysisch
+  - Bereits vorhanden: Englisch, Deutsch, Französisch, Spanisch, Italienisch, Portugiesisch, Russisch, Japanisch, Koreanisch, Chinesisch (vereinfacht), Chinesisch (traditionell), Hindi, Vietnamesisch, Ukrainisch und Hebräisch
   
   Alle Produktdaten-Endpunkte unterstützen jetzt diese zusätzlichen Sprachen über den Parameter `languages`.
 </Update>
@@ -243,12 +243,12 @@ Diese Seite dokumentiert bedeutende Updates und Änderungen an der Product Graph
 ### Erste öffentliche Veröffentlichung
   Die erste öffentliche Version der Product Graph API umfasst:
   
-  - Produkt-Such-API mit Filterung und Sortierung
+  - Produktsuch-API mit Filterung und Sortierung
   - Produktdaten-API mit mehrsprachiger Unterstützung
   - Markeninformations-API
   - Benutzerauthentifizierung und API-Schlüsselverwaltung
   - Grundlegende Webhooks für Echtzeit-Benachrichtigungen
-  - Guthabensystem für Nutzungsverfolgung
+  - Guthabensystem für die Nutzungsverfolgung
   
   Diese stabile Version folgt auf unsere umfangreiche Beta-Testphase. Vielen Dank an alle unsere Beta-Tester für ihr wertvolles Feedback!
 </Update>

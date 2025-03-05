@@ -17,19 +17,19 @@ icon: "house"
 
 # Willkommen bei der Product Graph API
 
-Die Product Graph API bietet ein umfassendes Set an Werkzeugen für den Zugriff, die Anreicherung und die Verwaltung von Produktdaten in mehreren Sprachen. Mit leistungsstarken Suchfunktionen, mehrsprachiger Unterstützung und fortschrittlicher Analytik hilft unsere API Ihnen, bessere E-Commerce-Erlebnisse zu schaffen.
+Die Product Graph API bietet ein umfassendes Set an Werkzeugen für den Zugriff, die Anreicherung und die Verwaltung von Produktdaten in mehreren Sprachen. Mit leistungsstarken Suchfunktionen, mehrsprachiger Unterstützung und fortschrittlicher Analytik hilft unsere API Ihnen, bessere E-Commerce-Erfahrungen zu schaffen.
 
 ## Warum Product Graph?
 
-Produktdaten sind oft fragmentiert, inkonsistent und in Sprachsilos gefangen. Product Graph löst diese Herausforderungen durch:
+Produktdaten sind oft fragmentiert, inkonsistent und in Sprachsilos eingeschlossen. Product Graph löst diese Herausforderungen durch folgende Funktionen:
 
 - **Vereinheitlichte Produktinformationen** - Zugriff auf umfassende Produktdaten aus einer einzigen Quelle
 - **Mehrsprachige Unterstützung** - Erhalten Sie Produktinformationen in mehreren Sprachen mit einem einzigen API-Aufruf
-- **Erweiterte Suche** - Finden Sie Produkte über Namen, GTINs, URLs oder eine Kombination von Parametern
-- **Historische Verfolgung** - Überwachen Sie, wie sich Produktdaten im Laufe der Zeit ändern
-- **Datenanreicherung** - Verbessern Sie Produktlisten mit hochwertigen Beschreibungen, Attributen und Medien
+- **Erweiterte Suche** - Finden Sie Produkte anhand von Namen, GTINs, URLs oder einer Kombination von Parametern
+- **Historisches Tracking** - Überwachen Sie, wie sich Produktdaten im Laufe der Zeit ändern
+- **Datenanreicherung** - Verbessern Sie Produktlistings mit hochwertigen Beschreibungen, Attributen und Medien
 
-## Kurzanleitung zur Authentifizierung
+## Schnellguide zur Authentifizierung
 
 ```bash
 # Alle API-Anfragen erfordern einen API-Schlüssel im Header
@@ -39,7 +39,7 @@ curl -X GET "https://api.productgraph.org/v1/credits" \
 
 <Note>
   Ihr API-Schlüssel ist im [Product Graph Dashboard](https://dashboard.productgraph.org) verfügbar. 
-  Halten Sie ihn sicher und geben Sie ihn niemals im Client-seitigen Code preis!
+  Halten Sie ihn sicher und geben Sie ihn niemals in clientseitigem Code preis!
 </Note>
 
 ## Erste Schritte
@@ -64,7 +64,7 @@ curl -X GET "https://api.productgraph.org/v1/credits" \
     icon="coins"
     href="/de/product-graph/credits"
   >
-    Erfahren Sie, wie unser kreditbasiertes Nutzungssystem funktioniert
+    Erfahren Sie, wie unser guthabenbasiertes Nutzungssystem funktioniert
   </Card>
   <Card
     title="Mehrsprachige Unterstützung"
@@ -75,7 +75,7 @@ curl -X GET "https://api.productgraph.org/v1/credits" \
   </Card>
 </CardGroup>
 
-## Beispiel: Suche nach Produkten
+## Beispiel: Nach Produkten suchen
 
 ```javascript
 // Suche nach Sony-Funkkopfhörern auf Englisch und Deutsch
@@ -98,7 +98,7 @@ fetch("https://api.productgraph.org/v1/search", {
 .then(response => response.json())
 .then(data => {
   console.log("Suchauftrag initiiert:", data);
-  // Die Suche ist asynchron, überprüfen Sie die Ergebnisse mit job_id
+  // Die Suche ist asynchron, überprüfen Sie die Ergebnisse mit der job_id
 })
 .catch(error => console.error("Fehler:", error));
 ```
@@ -139,14 +139,14 @@ fetch("https://api.productgraph.org/v1/search", {
     icon="chart-mixed"
     href="/de/product-graph/analytics"
   >
-    Einblicke in API-Nutzung und -Optimierung
+    Einblicke in API-Nutzung und Optimierung
   </Card>
   <Card
     title="Webhooks"
     icon="bell"
     href="/de/product-graph/webhooks"
   >
-    Echtzeit-Benachrichtigungen über wichtige Ereignisse
+    Echtzeitbenachrichtigungen über wichtige Ereignisse
   </Card>
 </CardGroup>
 
@@ -155,7 +155,7 @@ fetch("https://api.productgraph.org/v1/search", {
 Viele Product Graph API-Operationen werden aus Effizienzgründen asynchron verarbeitet:
 
 ```javascript
-// Überprüfen Sie den Status eines Suchauftrags
+// Überprüfen des Status eines Suchauftrags
 fetch(`https://api.productgraph.org/v1/search/${jobId}`, {
   headers: {
     "X-API-Key": apiKey
@@ -219,19 +219,19 @@ Für Produktionsanwendungen verwenden Sie [Webhooks](/de/product-graph/webhooks)
 
 ## API-Referenz
 
-Erkunden Sie unsere ausführliche API-Referenzdokumentation für eingehende Informationen zu allen verfügbaren Endpunkten.
+Erkunden Sie unsere detaillierte API-Referenzdokumentation für eingehende Informationen zu allen verfügbaren Endpunkten.
 
 <Card
   title="API-Referenz"
   icon="code"
   href="/de/api-reference/introduction"
 >
-  Umfassende API-Endpunkt-Dokumentation
+  Umfassende API-Endpunktdokumentation
 </Card>
 
 ## Bereit zum Entwickeln?
 
-Beginnen Sie mit unserem [Schnellstartleitfaden](/de/quickstart), um in wenigen Minuten mit funktionierenden Codebeispielen einsatzbereit zu sein.
+Beginnen Sie mit unserem [Quickstart-Leitfaden](/de/quickstart), um in Minuten mit funktionalen Codebeispielen zu starten.
 
 ## Brauchen Sie Hilfe?
 
@@ -241,7 +241,7 @@ Beginnen Sie mit unserem [Schnellstartleitfaden](/de/quickstart), um in wenigen 
     icon="browser"
     href="https://productgraph.org/developer"
   >
-    Zugriff auf Entwicklertools und Ressourcen
+    Zugriff auf Entwicklerwerkzeuge und -ressourcen
   </Card>
   <Card
     title="API-Status"
@@ -262,6 +262,6 @@ Beginnen Sie mit unserem [Schnellstartleitfaden](/de/quickstart), um in wenigen 
     icon="gauge-high"
     href="https://dashboard.productgraph.org"
   >
-    Verwalten Sie Ihr API-Konto und Analytik
+    Verwalten Sie Ihr API-Konto und Ihre Analysen
   </Card>
 </CardGroup>
