@@ -1,33 +1,161 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: 'API Reference Introduction'
+description: 'Comprehensive reference for the Product Graph API endpoints'
 ---
 
+# API Reference
+
+This section provides detailed reference documentation for all endpoints in the Product Graph API. Each endpoint includes request parameters, response formats, and example code to help you integrate with our API effectively.
+
+## API Base URLs
+
+The Product Graph API is available at the following base URLs:
+
+<CodeGroup>
+```bash Production
+https://api.productgraph.org/v1
+```
+
+```bash Sandbox
+https://sandbox.productgraph.org/v1
+```
+</CodeGroup>
+
 <Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
+  Use the sandbox environment for testing and development purposes. It provides a safe environment with dummy data that doesn't consume your production credits.
 </Note>
-
-## Welcome
-
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API endpoints require authentication using an API key. Include your API key in the request headers:
+
+```bash
+X-API-Key: your-api-key
+```
+
+Learn more about [authentication and obtaining API keys](/product-graph/authentication).
+
+## Endpoint Categories
+
+The Product Graph API includes the following main categories of endpoints:
+
+<CardGroup cols={2}>
+  <Card title="Products" icon="box" href="#product-endpoints">
+    Endpoints for retrieving, creating, and updating product information
+  </Card>
+  <Card title="Brands" icon="tag" href="#brand-endpoints">
+    Endpoints for accessing brand data
+  </Card>
+  <Card title="Search" icon="magnifying-glass" href="#search-endpoints">
+    Powerful search capabilities for finding products
+  </Card>
+  <Card title="Multilanguage" icon="language" href="#multilanguage-endpoints">
+    Endpoints for translations and language options
+  </Card>
+  <Card title="Analytics" icon="chart-mixed" href="#analytics-endpoints">
+    Access to usage statistics and insights
+  </Card>
+  <Card title="Webhooks" icon="bell" href="#webhook-endpoints">
+    Endpoints for managing event notifications
+  </Card>
+</CardGroup>
+
+## Data Models
+
+The API uses standardized data models across endpoints. Below are the key data structures you'll encounter:
+
+### Product Model
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
+{
+  "id": "prod_98765",
+  "name": {
+    "en": "Sony WH-1000XM4 Wireless Noise-Canceling Headphones",
+    "de": "Sony WH-1000XM4 Kabellose Noise-Cancelling-Kopfhörer"
+  },
+  "gtin": "4548736112001",
+  "url": "https://example.com/products/sony-wh1000xm4",
+  "price": 349.99,
+  "brand": {
+    "id": "brand_sony",
+    "name": "Sony"
+  },
+  "content": {
+    "description": {
+      "en": "Industry-leading noise cancellation technology...",
+      "de": "Branchenführende Geräuschunterdrückungstechnologie..."
+    }
   }
-]
+}
 ```
+
+### Brand Model
+
+```json
+{
+  "id": "brand_sony",
+  "name": "Sony",
+  "searchable_aliases": ["sony corporation", "sony electronics"],
+  "established": 1946,
+  "headquarters": {
+    "city": "Tokyo",
+    "country": "Japan"
+  },
+  "logo_url": "https://example.com/logos/sony_logo_primary.svg"
+}
+```
+
+## Error Handling
+
+The API uses standard HTTP status codes and provides detailed error messages:
+
+```json
+{
+  "error": {
+    "code": "invalid_language",
+    "message": "The requested language 'xyz' is not supported.",
+    "documentation_url": "https://productgraph.org/docs/errors#invalid_language",
+    "request_id": "req_7a8b9c0d1e2f"
+  }
+}
+```
+
+For more information on handling errors, see the [Error Handling guide](/product-graph/error-handling).
+
+## Rate Limiting
+
+The API implements rate limiting to ensure fair usage. The limits depend on your plan tier. When you exceed the rate limit, you'll receive a `429 Too Many Requests` response with a `Retry-After` header indicating how long to wait before retrying.
+
+## OpenAPI Specification
+
+Our API is fully documented with an OpenAPI specification. You can use this specification to generate client libraries, explore endpoints, and understand request and response formats.
+
+<Card title="OpenAPI Specification" icon="file-code" href="/api-reference/openapi.json">
+  View the complete OpenAPI specification
+</Card>
+
+## Using the API Playground
+
+Throughout this reference, you'll find interactive API playgrounds where you can try each endpoint directly in your browser. To use these:
+
+1. Enter the required parameters for the endpoint
+2. Click "Run" to execute the request
+3. View the response and headers
+4. Copy the generated code for your preferred language
+
+## Additional Resources
+
+<CardGroup cols={2}>
+  <Card title="Best Practices" icon="lightbulb" href="/product-graph/best-practices">
+    Tips for optimizing your API integration
+  </Card>
+  <Card title="Authentication" icon="key" href="/product-graph/authentication">
+    Learn more about authentication methods
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/product-graph/webhooks">
+    Set up real-time notifications
+  </Card>
+  <Card title="Rate Limits" icon="gauge-high" href="/product-graph/authentication#rate-limits">
+    Understanding API rate limits
+  </Card>
+</CardGroup>

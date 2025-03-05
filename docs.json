@@ -8,77 +8,64 @@
     "dark": "#1D4ED8"
   },
   "favicon": "/favicon.svg",
-  "navigation": {
-    "tabs": [
-      {
-        "tab": "Product Graph API",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": [
-              "product-graph/index",
-              "product-graph/overview",
-              "product-graph/authentication",
-              "product-graph/credits",
-              "product-graph/multilanguage"
-            ]
-          },
-          {
-            "group": "Core API",
-            "pages": [
-              "product-graph/search",
-              "product-graph/brand",
-              "product-graph/product-data",
-              "product-graph/historical-data"
-            ]
-          },
-          {
-            "group": "Advanced Features",
-            "pages": [
-              "product-graph/analytics",
-              "product-graph/webhooks",
-              "product-graph/best-practices",
-              "product-graph/error-handling"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "Endpoints",
-            "pages": [
-              "api-reference/introduction",
-              "api-reference/search-endpoints",
-              "api-reference/product-endpoints",
-              "api-reference/brand-endpoints",
-              "api-reference/analytics-endpoints"
-            ]
-          }
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
+  "navigation": [
+    {
+      "group": "Overview",
+      "pages": [
+        "introduction",
+        "quickstart"
+      ]
+    },
+    {
+      "group": "Product Graph API",
+      "pages": [
         {
-          "anchor": "Developer Portal",
-          "href": "https://productgraph.org/developer",
-          "icon": "browser"
+          "group": "Getting Started",
+          "pages": [
+            "product-graph/index",
+            "product-graph/overview",
+            "product-graph/authentication",
+            "product-graph/credits",
+            "product-graph/multilanguage"
+          ]
         },
         {
-          "anchor": "API Status",
-          "href": "https://status.productgraph.org",
-          "icon": "server"
+          "group": "Core API",
+          "pages": [
+            "product-graph/search",
+            "product-graph/brand",
+            "product-graph/product-data",
+            "product-graph/historical-data"
+          ]
         },
         {
-          "anchor": "Support",
-          "href": "https://support.productgraph.org",
-          "icon": "headset"
+          "group": "Advanced Features",
+          "pages": [
+            "product-graph/analytics",
+            "product-graph/webhooks",
+            "product-graph/best-practices",
+            "product-graph/error-handling"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api-reference/introduction",
+        {
+          "group": "Endpoints",
+          "pages": [
+            "api-reference/endpoint/create",
+            "api-reference/endpoint/delete",
+            "api-reference/endpoint/get",
+            "api-reference/endpoint/webhook"
+          ]
         }
       ]
     }
-  },
+  ],
+  "openapi": "/api-reference/openapi.json",
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
@@ -96,11 +83,26 @@
       "href": "https://dashboard.productgraph.org"
     }
   },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/productgraph",
-      "github": "https://github.com/productgraph",
-      "linkedin": "https://linkedin.com/company/productgraph"
+  "anchors": [
+    {
+      "anchor": "Developer Portal",
+      "href": "https://productgraph.org/developer",
+      "icon": "browser"
+    },
+    {
+      "anchor": "API Status",
+      "href": "https://status.productgraph.org",
+      "icon": "server"
+    },
+    {
+      "anchor": "Support",
+      "href": "https://support.productgraph.org",
+      "icon": "headset"
     }
+  ],
+  "footerSocials": {
+    "x": "https://x.com/productgraph",
+    "github": "https://github.com/productgraph",
+    "linkedin": "https://linkedin.com/company/productgraph"
   }
 }
