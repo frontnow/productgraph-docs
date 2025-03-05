@@ -1,0 +1,254 @@
+---
+title: 'Änderungsprotokoll'
+description: 'Bemerkenswerte Änderungen und Updates der Product Graph API'
+icon: 'clock-rotate-left'
+---
+
+# Product Graph API Änderungsprotokoll
+
+Diese Seite dokumentiert bedeutende Updates und Änderungen an der Product Graph API. Wir verbessern unsere API ständig, um bessere Funktionalität, Leistung und Entwicklererfahrung zu bieten.
+
+<Note>
+  Informationen zur Abwärtskompatibilität und zu Deprecation-Richtlinien finden Sie in unserer [API-Versionierungsrichtlinie](/de/product-graph/best-practices#api-versioning).
+</Note>
+
+## Version 1.6.0
+
+<Update label="15. April 2023" description="v1.6.0">
+### Qualitätsbewertung für mehrsprachige Inhalte
+  Wir haben eine Qualitätsbewertung für mehrsprachige Inhalte hinzugefügt, mit der Sie erkennen können, welche übersetzten Inhalte verbessert werden müssen.
+  
+  ```json
+  {
+    "name": {
+      "en": {
+        "value": "Wireless Bluetooth Headphones",
+        "quality_score": 0.98
+      },
+      "de": {
+        "value": "Kabellose Bluetooth-Kopfhörer",
+        "quality_score": 0.95
+      },
+      "fr": {
+        "value": "Écouteurs Bluetooth sans fil",
+        "quality_score": 0.92
+      }
+    }
+  }
+  ```
+  
+  Die Qualitätsbewertungen reichen von 0,0 bis 1,0, wobei höhere Werte eine bessere Qualität anzeigen.
+</Update>
+
+<Update label="12. April 2023" description="v1.6.0">
+### Erweiterte Filter-Operatoren in der Such-API
+  Suchfilter unterstützen jetzt erweiterte Operatoren, darunter Bereichsabfragen, Negation und ODER-Bedingungen.
+  
+  ```javascript
+  // Suche nach Produkten zwischen 50 € und 200 €, bestimmte Marken ausschließen
+  const searchData = {
+    query: "bluetooth lautsprecher",
+    filter: {
+      price: {
+        $gte: 50,
+        $lte: 200
+      },
+      brand: {
+        $nin: ["MarkeX", "MarkeY"]
+      },
+      attributes: {
+        $or: [
+          { waterproof: true },
+          { water_resistant: true }
+        ]
+      }
+    }
+  };
+  ```
+  
+  Dies ermöglicht eine viel präzisere Filterung für komplexe Produktsuchen.
+</Update>
+
+## Version 1.5.0
+
+<Update label="22. März 2023" description="v1.5.0">
+### Historische Daten-API
+  Einführung unserer neuen Historischen Daten-API, mit der Sie Änderungen an Produktinformationen im Laufe der Zeit verfolgen können.
+  
+  ```bash
+  # Historische Versionen eines Produkts abrufen
+  curl -X GET "https://api.productgraph.org/v1/products/prod_123/history" \
+    -H "X-API-Key: your-api-key"
+  ```
+  
+  Sie können jetzt frühere Versionen von Produktdaten abrufen, Änderungen zwischen Versionen vergleichen und auf Produktdaten zugreifen, wie sie zu einem bestimmten Zeitpunkt existierten.
+</Update>
+
+<Update label="20. März 2023" description="v1.5.0">
+### Markenanalytik und -einblicke
+  Die Marken-API bietet jetzt Analytik und Einblicke zu Marken in unserer Datenbank.
+  
+  ```json
+  {
+    "id": "brand_sony",
+    "name": "Sony",
+    "analytics": {
+      "product_count": 1245,
+      "average_quality_score": 0.87,
+      "language_coverage": ["en", "de", "fr", "es", "it", "ja"],
+      "top_categories": [
+        {"name": "Audio", "count": 432},
+        {"name": "Televisions", "count": 185},
+        {"name": "Cameras", "count": 126}
+      ]
+    }
+  }
+  ```
+  
+  Diese Daten können Ihnen helfen, die Markenpräsenz und Produktabdeckung über Kategorien hinweg zu verstehen.
+</Update>
+
+## Version 1.4.0
+
+<Update label="10. Februar 2023" description="v1.4.0">
+### Verbesserte Webhook-Zuverlässigkeit
+  Wir haben unser Webhook-Zustellungssystem komplett neu aufgebaut mit:
+  
+  - Garantierte Zustellung mit automatischen Wiederholungsversuchen
+  - Zustellungsmetriken und -protokolle im Dashboard
+  - Ereignisfilterung für präzisere Benachrichtigungen
+  - Webhook-Signaturverifizierung für erhöhte Sicherheit
+  
+  ```bash
+  # Webhook mit Ereignisfilterung erstellen
+  curl -X POST "https://api.productgraph.org/v1/webhooks" \
+    -H "X-API-Key: your-api-key" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "url": "https://your-server.com/webhook",
+      "events": ["product.created", "product.updated.description"],
+      "secret": "your-signing-secret"
+    }'
+  ```
+  
+  Webhooks zeigen jetzt den Zustellungsstatus und -verlauf im Dashboard an.
+</Update>
+
+<Update label="8. Februar 2023" description="v1.4.0">
+### Massenoperationen-API
+  Neue Endpunkte für Operationen mit hohem Volumen:
+  
+  ```bash
+  # Produkte in Masse abrufen
+  curl -X POST "https://api.productgraph.org/v1/products/bulk/get" \
+    -H "X-API-Key: your-api-key" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "ids": ["prod_123", "prod_456", "prod_789"],
+      "languages": ["en", "de"]
+    }'
+  ```
+  
+  Massenoperationen werden asynchron verarbeitet und reduzieren den API-Aufruf-Overhead für große Datensätze erheblich. Verfügbar für Produktabruf, Suchoperationen und Übersetzungen.
+</Update>
+
+## Version 1.3.0
+
+<Update label="25. Januar 2023" description="v1.3.0">
+### KI-gestützte Produktkategorisierung
+  Wir haben eine KI-gestützte Kategorisierung hinzugefügt, die Produkte automatisch den richtigen Kategoriehierarchien zuordnet.
+  
+  ```json
+  {
+    "categories": {
+      "primary": {
+        "id": "cat_electronics_audio_headphones",
+        "name": "Kopfhörer",
+        "path": ["Elektronik", "Audio", "Kopfhörer"],
+        "confidence": 0.97
+      },
+      "secondary": [
+        {
+          "id": "cat_electronics_accessories",
+          "name": "Zubehör",
+          "path": ["Elektronik", "Zubehör"],
+          "confidence": 0.82
+        }
+      ]
+    }
+  }
+  ```
+  
+  Diese Funktion verbessert das Durchsuchen, Filtern und Entdecken von Produkten.
+</Update>
+
+<Update label="23. Januar 2023" description="v1.3.0">
+### Leistungsverbesserungen
+  **50% schnellere Suchantwortzeiten** und **30% Reduzierung der API-Latenz** über alle Endpunkte hinweg.
+  
+  Wir haben unsere Infrastruktur komplett neu konzipiert mit:
+  
+  - Verteilter Suchindexierung für schnellere Antworten
+  - Verbesserte Caching-Strategien
+  - Optimierte Datenbankabfragen
+  - Globale CDN-Integration
+  
+  Diese Verbesserungen stehen automatisch allen API-Nutzern zur Verfügung, ohne dass Integrationsänderungen erforderlich sind.
+</Update>
+
+## Version 1.2.0
+
+<Update label="14. Dezember 2022" description="v1.2.0">
+### Bildanalyse-API
+  Neue Bildanalyse-Funktionen, die detaillierte Informationen zu Produktbildern liefern:
+  
+  ```json
+  {
+    "images": [
+      {
+        "url": "https://example.com/headphones.jpg",
+        "analysis": {
+          "dominant_colors": ["#121212", "#F5F5F5"],
+          "background_type": "solid",
+          "subject_position": "center",
+          "quality_score": 0.94,
+          "detected_objects": [
+            {"label": "Kopfhörer", "confidence": 0.99, "bounding_box": {...}},
+            {"label": "USB-Kabel", "confidence": 0.87, "bounding_box": {...}}
+          ]
+        }
+      }
+    ]
+  }
+  ```
+  
+  Diese Funktion hilft dabei, bessere Produktlisten mit genauen Farbinformationen und Qualitätsbewertung zu erstellen.
+</Update>
+
+## Version 1.1.0
+
+<Update label="5. November 2022" description="v1.1.0">
+### Erweiterte Sprachunterstützung
+  Wir haben Unterstützung für 15 neue Sprachen hinzugefügt, wodurch sich die Gesamtzahl auf 30 Sprachen erhöht:
+  
+  - Neu hinzugefügt: Arabisch, Türkisch, Niederländisch, Schwedisch, Norwegisch, Finnisch, Dänisch, Polnisch, Tschechisch, Ungarisch, Griechisch, Rumänisch, Thai, Indonesisch und Malaysisch
+  - Bestehend: Englisch, Deutsch, Französisch, Spanisch, Italienisch, Portugiesisch, Russisch, Japanisch, Koreanisch, Chinesisch (Vereinfacht), Chinesisch (Traditionell), Hindi, Vietnamesisch, Ukrainisch und Hebräisch
+  
+  Alle Produktdaten-Endpunkte unterstützen jetzt diese zusätzlichen Sprachen über den Parameter `languages`.
+</Update>
+
+## Version 1.0.0
+
+<Update label="1. Oktober 2022" description="v1.0.0">
+### Erste öffentliche Veröffentlichung
+  Die erste öffentliche Version der Product Graph API umfasst:
+  
+  - Produkt-Such-API mit Filterung und Sortierung
+  - Produktdaten-API mit mehrsprachiger Unterstützung
+  - Markeninformations-API
+  - Benutzerauthentifizierung und API-Schlüsselverwaltung
+  - Grundlegende Webhooks für Echtzeit-Benachrichtigungen
+  - Guthabensystem für Nutzungsverfolgung
+  
+  Diese stabile Version folgt auf unsere umfangreiche Beta-Testphase. Vielen Dank an alle unsere Beta-Tester für ihr wertvolles Feedback!
+</Update>

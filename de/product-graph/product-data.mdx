@@ -1,0 +1,644 @@
+---
+title: 'Produktdaten-API'
+description: 'Zugriff auf umfassende Produktinformationen mit mehrsprachiger Unterstützung'
+icon: 'cube'
+---
+
+# Produktdaten-API
+
+Die Produktdaten-API bietet umfassende Produktinformationen mit Unterstützung für selektives Laden und mehrsprachige Inhalte. Diese API ist das Herzstück der ProductGraph-Plattform und bietet reichhaltige, strukturierte Daten über Produkte verschiedener Kategorien.
+
+<Note>
+Alle Produktdaten werden kontinuierlich aus mehreren Quellen aktualisiert und angereichert, um Vollständigkeit und Genauigkeit zu gewährleisten.
+</Note>
+
+## Überblick über Produktdaten
+
+Die Produktdaten-API gibt Ihnen Zugriff auf eine Fülle von Informationen über Produkte, darunter:
+
+<CardGroup cols={2}>
+  <Card title="Grundlegende Informationen" icon="id-card" color="#3B82F6">
+    Namen, Kennungen, Markendetails und Kategorien
+  </Card>
+  <Card title="Umfangreiche Inhalte" icon="file-lines" color="#10B981">
+    Beschreibungen, Vorteile, Spezifikationen und technische Details
+  </Card>
+  <Card title="Medien-Assets" icon="images" color="#F59E0B">
+    Bilder, Videos und Dokumente in verschiedenen Formaten
+  </Card>
+  <Card title="Attribute" icon="tags" color="#8B5CF6">
+    Strukturierte Produktspezifikationen und Eigenschaften
+  </Card>
+  <Card title="Qualitätsmetriken" icon="chart-simple" color="#EC4899">
+    Datenqualitätsbewertungen und Verbesserungsvorschläge
+  </Card>
+  <Card title="Lebenszyklus-Daten" icon="clock-rotate-left" color="#6366F1">
+    Veröffentlichungsdaten, Garantiedetails und Support-Informationen
+  </Card>
+</CardGroup>
+
+## Produktdetails abrufen
+
+Rufen Sie detaillierte Informationen über ein bestimmtes Produkt anhand seiner eindeutigen Kennung ab.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/products/prod_98765?lang=de&fields=description,attributes,images" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  lang: 'de',
+  fields: 'description,attributes,images'
+});
+
+const response = await fetch(`https://api.productgraph.org/v1/products/prod_98765?${params}`, {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const productData = await response.json();
+console.log('Produktdetails:', productData);
+```
+
+```python Python
+import requests
+import os
+
+api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+url = 'https://api.productgraph.org/v1/products/prod_98765'
+headers = {'X-API-Key': api_key}
+params = {
+    'lang': 'de',
+    'fields': 'description,attributes,images'
+}
+
+response = requests.get(url, headers=headers, params=params)
+product_data = response.json()
+print(f"Produktdetails: {product_data}")
+```
+</CodeGroup>
+
+### Abfrageparameter
+
+<ParamField query="lang" type="string">
+  Bevorzugte Sprache für Inhalte. Beispiel: `de` für Deutsch.
+</ParamField>
+
+<ParamField query="languages" type="string">
+  Kommagetrennte Liste von Sprachen in Prioritätsreihenfolge. Beispiel: `de,en,fr`.
+</ParamField>
+
+<ParamField query="fields" type="string">
+  Kommagetrennte Liste der einzuschließenden Felder für selektives Laden. Beispiel: `description,attributes,images`.
+</ParamField>
+
+<ParamField query="include_translation_status" type="boolean" default="false">
+  Ob Informationen über die Übersetzungsvollständigkeit für jede Sprache einbezogen werden sollen.
+</ParamField>
+
+### Antwortstruktur
+
+Die Produktdatenantwort ist umfangreich und enthält mehrere Informationsabschnitte. Nachfolgend finden Sie einen Überblick über die Hauptabschnitte:
+
+<AccordionGroup>
+  <Accordion title="Grundlegende Informationen">
+    Kernproduktdetails einschließlich Kennungen, Name und Markeninformationen.
+    
+    ```json
+    {
+      "product_id": "prod_98765",
+      "name": {
+        "en": "Sony WH-1000XM4 Wireless Noise-Canceling Headphones",
+        "de": "Sony WH-1000XM4 Kabellose Noise-Cancelling-Kopfhörer"
+      },
+      "gtin": "4548736112001",
+      "brand": {
+        "id": "brand_sony",
+        "name": "Sony",
+        "display_name": {
+          "en": "Brand",
+          "de": "Marke"
+        },
+        "established": 1946,
+        "country_of_origin": "Japan",
+        "logo_url": "https://example.com/logos/sony_logo_primary.svg",
+        "details_url": "/api/v1/brands/brand_sony"
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Kategorien">
+    Produktkategorisierungsinformationen, einschließlich primärer und sekundärer Kategorien.
+    
+    ```json
+    "categories": [
+      {
+        "id": "cat_456",
+        "name": {
+          "en": "Wireless Headphones",
+          "de": "Kabellose Kopfhörer"
+        },
+        "parent": "cat_123",
+        "primary": true
+      },
+      {
+        "id": "cat_789",
+        "name": {
+          "en": "Noise-Canceling Devices",
+          "de": "Geräuschunterdrückende Geräte"
+        },
+        "parent": "cat_234",
+        "primary": false
+      }
+    ]
+    ```
+  </Accordion>
+  
+  <Accordion title="Inhalte">
+    Reichhaltige Textinhalte über das Produkt, einschließlich Beschreibungen, Vorteile und technischer Details.
+    
+    ```json
+    "content": {
+      "short_description": {
+        "en": "Premium wireless headphones with industry-leading noise cancellation and 30-hour battery life.",
+        "de": "Premium-Funkkopfhörer mit branchenführender Geräuschunterdrückung und 30 Stunden Akkulaufzeit."
+      },
+      "description": {
+        "en": "Industry-leading noise cancellation technology helps block out background noise for a more immersive listening experience...",
+        "de": "Branchenführende Geräuschunterdrückungstechnologie hilft, Hintergrundgeräusche auszublenden..."
+      },
+      "markdown_description": {
+        "en": "# Sony WH-1000XM4 Wireless Headphones\n\n## Industry-Leading Noise Cancellation\n\nExperience the next level of silence...",
+        "de": "# Sony WH-1000XM4 Kabellose Kopfhörer\n\n## Branchenführende Geräuschunterdrückung\n\nErleben Sie die nächste Stufe der Stille..."
+      },
+      "key_benefits": [
+        {
+          "en": "Industry-leading noise cancellation",
+          "de": "Branchenführende Geräuschunterdrückung"
+        },
+        {
+          "en": "Exceptional sound quality with 40mm drivers",
+          "de": "Außergewöhnliche Klangqualität mit 40-mm-Treibern"
+        }
+      ],
+      // Zusätzliche Inhaltsabschnitte...
+    }
+    ```
+    
+    <Tip>
+      Das Feld `markdown_description` enthält vollständig formatierte Markdown-Inhalte, die Sie direkt in Ihren Anwendungen für reichhaltige, stilisierte Produktbeschreibungen rendern können.
+    </Tip>
+  </Accordion>
+  
+  <Accordion title="Bildanreicherung">
+    KI-verarbeitete Bilddaten einschließlich Tags und automatisch generiertem Alternativtext.
+    
+    ```json
+    "images_enrichment": {
+      "processed_images": [
+        {
+          "original_url": "https://example.com/images/sony-wh1000xm4-front.jpg",
+          "processed_url": "https://example.com/processed/sony-wh1000xm4-front-enhanced.jpg",
+          "tags": ["headphones", "electronics", "black", "over-ear", "noise-canceling"],
+          "auto_alt_text": {
+            "en": "Black Sony WH-1000XM4 over-ear wireless headphones with cushioned earpads",
+            "de": "Schwarze Sony WH-1000XM4 Over-Ear-Funkkopfhörer mit gepolsterten Ohrpolstern"
+          }
+        }
+      ]
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Qualitätsbewertung">
+    Datenqualitätsmetriken und Verbesserungsvorschläge.
+    
+    ```json
+    "quality_score": {
+      "score": 92,
+      "breakdown": {
+        "images": 95,
+        "description": 90,
+        "attributes": 95,
+        "overall_completeness": 88
+      },
+      "issues": [
+        {"severity": "low", "description": "Französische Übersetzung unvollständig", "field": "description", "language": "fr"},
+        {"severity": "suggestion", "description": "Könnte von zusätzlichen Lifestyle-Bildern profitieren", "field": "images"}
+      ]
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Lebenszyklusinformationen">
+    Produktlebenszyklus-Details einschließlich Veröffentlichungsdaten und Garantieinformationen.
+    
+    ```json
+    "lifecycle": {
+      "display_name": {
+        "en": "Product Lifecycle",
+        "de": "Produktlebenszyklus"
+      },
+      "release_date": "2020-08-20",
+      "warranty": {
+        "standard_period": {
+          "value": 1,
+          "unit": "year"
+        }
+      },
+      "software_support": {
+        "status": "active",
+        "end_date": "2025-08-20",
+        "latest_firmware": {
+          "version": "2.5.0",
+          "release_date": "2023-03-15"
+        }
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+Das obige Beispiel ist gekürzt. Die vollständige Antwort enthält zusätzliche Abschnitte wie Produktfamilieninformationen, Umweltauswirkungsdaten, Kompatibilitätsdetails und eine umfassendere Dokumentation der Funktionen.
+</Note>
+
+## Feldauswahl und Leistung
+
+Um die API-Leistung zu optimieren und die Antwortgröße zu reduzieren, können Sie mit dem Parameter `fields` genau angeben, welche Felder Sie benötigen.
+
+<CodeGroup>
+```bash Grundlegende Informationen
+# Nur grundlegende Produktinformationen abrufen
+curl -X GET "https://api.productgraph.org/v1/products/prod_98765?fields=name,gtin,brand" \
+  -H "X-API-Key: your-api-key"
+```
+
+```bash Nur Inhalte
+# Nur inhaltsbezogene Felder abrufen
+curl -X GET "https://api.productgraph.org/v1/products/prod_98765?fields=content.short_description,content.key_benefits" \
+  -H "X-API-Key: your-api-key"
+```
+
+```bash Nur Bilder
+# Nur bildbezogene Felder abrufen
+curl -X GET "https://api.productgraph.org/v1/products/prod_98765?fields=images_enrichment" \
+  -H "X-API-Key: your-api-key"
+```
+</CodeGroup>
+
+<Tip>
+Für optimale Leistung fordern Sie nur die Felder an, die Sie für Ihren spezifischen Anwendungsfall benötigen. Dies reduziert die Antwortgröße und die Verarbeitungszeit.
+</Tip>
+
+## Produktattribute
+
+Produktattribute repräsentieren strukturierte technische Spezifikationen und Eigenschaften. Sie sind in einer hierarchischen Struktur mit Unterstützung für mehrere Datentypen und Maßeinheiten organisiert.
+
+<Tabs>
+  <Tab title="Grundlegende Attribute">
+    Einfache Schlüssel-Wert-Paare für Produkteigenschaften:
+    
+    ```json
+    "attributes": {
+      "color": {
+        "en": {
+          "key": "Color",
+          "value": "Black"
+        },
+        "de": {
+          "key": "Farbe",
+          "value": "Schwarz"
+        }
+      },
+      "bluetooth_version": {
+        "en": {
+          "key": "Bluetooth Version",
+          "value": "5.0"
+        },
+        "de": {
+          "key": "Bluetooth-Version",
+          "value": "5.0"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Verschachtelte Attribute">
+    Hierarchische Organisation verwandter Attribute:
+    
+    ```json
+    "attributes": {
+      "technical": {
+        "en": {
+          "key": "Technical",
+          "value": null
+        },
+        "de": {
+          "key": "Technisch",
+          "value": null
+        },
+        "children": {
+          "connectivity": {
+            "en": {
+              "key": "Connectivity",
+              "value": null
+            },
+            "de": {
+              "key": "Konnektivität",
+              "value": null
+            },
+            "children": {
+              "bluetooth": {
+                "en": {
+                  "key": "Bluetooth",
+                  "value": "5.0"
+                },
+                "de": {
+                  "key": "Bluetooth",
+                  "value": "5.0"
+                }
+              },
+              "nfc": {
+                "en": {
+                  "key": "NFC",
+                  "value": "Yes"
+                },
+                "de": {
+                  "key": "NFC",
+                  "value": "Ja"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Numerische Attribute">
+    Attribute mit numerischen Werten und Einheiten:
+    
+    ```json
+    "attributes": {
+      "weight": {
+        "value": 254,
+        "unit": "g",
+        "en": {
+          "key": "Weight",
+          "formatted_value": "254 grams"
+        },
+        "en-US": {
+          "key": "Weight",
+          "formatted_value": "8.96 ounces"
+        },
+        "de": {
+          "key": "Gewicht",
+          "formatted_value": "254 Gramm"
+        }
+      },
+      "battery_life": {
+        "value": 30,
+        "unit": "h",
+        "en": {
+          "key": "Battery Life",
+          "formatted_value": "30 hours"
+        },
+        "de": {
+          "key": "Akkulaufzeit",
+          "formatted_value": "30 Stunden"
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+<Tip>
+Nutzen Sie bei der Anzeige von Attributen die hierarchische Struktur, um organisierte, zusammenklappbare Abschnitte für eine bessere Benutzererfahrung zu erstellen.
+</Tip>
+
+## Verwandte Produkte
+
+Rufen Sie Produkte ab, die mit einem bestimmten Produkt verwandt sind, wie Zubehör, Alternativen oder ergänzende Artikel.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/products/prod_98765/related?relation_type=accessories" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/products/prod_98765/related?relation_type=accessories', {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const relatedProducts = await response.json();
+console.log(`${relatedProducts.total} verwandte Produkte gefunden`);
+```
+</CodeGroup>
+
+### Abfrageparameter
+
+<ParamField query="relation_type" type="string">
+  Art der Beziehung, nach der gefiltert werden soll. Optionen beinhalten:
+  - `accessories` - Kompatibles Zubehör für das Produkt
+  - `alternatives` - Alternative Produkte in der gleichen Kategorie
+  - `complementary` - Produkte, die gut mit diesem zusammenarbeiten
+  - `newer_versions` - Neuere Modelle, die dieses Produkt ersetzen
+  - `bundle_contents` - Produkte, die in diesem Bundle enthalten sind (falls zutreffend)
+</ParamField>
+
+<ParamField query="page" type="number" default="1">
+  Seitennummer für paginierte Ergebnisse.
+</ParamField>
+
+<ParamField query="page_size" type="number" default="20">
+  Anzahl der Produkte pro Seite (max. 100).
+</ParamField>
+
+### Antwort
+
+```json
+{
+  "product_id": "prod_98765",
+  "related_products": [
+    {
+      "product_id": "prod_abcde",
+      "name": {
+        "en": "Sony Carrying Case for WH-1000XM4",
+        "de": "Sony Tragetasche für WH-1000XM4"
+      },
+      "relation_type": "accessory",
+      "relation_strength": 0.95,
+      "gtin": "4548736113008",
+      "main_image_url": "https://example.com/images/sony-case.jpg"
+    }
+  ],
+  "total": 8,
+  "page": 1,
+  "pages": 1
+}
+```
+
+## Produktvariationen
+
+Erhalten Sie Informationen über Variationen eines Produkts, wie verschiedene Farben, Größen oder Konfigurationen.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/products/prod_98765/variations" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/products/prod_98765/variations', {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const variations = await response.json();
+console.log(`${variations.variations.length} Variationen gefunden`);
+```
+</CodeGroup>
+
+### Antwort
+
+```json
+{
+  "product_id": "prod_98765",
+  "variation_attributes": ["color"],
+  "variations": [
+    {
+      "product_id": "prod_98766",
+      "name": {
+        "en": "Sony WH-1000XM4 Wireless Noise-Canceling Headphones - Silver",
+        "de": "Sony WH-1000XM4 Kabellose Noise-Cancelling-Kopfhörer - Silber"
+      },
+      "attributes": {
+        "color": {
+          "en": {
+            "key": "Color",
+            "value": "Silver"
+          },
+          "de": {
+            "key": "Farbe",
+            "value": "Silber"
+          }
+        }
+      },
+      "gtin": "4548736112018",
+      "main_image_url": "https://example.com/images/sony-wh1000xm4-silver.jpg"
+    }
+  ]
+}
+```
+
+## Häufige Anwendungsfälle
+
+<AccordionGroup>
+  <Accordion title="Produktdetailseiten">
+    Erstellen Sie reichhaltige, detaillierte Produktseiten mit umfassenden Informationen.
+    
+    <Steps>
+      <Step title="Produktdetails abrufen">
+        Grundlegende Produktinformationen und strukturierte Inhalte abrufen
+      </Step>
+      <Step title="Medien-Assets laden">
+        Hochwertige Bilder mit KI-generiertem Alternativtext anzeigen
+      </Step>
+      <Step title="Spezifikationen präsentieren">
+        Technische Spezifikationen in einem organisierten Format anzeigen
+      </Step>
+      <Step title="Verwandte Produkte hinzufügen">
+        Zubehör und Alternativen vorschlagen
+      </Step>
+    </Steps>
+  </Accordion>
+  
+  <Accordion title="Mehrsprachige Unterstützung">
+    Nutzen Sie die integrierten mehrsprachigen Funktionen, um globale Zielgruppen zu bedienen.
+    
+    ```javascript
+    // Produktdetails auf Deutsch mit englischem Fallback abrufen
+    const response = await fetch(
+      'https://api.productgraph.org/v1/products/prod_98765?languages=de,en',
+      { headers: { 'X-API-Key': apiKey } }
+    );
+    
+    const product = await response.json();
+    
+    // Den Produktnamen auf Deutsch anzeigen, falls verfügbar, sonst auf Englisch
+    const productName = product.name.de || product.name.en;
+    
+    // Alle verfügbaren Übersetzungen für ein bestimmtes Feld abrufen
+    function getAvailableTranslations(field) {
+      return Object.keys(field).filter(key => key.length === 2);
+    }
+    
+    const availableLanguages = getAvailableTranslations(product.name);
+    console.log(`Dieses Produkt hat Namensübersetzungen in: ${availableLanguages.join(', ')}`);
+    ```
+  </Accordion>
+  
+  <Accordion title="Datenqualitätsverbesserung">
+    Verwenden Sie Qualitätsmetriken, um Probleme in Ihren Produktdaten zu identifizieren und zu beheben.
+    
+    ```javascript
+    // Produktdetails mit Qualitätsmetriken abrufen
+    const response = await fetch(
+      'https://api.productgraph.org/v1/products/prod_98765?fields=quality_score',
+      { headers: { 'X-API-Key': apiKey } }
+    );
+    
+    const product = await response.json();
+    
+    // Probleme finden, die Aufmerksamkeit benötigen
+    const highPriorityIssues = product.quality_score.issues.filter(
+      issue => issue.severity === 'high'
+    );
+    
+    if (highPriorityIssues.length > 0) {
+      console.log('Hochprioritäre Probleme zu beheben:');
+      highPriorityIssues.forEach(issue => {
+        console.log(`- ${issue.description} (${issue.field})`);
+      });
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<Tip>
+Befolgen Sie diese Best Practices, um das Beste aus der Produktdaten-API herauszuholen:
+</Tip>
+
+1. **Verwenden Sie selektives Laden** mit dem Parameter `fields`, um nur die benötigten Daten anzufordern.
+
+2. **Implementieren Sie Caching** für Produktdaten, die sich nicht häufig ändern, um API-Aufrufe zu reduzieren.
+
+3. **Nutzen Sie die hierarchische Struktur** von Attributen, um organisierte Anzeigen zu erstellen.
+
+4. **Verwenden Sie das Feld markdown_description** für reichhaltige, formatierte Inhalte, die leicht zu rendern sind.
+
+5. **Nutzen Sie den KI-generierten Alternativtext** für bessere Barrierefreiheit.
+
+6. **Überwachen und beheben Sie Qualitätsprobleme**, um Ihre Produktdaten im Laufe der Zeit zu verbessern.
+
+7. **Berücksichtigen Sie regionale Unterschiede** in Produktinformationen, insbesondere für Maße und Größenangaben.
+
+## Nächste Schritte
+
+Erfahren Sie, wie Sie Änderungen an Produktdaten im Laufe der Zeit mit unserer Historische Daten-API verfolgen können:
+
+<Card title="Historische Daten-API" icon="clock-rotate-left" href="/de/product-graph/historical-data">
+  Zugriff auf und Vergleich von Produktdaten über verschiedene Zeitpunkte hinweg
+</Card>

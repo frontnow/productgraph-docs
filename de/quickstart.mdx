@@ -1,0 +1,510 @@
+---
+title: 'Schnellstartanleitung'
+description: 'Beginnen Sie die Integration mit der Product Graph API in wenigen Minuten'
+icon: 'rocket'
+---
+
+# Product Graph API Schnellstart
+
+Diese Anleitung hilft Ihnen, in nur wenigen Minuten mit der Product Graph API zu starten. Folgen Sie diesen Schritten, um sich zu authentifizieren, Ihre ersten API-Aufrufe zu tätigen und mit dem Aufbau Ihrer Integration zu beginnen, um auf umfassende Produktdaten in mehreren Sprachen zuzugreifen.
+
+## Was Sie mit der Product Graph API tun können
+
+Die ProductGraph API ermöglicht Ihnen:
+
+- **Zugriff auf vereinheitlichte Produktinformationen** über Kategorien und Marken hinweg
+- **Abrufen von Produktdaten in mehreren Sprachen** mit einem einzigen API-Aufruf
+- **Suche nach Produkten** nach Namen, GTIN, URL oder Marke
+- **Verfolgung von Produktdatenänderungen** im Laufe der Zeit
+- **Empfangen von Benachrichtigungen** bei Aktualisierung von Produktdaten
+
+## Schritt 1: API-Zugangsdaten erhalten
+
+<Steps>
+  <Step title="Konto erstellen">
+    Besuchen Sie das [Product Graph Dashboard](https://dashboard.productgraph.org) und registrieren Sie sich für ein Konto.
+    
+    <Note>
+      Bei der Anmeldung werden Sie nach Ihrem primären Anwendungsfall gefragt. Dies hilft uns, Ihre Erfahrung zu optimieren.
+    </Note>
+  </Step>
+  <Step title="Plan auswählen">
+    Wählen Sie einen Plan, der Ihren Bedürfnissen entspricht:
+    
+    - **Kostenlos für Entwickler**: 1.000 Guthaben/Monat, 100 Anfragen/Stunde
+    - **Business**: 100.000 Guthaben/Monat, 1.000 Anfragen/Stunde
+    - **Enterprise**: Unbegrenztes Guthaben, benutzerdefinierte Ratenlimits
+    
+    <Tip>
+      Jede API-Operation kostet eine bestimmte Anzahl an Guthaben. Eine einfache Produktsuche kostet beispielsweise 1 Guthaben, während eine vollständige mehrsprachige Produktanreicherung 10 Guthaben kosten könnte.
+    </Tip>
+  </Step>
+  <Step title="API-Schlüssel generieren">
+    Navigieren Sie in Ihrem Dashboard zum Bereich "API-Schlüssel" und klicken Sie auf "Neuen Schlüssel generieren".
+    
+    <Warning>
+      Halten Sie Ihren API-Schlüssel sicher! Geben Sie ihn nicht in clientseitigem Code oder öffentlichen Repositories preis.
+    </Warning>
+  </Step>
+</Steps>
+
+## Schritt 2: Ihren ersten API-Aufruf tätigen
+
+Lassen Sie uns einen einfachen API-Aufruf ausprobieren, um Ihre Einrichtung zu überprüfen. Wir werden die Details Ihres API-Kontos und Guthabens abrufen.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/credits" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const apiKey = "your-api-key";
+
+fetch("https://api.productgraph.org/v1/credits", {
+  headers: {
+    "X-API-Key": apiKey
+  }
+})
+.then(response => response.json())
+.then(data => console.log("Guthabeninformationen:", data))
+.catch(error => console.error("Fehler:", error));
+```
+
+```python Python
+import requests
+
+api_key = "your-api-key"
+url = "https://api.productgraph.org/v1/credits"
+headers = {"X-API-Key": api_key}
+
+response = requests.get(url, headers=headers)
+data = response.json()
+print(f"Guthabeninformationen: {data}")
+```
+</CodeGroup>
+
+Sie sollten eine Antwort wie diese erhalten:
+
+```json
+{
+  "account_id": "acc_e7f8g9h0i1j2",
+  "total_credits": 1000,
+  "used_credits": 0,
+  "remaining_credits": 1000,
+  "plan": "Developer",
+  "credits_reset_at": "2025-04-01T00:00:00Z",
+  "usage_stats": {
+    "searches": 0,
+    "product_retrievals": 0,
+    "translations": 0
+  }
+}
+```
+
+## Schritt 3: Nach Produkten suchen
+
+Jetzt versuchen wir etwas Nützlicheres - die Suche nach Produkten in der Product Graph-Datenbank. Dieses Beispiel zeigt, wie Sie eine Suche nach Sony-Funkkopfhörern mit mehrsprachiger Unterstützung durchführen:
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.productgraph.org/v1/search" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "wireless headphones",
+    "languages": ["en", "de", "fr", "es"],
+    "filter": {
+      "brand": "Sony",
+      "attributes": {
+        "noise_cancellation": true,
+        "connection_type": "bluetooth"
+      }
+    },
+    "sort": {
+      "field": "relevance",
+      "direction": "desc"
+    }
+  }'
+```
+
+```javascript JavaScript
+const searchData = {
+  query: "wireless headphones",
+  languages: ["en", "de", "fr", "es"],
+  filter: {
+    brand: "Sony",
+    attributes: {
+      noise_cancellation: true,
+      connection_type: "bluetooth"
+    }
+  },
+  sort: {
+    field: "relevance",
+    direction: "desc"
+  }
+};
+
+fetch("https://api.productgraph.org/v1/search", {
+  method: "POST",
+  headers: {
+    "X-API-Key": apiKey,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(searchData)
+})
+.then(response => response.json())
+.then(data => {
+  console.log("Suchauftrag initiiert:", data);
+  // Hinweis: Product Graph verwendet asynchrone Verarbeitung für komplexe Suchen
+  // Speichern Sie die job_id, um später die Ergebnisse zu überprüfen
+})
+.catch(error => console.error("Fehler:", error));
+```
+
+```python Python
+import requests
+import json
+
+search_data = {
+    "query": "wireless headphones",
+    "languages": ["en", "de", "fr", "es"],
+    "filter": {
+        "brand": "Sony",
+        "attributes": {
+            "noise_cancellation": True,
+            "connection_type": "bluetooth"
+        }
+    },
+    "sort": {
+        "field": "relevance",
+        "direction": "desc"
+    }
+}
+
+response = requests.post(
+    "https://api.productgraph.org/v1/search",
+    headers={"X-API-Key": api_key, "Content-Type": "application/json"},
+    data=json.dumps(search_data)
+)
+
+data = response.json()
+print(f"Suchauftrag initiiert: {data}")
+# Hinweis: Product Graph verwendet asynchrone Verarbeitung für komplexe Suchen
+# Speichern Sie die job_id, um später die Ergebnisse zu überprüfen
+```
+</CodeGroup>
+
+Sie erhalten eine Antwort mit einer Auftrags-ID für die Suchanfrage:
+
+```json
+{
+  "job_id": "srch_7b84c5e9d3f2a1",
+  "status": "queued",
+  "estimated_completion_time": "10-15 seconds",
+  "created_at": "2025-03-14T10:30:22Z",
+  "credits_used": 2
+}
+```
+
+## Schritt 4: Suchergebnisse abrufen
+
+Die Product Graph API verarbeitet Suchvorgänge für komplexe Abfragen asynchron. So können Sie den Status überprüfen und Ihre Ergebnisse abrufen:
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/search/srch_7b84c5e9d3f2a1" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const jobId = "srch_7b84c5e9d3f2a1"; // Verwenden Sie die job_id aus der vorherigen Antwort
+
+fetch(`https://api.productgraph.org/v1/search/${jobId}`, {
+  headers: {
+    "X-API-Key": apiKey
+  }
+})
+.then(response => response.json())
+.then(data => {
+  if (data.status === "completed") {
+    // Verarbeiten Sie die Produktergebnisse
+    data.results.forEach(product => {
+      console.log(`Produkt: ${product.name.de || product.name.en}`);
+      console.log(`Verfügbar in Sprachen: ${Object.keys(product.name).join(", ")}`);
+      console.log(`GTIN: ${product.gtin}`);
+    });
+  } else {
+    console.log(`Suchstatus: ${data.status}, Fortschritt: ${data.progress}%`);
+  }
+})
+.catch(error => console.error("Fehler:", error));
+```
+
+```python Python
+job_id = "srch_7b84c5e9d3f2a1"  # Verwenden Sie die job_id aus der vorherigen Antwort
+
+response = requests.get(
+    f"https://api.productgraph.org/v1/search/{job_id}",
+    headers={"X-API-Key": api_key}
+)
+
+results = response.json()
+if results["status"] == "completed":
+    # Verarbeiten Sie die Produktergebnisse
+    for product in results["results"]:
+        print(f"Produkt: {product['name'].get('de', product['name']['en'])}")
+        print(f"Verfügbar in Sprachen: {', '.join(product['name'].keys())}")
+        print(f"GTIN: {product['gtin']}")
+else:
+    print(f"Suchstatus: {results['status']}, Fortschritt: {results['progress']}%")
+```
+</CodeGroup>
+
+Beispiel für abgeschlossene Suchergebnisse:
+
+```json
+{
+  "status": "completed",
+  "job_id": "srch_7b84c5e9d3f2a1",
+  "results": [
+    {
+      "id": "prod_5e72a1b9c8d3f4",
+      "name": {
+        "en": "Sony WH-1000XM5 Wireless Noise-Canceling Headphones",
+        "de": "Sony WH-1000XM5 Kabellose Noise-Cancelling-Kopfhörer",
+        "fr": "Sony WH-1000XM5 Casque sans fil à réduction de bruit",
+        "es": "Sony WH-1000XM5 Auriculares inalámbricos con cancelación de ruido"
+      },
+      "gtin": "4548736123458",
+      "brand": {
+        "id": "brand_sony",
+        "name": "Sony"
+      },
+      "attributes": {
+        "noise_cancellation": true,
+        "connection_type": "bluetooth",
+        "battery_life": "30 hours",
+        "color": "Black"
+      },
+      "relevance_score": 0.98
+    },
+    {
+      "id": "prod_9a87b6c5d4e3f2",
+      "name": {
+        "en": "Sony WH-1000XM4 Wireless Noise-Canceling Headphones",
+        "de": "Sony WH-1000XM4 Kabellose Noise-Cancelling-Kopfhörer",
+        "fr": "Sony WH-1000XM4 Casque sans fil à réduction de bruit",
+        "es": "Sony WH-1000XM4 Auriculares inalámbricos con cancelación de ruido"
+      },
+      "gtin": "4548736112001",
+      "brand": {
+        "id": "brand_sony",
+        "name": "Sony"
+      },
+      "attributes": {
+        "noise_cancellation": true,
+        "connection_type": "bluetooth",
+        "battery_life": "30 hours",
+        "color": "Black"
+      },
+      "relevance_score": 0.95
+    }
+  ],
+  "total_results": 12,
+  "pagination": {
+    "page": 1,
+    "per_page": 10,
+    "total_pages": 2,
+    "next_page_url": "https://api.productgraph.org/v1/search/srch_7b84c5e9d3f2a1?page=2"
+  },
+  "credits_used": 2,
+  "completed_at": "2025-03-14T10:30:35Z"
+}
+```
+
+## Schritt 5: Detaillierte Produktinformationen abrufen
+
+Nachdem Sie Produkte durch die Suche identifiziert haben, können Sie umfassende Informationen über ein bestimmtes Produkt abrufen:
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/products/prod_5e72a1b9c8d3f4" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "languages": ["en", "de"],
+    "include": ["attributes", "images", "videos", "reviews"]
+  }'
+```
+
+```javascript JavaScript
+const productId = "prod_5e72a1b9c8d3f4";
+const params = {
+  languages: ["en", "de"],
+  include: ["attributes", "images", "videos", "reviews"]
+};
+
+fetch(`https://api.productgraph.org/v1/products/${productId}?${new URLSearchParams(params)}`, {
+  headers: {
+    "X-API-Key": apiKey
+  }
+})
+.then(response => response.json())
+.then(data => console.log("Produktdetails:", data))
+.catch(error => console.error("Fehler:", error));
+```
+
+```python Python
+product_id = "prod_5e72a1b9c8d3f4"
+params = {
+    "languages": ["en", "de"],
+    "include": ["attributes", "images", "videos", "reviews"]
+}
+
+response = requests.get(
+    f"https://api.productgraph.org/v1/products/{product_id}",
+    headers={"X-API-Key": api_key},
+    params=params
+)
+
+product = response.json()
+print(f"Produktdetails: {product}")
+```
+</CodeGroup>
+
+## Schritt 6: Webhooks implementieren (Optional)
+
+Für Produktionsanwendungen können Sie anstelle des Abfragens von Suchergebnissen Webhooks einrichten, um benachrichtigt zu werden, wenn asynchrone Operationen abgeschlossen sind:
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.productgraph.org/v1/webhooks" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://your-callback-url.com/webhook",
+    "events": ["search.completed", "product.updated", "product.translated"],
+    "description": "Mein App-Webhook für ProductGraph-Updates",
+    "active": true,
+    "secret": "your-webhook-secret"
+  }'
+```
+
+```javascript JavaScript
+const webhookData = {
+  url: "https://your-callback-url.com/webhook",
+  events: ["search.completed", "product.updated", "product.translated"],
+  description: "Mein App-Webhook für ProductGraph-Updates",
+  active: true,
+  secret: "your-webhook-secret"
+};
+
+fetch("https://api.productgraph.org/v1/webhooks", {
+  method: "POST",
+  headers: {
+    "X-API-Key": apiKey,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(webhookData)
+})
+.then(response => response.json())
+.then(data => console.log("Webhook erstellt:", data))
+.catch(error => console.error("Fehler:", error));
+```
+</CodeGroup>
+
+Eine erfolgreiche Antwort enthält Ihre Webhook-ID:
+
+```json
+{
+  "id": "wh_1a2b3c4d5e6f",
+  "url": "https://your-callback-url.com/webhook",
+  "events": ["search.completed", "product.updated", "product.translated"],
+  "description": "Mein App-Webhook für ProductGraph-Updates",
+  "active": true,
+  "created_at": "2025-03-14T11:45:30Z"
+}
+```
+
+Erfahren Sie mehr über die [Webhook-Implementierung](/de/product-graph/webhooks).
+
+## Arbeiten mit mehrsprachiger Unterstützung
+
+Eine der Hauptstärken von Product Graph ist die mehrsprachige Unterstützung. So können Sie eine Produktübersetzung anfordern:
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.productgraph.org/v1/products/prod_5e72a1b9c8d3f4/translate" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source_language": "en",
+    "target_languages": ["it", "nl", "sv"],
+    "fields": ["name", "description", "features"]
+  }'
+```
+
+```javascript JavaScript
+const productId = "prod_5e72a1b9c8d3f4";
+const translationData = {
+  source_language: "en",
+  target_languages: ["it", "nl", "sv"],
+  fields: ["name", "description", "features"]
+};
+
+fetch(`https://api.productgraph.org/v1/products/${productId}/translate`, {
+  method: "POST",
+  headers: {
+    "X-API-Key": apiKey,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(translationData)
+})
+.then(response => response.json())
+.then(data => console.log("Übersetzungsauftrag initiiert:", data))
+.catch(error => console.error("Fehler:", error));
+```
+</CodeGroup>
+
+Sie erhalten eine Übersetzungsauftrags-ID, die Sie ähnlich wie bei Suchergebnissen zur Statusüberprüfung verwenden können.
+
+## Nächste Schritte
+
+Nachdem Sie Ihre ersten API-Aufrufe mit Product Graph getätigt haben, sind hier einige vorgeschlagene nächste Schritte:
+
+<CardGroup cols={2}>
+  <Card title="Produktdaten-API erkunden" icon="box" href="/de/product-graph/product-data">
+    Erfahren Sie, wie Sie detaillierte Produktinformationen abrufen und verbessern können
+  </Card>
+  <Card title="Erweiterte Mehrsprachigkeit" icon="language" href="/de/product-graph/multilanguage">
+    Implementieren Sie anspruchsvolle mehrsprachige Funktionen in Ihrer Anwendung
+  </Card>
+  <Card title="Markeninformationen" icon="tag" href="/de/product-graph/brand">
+    Zugriff auf und Nutzung umfassender Markendaten
+  </Card>
+  <Card title="Historische Verfolgung" icon="clock" href="/de/product-graph/historical-data">
+    Verfolgen Sie, wie sich Produktdaten im Laufe der Zeit ändern
+  </Card>
+</CardGroup>
+
+## Reale Product Graph-Anwendungen
+
+<CardGroup cols={2}>
+  <Card title="Mehrsprachiger E-Commerce" icon="globe" href="https://github.com/productgraph/multilingual-catalog">
+    Verbessern Sie Ihren Online-Shop mit mehrsprachigen Produktinformationen, die automatisch über Sprachen hinweg synchronisiert bleiben
+  </Card>
+  <Card title="Produktinhaltsverwaltung" icon="database" href="https://github.com/productgraph/pcm-integration">
+    Integrieren Sie Product Graph in Ihr bestehendes PIM/PCM-System, um Produktinhalte zu verbessern und zu bereichern
+  </Card>
+  <Card title="Marktplatzintegration" icon="shop" href="https://github.com/productgraph/marketplace-connector">
+    Standardisieren und verbessern Sie Produktdaten über mehrere Marktplätze und Vertriebskanäle hinweg
+  </Card>
+  <Card title="SEO-Optimierung" icon="chart-line" href="https://github.com/productgraph/seo-enhancer">
+    Verbessern Sie die SEO von Produktseiten mit erweiterten, mehrsprachigen Produktinhalten
+  </Card>
+</CardGroup>
+
+<Note>
+  Möchten Sie einen bestimmten Anwendungsfall besprechen? Treten Sie unserer [Entwicklergemeinschaft](https://community.productgraph.org) bei oder [vereinbaren Sie eine Beratung](https://productgraph.org/consultation) mit unseren Integrationsspezialisten.
+</Note>

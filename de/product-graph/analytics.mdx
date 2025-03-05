@@ -1,0 +1,511 @@
+---
+title: 'Analytik-API'
+description: 'Gewinnen Sie Einblicke in Ihre API-Nutzungsmuster und optimieren Sie Ihre Integration'
+icon: 'chart-mixed'
+---
+
+# Analytik-API
+
+Die Analytik-API bietet umfassende Einblicke in Ihre Product Graph API-Nutzungsmuster und hilft Ihnen dabei, Ihre Integration zu optimieren, Kosten zu verfolgen und zu verstehen, wie Ihre Benutzer mit Produktdaten interagieren.
+
+<Note>
+Analysedaten sind für alle API-Tarifstufen verfügbar. Historische Analysedaten werden bis zu 12 Monate aufbewahrt.
+</Note>
+
+## Analyse-Vorteile
+
+<CardGroup cols={2}>
+  <Card title="Nutzungsoptimierung" icon="gauge-high" color="#3B82F6">
+    Identifizieren Sie beliebte Endpunkte und optimieren Sie Ihre Integration für bessere Leistung
+  </Card>
+  <Card title="Kostenmanagement" icon="credit-card" color="#10B981">
+    Verfolgen Sie die Guthabennutzung und verwalten Sie API-Kosten effektiv
+  </Card>
+  <Card title="Benutzer-Erkenntnisse" icon="users" color="#F59E0B">
+    Verstehen Sie, an welchen Produkten und Daten Ihre Benutzer am meisten interessiert sind
+  </Card>
+  <Card title="Leistungsüberwachung" icon="bolt" color="#8B5CF6">
+    Überwachen Sie die API-Leistung und identifizieren Sie potenzielle Engpässe
+  </Card>
+</CardGroup>
+
+## Nutzungsanalyse abrufen
+
+Rufen Sie detaillierte Analysen zu Ihren API-Nutzungsmustern über verschiedene Dimensionen hinweg ab.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/analytics/usage?timeframe=30d&group_by=endpoint,language" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  timeframe: '30d',
+  group_by: 'endpoint,language'
+});
+
+const response = await fetch(`https://api.productgraph.org/v1/analytics/usage?${params}`, {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const analyticsData = await response.json();
+console.log('API-Nutzungsanalyse:', analyticsData);
+```
+
+```python Python
+import requests
+import os
+
+api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+url = 'https://api.productgraph.org/v1/analytics/usage'
+headers = {'X-API-Key': api_key}
+params = {
+    'timeframe': '30d',
+    'group_by': 'endpoint,language'
+}
+
+response = requests.get(url, headers=headers, params=params)
+analytics_data = response.json()
+print(f"API-Nutzungsanalyse: {analytics_data}")
+```
+</CodeGroup>
+
+### Abfrageparameter
+
+<ParamField query="timeframe" type="string" default="30d">
+  Der Zeitraum für Analysedaten. Mögliche Werte:
+  - `1d` - Letzte 24 Stunden
+  - `7d` - Letzte 7 Tage
+  - `30d` - Letzte 30 Tage
+  - `90d` - Letzte 90 Tage
+  - `1y` - Letztes Jahr
+</ParamField>
+
+<ParamField query="group_by" type="string">
+  Kommagetrennte Liste von Dimensionen, nach denen Metriken gruppiert werden sollen. Mögliche Werte:
+  - `endpoint` - Nach API-Endpunkt gruppieren
+  - `language` - Nach angeforderten Sprachen gruppieren
+  - `hour` - Nach Tageszeit gruppieren
+  - `day` - Nach Wochentag gruppieren
+  - `date` - Nach Kalenderdatum gruppieren
+</ParamField>
+
+<ParamField query="include" type="string">
+  Kommagetrennte Liste zusätzlicher Datenabschnitte, die in die Antwort aufgenommen werden sollen.
+  - `search_queries` - Beliebte Suchanfragen einbeziehen
+  - `products_viewed` - Am häufigsten angesehene Produkte einbeziehen
+  - `translations` - Details zur Übersetzungsnutzung einbeziehen
+  - `trends` - Nutzungstrenddaten einbeziehen
+</ParamField>
+
+### Antwortstruktur
+
+Die Analyseantwort bietet eine umfassende Aufschlüsselung Ihrer API-Nutzung:
+
+<Tabs>
+  <Tab title="Überblicksmetriken">
+    ```json
+    {
+      "timeframe": "30d",
+      "total_requests": 3452,
+      "average_processing_time_sec": {
+        "overall": 2.1,
+        "by_endpoint": {
+          "/search": 3.2,
+          "/products/{product_id}": 1.5,
+          "/products/{product_id}/translate": 5.7
+        }
+      },
+      "credits_used": 1240
+    }
+    ```
+  </Tab>
+  <Tab title="Endpunkt-Aufschlüsselung">
+    ```json
+    "requests_by_endpoint": [
+      {"endpoint": "/search", "count": 1245, "percentage": 36.1},
+      {"endpoint": "/products/{product_id}", "count": 987, "percentage": 28.6},
+      {"endpoint": "/products/{product_id}/translate", "count": 428, "percentage": 12.4}
+    ]
+    ```
+    
+    <Tip>
+      Die Analyse der Endpunktnutzung kann Ihnen helfen zu identifizieren, welche Funktionen der API für Ihre Benutzer am wertvollsten sind.
+    </Tip>
+  </Tab>
+  <Tab title="Sprachnutzung">
+    ```json
+    "requests_by_language": [
+      {"language": "en", "count": 2134, "percentage": 61.8},
+      {"language": "de", "count": 876, "percentage": 25.4},
+      {"language": "fr", "count": 442, "percentage": 12.8}
+    ],
+    "translation_usage": {
+      "total_translation_requests": 324,
+      "by_language": [
+        {"language": "de", "count": 156, "percentage": 48.1},
+        {"language": "fr", "count": 98, "percentage": 30.2},
+        {"language": "es", "count": 70, "percentage": 21.7}
+      ]
+    }
+    ```
+  </Tab>
+  <Tab title="Benutzerverhalten">
+    ```json
+    "top_search_queries": [
+      {"query": "wireless headphones", "count": 87, "percentage": 7.0},
+      {"query": "bluetooth speaker", "count": 65, "percentage": 5.2}
+    ],
+    "top_products_viewed": [
+      {"product_id": "prod_98765", "name": "Sony WH-1000XM4", "count": 124, "percentage": 12.6}
+    ]
+    ```
+    
+    <Tip>
+      Das Verständnis beliebter Suchanfragen und häufig angesehener Produkte kann Ihnen helfen, Ihre Contentstrategie zu lenken.
+    </Tip>
+  </Tab>
+  <Tab title="Nutzungstrends">
+    ```json
+    "usage_trends": {
+      "daily_requests": [
+        {"date": "2023-04-01", "count": 112},
+        {"date": "2023-04-02", "count": 98}
+      ],
+      "weekly_comparison": {
+        "current_week": 843,
+        "previous_week": 792,
+        "change_percentage": 6.4
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Guthabennutzungsanalyse abrufen
+
+Verfolgen Sie Ihren Guthabenverbrauch im Laufe der Zeit mit detaillierten Aufschlüsselungen nach Operationstyp.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/analytics/credits?timeframe=30d" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/analytics/credits?timeframe=30d', {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const creditsData = await response.json();
+console.log('Guthabennutzungsanalyse:', creditsData);
+```
+</CodeGroup>
+
+### Antwortbeispiel
+
+```json
+{
+  "timeframe": "30d",
+  "total_credits_used": 1240,
+  "credits_by_operation": [
+    {"operation": "search", "credits": 498, "percentage": 40.2},
+    {"operation": "product_details", "credits": 357, "percentage": 28.8},
+    {"operation": "translations", "credits": 246, "percentage": 19.8},
+    {"operation": "image_analysis", "credits": 139, "percentage": 11.2}
+  ],
+  "daily_usage": [
+    {"date": "2023-04-01", "credits": 42},
+    {"date": "2023-04-02", "credits": 38}
+  ],
+  "projected_usage": {
+    "current_month": 1456,
+    "percentage_of_plan_limit": 72.8
+  },
+  "recommendations": [
+    {
+      "type": "cost_optimization",
+      "description": "Erwägen Sie die Implementierung von Caching für Produktdetails, um wiederholte Nachschlagungen zu reduzieren",
+      "potential_savings": "15-20%"
+    }
+  ]
+}
+```
+
+## Leistungsanalyse abrufen
+
+Überwachen Sie API-Leistungsmetriken, um Ihre Integration zu optimieren und die Benutzererfahrung zu verbessern.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/analytics/performance?timeframe=7d" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/analytics/performance?timeframe=7d', {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const performanceData = await response.json();
+console.log('API-Leistungsanalyse:', performanceData);
+```
+</CodeGroup>
+
+### Antwortbeispiel
+
+```json
+{
+  "timeframe": "7d",
+  "overall_performance": {
+    "average_response_time_ms": 287,
+    "90th_percentile_ms": 512,
+    "95th_percentile_ms": 843,
+    "99th_percentile_ms": 1254
+  },
+  "by_endpoint": [
+    {
+      "endpoint": "/search",
+      "average_response_time_ms": 382,
+      "request_count": 452,
+      "error_rate": 0.008
+    },
+    {
+      "endpoint": "/products/{product_id}",
+      "average_response_time_ms": 224,
+      "request_count": 876,
+      "error_rate": 0.002
+    }
+  ],
+  "by_hour": [
+    {
+      "hour": 0,
+      "average_response_time_ms": 245
+    },
+    {
+      "hour": 1,
+      "average_response_time_ms": 238
+    }
+  ],
+  "error_analytics": {
+    "total_errors": 18,
+    "error_rate": 0.005,
+    "by_error_type": [
+      {"error_type": "rate_limit_exceeded", "count": 8, "percentage": 44.4},
+      {"error_type": "invalid_parameter", "count": 6, "percentage": 33.3},
+      {"error_type": "not_found", "count": 4, "percentage": 22.2}
+    ]
+  }
+}
+```
+
+## Suchanalyse abrufen
+
+Tauchen Sie tief in das Suchverhalten ein, um zu verstehen, wonach Ihre Benutzer suchen und wie Sie ihre Erfahrung verbessern können.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/analytics/search?timeframe=30d" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/analytics/search?timeframe=30d', {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const searchAnalytics = await response.json();
+console.log('Suchanalyse:', searchAnalytics);
+```
+</CodeGroup>
+
+### Antwortbeispiel
+
+```json
+{
+  "timeframe": "30d",
+  "total_searches": 1245,
+  "top_queries": [
+    {"query": "wireless headphones", "count": 87, "conversion_rate": 0.68},
+    {"query": "bluetooth speaker", "count": 65, "conversion_rate": 0.72},
+    {"query": "4k tv", "count": 54, "conversion_rate": 0.65}
+  ],
+  "zero_results_queries": [
+    {"query": "quantum headphones", "count": 12},
+    {"query": "invisible speaker", "count": 8}
+  ],
+  "search_refinements": {
+    "average_refinements_per_search": 0.8,
+    "top_refinement_patterns": [
+      {
+        "initial_query": "headphones",
+        "refined_query": "wireless headphones",
+        "count": 36
+      }
+    ]
+  },
+  "filter_usage": {
+    "percentage_of_searches_with_filters": 68.2,
+    "top_filters": [
+      {"filter": "brand", "usage_count": 423, "percentage": 34.0},
+      {"filter": "price_range", "usage_count": 315, "percentage": 25.3},
+      {"filter": "color", "usage_count": 287, "percentage": 23.1}
+    ]
+  },
+  "search_to_product_view_funnel": {
+    "search_count": 1245,
+    "product_view_count": 872,
+    "conversion_rate": 0.70
+  }
+}
+```
+
+## Analyse-Dashboard
+
+Zusätzlich zur API können Sie auf ein visuelles Analyse-Dashboard in Ihrem ProductGraph-Kontoportal zugreifen.
+
+<Steps>
+  <Step title="Melden Sie sich bei Ihrem Konto an">
+    Besuchen Sie [dashboard.productgraph.org](https://dashboard.productgraph.org) und melden Sie sich mit Ihren Zugangsdaten an
+  </Step>
+  <Step title="Navigieren Sie zu Analytics">
+    Klicken Sie auf den Tab "Analytics" im linken Navigationsmenü
+  </Step>
+  <Step title="Wählen Sie Ihre Ansicht">
+    Wählen Sie aus den Ansichten Übersicht, Nutzung, Leistung oder Suchanalysen
+  </Step>
+  <Step title="Passen Sie Ihr Dashboard an">
+    Verwenden Sie die Filter und Datumsbereichsauswahlen, um sich auf bestimmte Daten zu konzentrieren
+  </Step>
+  <Step title="Exportieren oder teilen">
+    Exportieren Sie Daten als CSV/PDF oder teilen Sie Dashboard-Ansichten mit Teammitgliedern
+  </Step>
+</Steps>
+
+<img
+  className="block dark:hidden"
+  src="/images/analytics-dashboard-light.png"
+  alt="ProductGraph Analytics Dashboard"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/analytics-dashboard-dark.png"
+  alt="ProductGraph Analytics Dashboard"
+/>
+
+## Häufige Anwendungsfälle
+
+<AccordionGroup>
+  <Accordion title="Nutzungsprognose und Budgetplanung">
+    Verwenden Sie historische Analysedaten, um zukünftige API-Nutzung zu prognostizieren und Ihr Guthabenbudget entsprechend zu planen.
+    
+    ```javascript
+    // Beispiel: Berechnung des durchschnittlichen täglichen Guthabenverbrauchs und Projektion der monatlichen Nutzung
+    const response = await fetch(
+      'https://api.productgraph.org/v1/analytics/credits?timeframe=90d',
+      { headers: { 'X-API-Key': apiKey } }
+    );
+    
+    const data = await response.json();
+    
+    // Tägliche Nutzung extrahieren
+    const dailyUsage = data.daily_usage.map(day => day.credits);
+    
+    // Durchschnittlichen täglichen Verbrauch berechnen
+    const averageDailyConsumption = dailyUsage.reduce((sum, credits) => sum + credits, 0) / dailyUsage.length;
+    
+    // Monatliche Nutzung projizieren
+    const projectedMonthlyUsage = averageDailyConsumption * 30;
+    
+    console.log(`Durchschnittlicher täglicher Guthabenverbrauch: ${averageDailyConsumption.toFixed(2)}`);
+    console.log(`Projizierte monatliche Nutzung: ${projectedMonthlyUsage.toFixed(2)}`);
+    ```
+  </Accordion>
+  
+  <Accordion title="Leistungsoptimierung">
+    Identifizieren Sie langsame Endpunkte oder Zeiten mit hohem Verkehrsaufkommen, um Ihre Integration für bessere Leistung zu optimieren.
+    
+    ```javascript
+    const response = await fetch(
+      'https://api.productgraph.org/v1/analytics/performance?timeframe=30d',
+      { headers: { 'X-API-Key': apiKey } }
+    );
+    
+    const data = await response.json();
+    
+    // Endpunkte mit Antwortzeiten über einem Schwellenwert finden
+    const slowEndpoints = data.by_endpoint.filter(
+      endpoint => endpoint.average_response_time_ms > 300
+    );
+    
+    // Hauptverkehrszeiten identifizieren
+    const byHour = data.by_hour;
+    byHour.sort((a, b) => b.average_response_time_ms - a.average_response_time_ms);
+    const peakHours = byHour.slice(0, 3);
+    
+    console.log('Zu optimierende Endpunkte:', slowEndpoints);
+    console.log('Hauptverkehrszeiten:', peakHours);
+    ```
+  </Accordion>
+  
+  <Accordion title="Verbesserung der Sucherfahrung">
+    Analysieren Sie Suchmuster, um Ihre Produktsuchimplementierung zu verbessern.
+    
+    ```javascript
+    const response = await fetch(
+      'https://api.productgraph.org/v1/analytics/search?timeframe=30d',
+      { headers: { 'X-API-Key': apiKey } }
+    );
+    
+    const data = await response.json();
+    
+    // Null-Ergebnis-Abfragen zu Ihren Suchsynonymen oder Ihrer Contentstrategie hinzufügen
+    const zeroResultsQueries = data.zero_results_queries;
+    
+    // Beliebte Suchverfeinerungen identifizieren, um die anfängliche Suchqualität zu verbessern
+    const refinements = data.search_refinements.top_refinement_patterns;
+    
+    // Analysieren, welche Filter in Ihrer Suchoberfläche am häufigsten verwendet werden
+    const popularFilters = data.filter_usage.top_filters;
+    
+    console.log('Zu adressierende Suchanfragen:', zeroResultsQueries);
+    console.log('Häufige Suchverfeinerungen:', refinements);
+    console.log('Meistgenutzte Filter:', popularFilters);
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<Tip>
+Befolgen Sie diese Best Practices, um das Beste aus Ihren Analysedaten herauszuholen:
+</Tip>
+
+1. **Überwachen Sie regelmäßig Trends**: Richten Sie eine Routine ein, um wöchentlich oder monatlich die Nutzungsmuster zu überprüfen, um signifikante Änderungen zu identifizieren.
+
+2. **Vergleichen Sie Zeiträume**: Betrachten Sie Daten über verschiedene Zeiträume hinweg, um saisonale Muster oder Wachstumstrends zu identifizieren.
+
+3. **Handeln Sie bei Null-Ergebnis-Suchen**: Verwenden Sie die Null-Ergebnis-Suchanfragen, um Ihre Contentstrategie zu verbessern oder Synonyme zu Ihrer Suchimplementierung hinzuzufügen.
+
+4. **Optimieren Sie für Leistung**: Verwenden Sie Antwortzeit-Analysen, um langsam ausführende Endpunkte in Ihrer Integration zu identifizieren und zu optimieren.
+
+5. **Nutzen Sie Analysen für Kapazitätsplanung**: Verfolgen Sie das Wachstum Ihrer API-Nutzung, um für Skalierung und potenzielle Planupgrades zu planen, bevor Sie Ratenbegrenzungen erreichen.
+
+6. **Exportieren Sie Daten für tiefere Analysen**: Nutzen Sie die Exportfunktion im Dashboard, um benutzerdefinierte Analysen in Ihren Business-Intelligence-Tools durchzuführen.
+
+## Nächste Schritte
+
+Erfahren Sie, wie Sie Echtzeitbenachrichtigungen über Produktaktualisierungen und API-Ereignisse erhalten können:
+
+<Card title="Webhooks" icon="bell" href="/de/product-graph/webhooks">
+  Richten Sie Webhooks ein, um Benachrichtigungen über Produktänderungen zu erhalten
+</Card>

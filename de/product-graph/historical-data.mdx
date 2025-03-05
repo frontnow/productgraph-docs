@@ -1,0 +1,466 @@
+---
+title: 'Historische Daten-API'
+description: 'Verfolgen Sie Änderungen an Produktinformationen im Laufe der Zeit'
+icon: 'clock-rotate-left'
+---
+
+# Historische Daten-API
+
+Die Historische Daten-API ermöglicht es Ihnen, Änderungen an Produktinformationen im Laufe der Zeit zu verfolgen und zu analysieren. Diese leistungsstarke Funktion ermöglicht es Ihnen, zu verstehen, wie sich Produktdaten entwickeln, Trends zu identifizieren und einen Prüfpfad von Änderungen zu führen.
+
+<Note>
+Historische Daten werden automatisch für alle Produkte in der ProductGraph-Plattform nachverfolgt, ohne dass zusätzliche Konfigurationen erforderlich sind.
+</Note>
+
+## Warum historische Daten wichtig sind
+
+<CardGroup cols={2}>
+  <Card title="Datenentwicklung" icon="chart-line" color="#3B82F6">
+    Verfolgen Sie, wie sich Produktbeschreibungen, Attribute und Inhalte im Laufe der Zeit verbessern
+  </Card>
+  <Card title="Compliance" icon="shield-check" color="#10B981">
+    Führen Sie Prüfpfade für regulatorische Compliance und Daten-Governance
+  </Card>
+  <Card title="Qualitätsanalyse" icon="chart-simple" color="#F59E0B">
+    Identifizieren Sie Muster bei der Datenanreicherung und Qualitätsverbesserungen
+  </Card>
+  <Card title="Trenderkennung" icon="arrow-trend-up" color="#8B5CF6">
+    Erkennen Sie Änderungen in Produktspezifikationen und Funktionsumfängen über die Zeit
+  </Card>
+</CardGroup>
+
+## Produktinhaltshistorie abrufen
+
+Rufen Sie die Historie der Änderungen für bestimmte Produktinhalte ab, wie Beschreibungen, Attribute und Bilder.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/products/prod_98765/history/content?timeframe=30d&fields=description,attributes,images&lang=de" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  timeframe: '30d',
+  fields: 'description,attributes,images',
+  lang: 'de'
+});
+
+const response = await fetch(`https://api.productgraph.org/v1/products/prod_98765/history/content?${params}`, {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const historyData = await response.json();
+console.log(`${historyData.content_history.length} Inhaltsänderungen in den letzten 30 Tagen gefunden`);
+```
+
+```python Python
+import requests
+import os
+
+api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+url = 'https://api.productgraph.org/v1/products/prod_98765/history/content'
+headers = {'X-API-Key': api_key}
+params = {
+    'timeframe': '30d',
+    'fields': 'description,attributes,images',
+    'lang': 'de'
+}
+
+response = requests.get(url, headers=headers, params=params)
+history_data = response.json()
+print(f"{len(history_data['content_history'])} Inhaltsänderungen in den letzten 30 Tagen gefunden")
+```
+</CodeGroup>
+
+### Abfrageparameter
+
+<ParamField query="timeframe" type="string" default="30d">
+  Der Zeitraum, der in der Historie enthalten sein soll. Mögliche Werte:
+  - `1d` - Letzte 24 Stunden
+  - `7d` - Letzte 7 Tage
+  - `30d` - Letzte 30 Tage
+  - `90d` - Letzte 90 Tage
+  - `1y` - Letztes Jahr
+  - `all` - Gesamte verfügbare Historie
+</ParamField>
+
+<ParamField query="fields" type="string">
+  Kommagetrennte Liste der Felder, die in der Historie enthalten sein sollen. Beispiel: `description,attributes,images`.
+</ParamField>
+
+<ParamField query="lang" type="string">
+  Filter für die Historie einer bestimmten Sprache. Beispiel: `de` für Deutsch.
+</ParamField>
+
+<ParamField query="page" type="number" default="1">
+  Seitennummer für paginierte Ergebnisse.
+</ParamField>
+
+<ParamField query="page_size" type="number" default="20">
+  Anzahl der historischen Änderungen pro Seite (max. 100).
+</ParamField>
+
+### Antwortstruktur
+
+<Tabs>
+  <Tab title="Inhaltshistorie">
+    Das Array `content_history` enthält einzelne Änderungsereignisse in chronologischer Reihenfolge:
+    
+    ```json
+    "content_history": [
+      {
+        "timestamp": "2023-04-10T14:22:31Z",
+        "field": "description",
+        "language": "de",
+        "previous_value": "Branchenführende Geräuschunterdrückung mit erstklassiger Klangqualität und langer Akkulaufzeit.",
+        "new_value": "Branchenführende Geräuschunterdrückungstechnologie hilft, Hintergrundgeräusche für ein intensiveres Hörerlebnis auszublenden. Genießen Sie erstklassige Klangqualität mit minimaler Verzerrung dank 40-mm-Treibern und DSEE Extreme-Upscaling. Bis zu 30 Stunden Akkulaufzeit mit Schnellladefunktion.",
+        "change_type": "update",
+        "change_source": "enrichment",
+        "change_reason": "Qualitätsverbesserung"
+      },
+      {
+        "timestamp": "2023-04-09T08:15:22Z",
+        "field": "attributes",
+        "language": "de",
+        "attribute_key": "connectivity",
+        "previous_value": "Bluetooth",
+        "new_value": "Bluetooth 5.0",
+        "change_type": "update",
+        "change_source": "manual_correction",
+        "change_reason": "Aktualisierung der technischen Spezifikation"
+      },
+      {
+        "timestamp": "2023-04-07T16:42:15Z",
+        "field": "images",
+        "previous_value": null,
+        "new_value": "https://example.com/images/sony-wh1000xm4-folded.jpg",
+        "change_type": "add",
+        "change_source": "enrichment"
+      }
+    ]
+    ```
+  </Tab>
+  <Tab title="Änderungsfelder">
+    <ResponseField name="timestamp" type="string">
+      ISO 8601-Zeitstempel, wann die Änderung erfolgte.
+    </ResponseField>
+    
+    <ResponseField name="field" type="string">
+      Das Feld, das geändert wurde (z.B. description, attributes, images).
+    </ResponseField>
+    
+    <ResponseField name="language" type="string">
+      Sprachcode für den geänderten Inhalt.
+    </ResponseField>
+    
+    <ResponseField name="attribute_key" type="string">
+      Bei Attributänderungen das spezifische Attribut, das geändert wurde.
+    </ResponseField>
+    
+    <ResponseField name="previous_value" type="string or null">
+      Der Wert vor der Änderung.
+    </ResponseField>
+    
+    <ResponseField name="new_value" type="string">
+      Der Wert nach der Änderung.
+    </ResponseField>
+    
+    <ResponseField name="change_type" type="string">
+      Art der Änderung: `add`, `update` oder `remove`.
+    </ResponseField>
+    
+    <ResponseField name="change_source" type="string">
+      Quelle der Änderung: `enrichment`, `manual_correction`, `automated_update`, etc.
+    </ResponseField>
+    
+    <ResponseField name="change_reason" type="string">
+      Optionaler Grund oder Erklärung für die Änderung.
+    </ResponseField>
+  </Tab>
+  <Tab title="Zusammenfassungsdaten">
+    Das Objekt `summarized_changes` bietet aggregierte Statistiken über Änderungen:
+    
+    ```json
+    "summarized_changes": {
+      "total_changes": 17,
+      "by_field": {
+        "description": 3,
+        "attributes": 8,
+        "images": 6
+      },
+      "by_language": {
+        "en": 10,
+        "de": 7
+      },
+      "by_change_type": {
+        "add": 9,
+        "update": 8,
+        "remove": 0
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Produktversionen vergleichen
+
+Vergleichen Sie ein Produkt über verschiedene Zeitpunkte hinweg, um zu sehen, wie es sich entwickelt hat.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/products/prod_98765/compare?from=2023-01-01&to=2023-04-15&fields=description,attributes" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  from: '2023-01-01',
+  to: '2023-04-15',
+  fields: 'description,attributes'
+});
+
+const response = await fetch(`https://api.productgraph.org/v1/products/prod_98765/compare?${params}`, {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const compareData = await response.json();
+console.log('Produktvergleich zwischen Versionen:', compareData);
+```
+</CodeGroup>
+
+### Abfrageparameter
+
+<ParamField query="from" type="string" required>
+  ISO 8601-Datum oder Zeitstempel für den Anfangspunkt des Vergleichs.
+</ParamField>
+
+<ParamField query="to" type="string" default="now">
+  ISO 8601-Datum oder Zeitstempel für den Endpunkt des Vergleichs.
+</ParamField>
+
+<ParamField query="fields" type="string">
+  Kommagetrennte Liste der zu vergleichenden Felder.
+</ParamField>
+
+<ParamField query="lang" type="string">
+  Sprache für Textfelder.
+</ParamField>
+
+### Antwortbeispiel
+
+```json
+{
+  "product_id": "prod_98765",
+  "from_version": {
+    "timestamp": "2023-01-01T00:00:00Z"
+  },
+  "to_version": {
+    "timestamp": "2023-04-15T00:00:00Z"
+  },
+  "differences": {
+    "description": {
+      "de": {
+        "from": "Kabellose Noise-Cancelling-Kopfhörer mit erstklassiger Klangqualität.",
+        "to": "Branchenführende Geräuschunterdrückungstechnologie hilft, Hintergrundgeräusche für ein intensiveres Hörerlebnis auszublenden. Genießen Sie erstklassige Klangqualität mit minimaler Verzerrung dank 40-mm-Treibern und DSEE Extreme-Upscaling. Bis zu 30 Stunden Akkulaufzeit mit Schnellladefunktion.",
+        "similarity_score": 0.42
+      }
+    },
+    "attributes": {
+      "added": [
+        {
+          "key": "nfc",
+          "value": {
+            "de": "Ja"
+          }
+        }
+      ],
+      "removed": [],
+      "changed": [
+        {
+          "key": "bluetooth_version",
+          "from": {
+            "de": "Bluetooth"
+          },
+          "to": {
+            "de": "Bluetooth 5.0"
+          }
+        }
+      ]
+    }
+  },
+  "quality_change": {
+    "overall": "+28%",
+    "completeness": "+35%",
+    "accuracy": "+22%"
+  }
+}
+```
+
+## Historische Snapshots abrufen
+
+Rufen Sie einen vollständigen Snapshot der Produktdaten zu einem bestimmten Zeitpunkt ab.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/products/prod_98765/snapshot?timestamp=2023-01-15T12:00:00Z" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  timestamp: '2023-01-15T12:00:00Z'
+});
+
+const response = await fetch(`https://api.productgraph.org/v1/products/prod_98765/snapshot?${params}`, {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const snapshotData = await response.json();
+console.log('Produkt-Snapshot vom 15. Januar:', snapshotData);
+```
+</CodeGroup>
+
+### Antwort
+
+Das Antwortformat entspricht dem standardmäßigen Produktdaten-Antwortformat, stellt jedoch die Produktdaten dar, wie sie zum angegebenen Zeitpunkt existierten.
+
+## Häufige Anwendungsfälle
+
+<AccordionGroup>
+  <Accordion title="Datenqualitätsverfolgung">
+    Überwachen Sie, wie sich die Produktdatenqualität im Laufe der Zeit verbessert, und identifizieren Sie Muster bei der Datenanreicherung.
+    
+    ```javascript
+    const params = new URLSearchParams({
+      timeframe: '90d'
+    });
+    
+    const response = await fetch(`https://api.productgraph.org/v1/products/prod_98765/history/quality?${params}`, {
+      headers: { 'X-API-Key': apiKey }
+    });
+    
+    const qualityHistory = await response.json();
+    
+    // Erstellen Sie eine Visualisierung der Qualitätsverbesserung im Laufe der Zeit
+    const labels = qualityHistory.data.map(item => new Date(item.timestamp).toLocaleDateString());
+    const scores = qualityHistory.data.map(item => item.quality_score);
+    
+    createLineChart(labels, scores, {
+      title: 'Produktdatenqualitätstrend',
+      yAxisLabel: 'Qualitätswert (0-100)'
+    });
+    ```
+  </Accordion>
+  
+  <Accordion title="Produktentwicklungsanalyse">
+    Analysieren Sie, wie sich Produkte im Laufe der Zeit entwickeln, um Trends und Muster in der Produktentwicklung zu identifizieren.
+    
+    ```javascript
+    // Mehrere Produkt-Snapshots zu verschiedenen Zeitpunkten abrufen
+    async function getProductEvolution(productId, timestamps) {
+      const snapshots = [];
+      
+      for (const timestamp of timestamps) {
+        const params = new URLSearchParams({ timestamp });
+        const response = await fetch(
+          `https://api.productgraph.org/v1/products/${productId}/snapshot?${params}`,
+          { headers: { 'X-API-Key': apiKey } }
+        );
+        
+        snapshots.push(await response.json());
+      }
+      
+      return snapshots;
+    }
+    
+    // Beispiel: Vierteljährliche Snapshots für ein Produkt über das letzte Jahr abrufen
+    const today = new Date();
+    const lastYear = new Date(today);
+    lastYear.setFullYear(today.getFullYear() - 1);
+    
+    const timestamps = [];
+    for (let i = 0; i <= 4; i++) {
+      const date = new Date(lastYear);
+      date.setMonth(lastYear.getMonth() + (i * 3));
+      timestamps.push(date.toISOString());
+    }
+    
+    const evolution = await getProductEvolution('prod_98765', timestamps);
+    ```
+  </Accordion>
+  
+  <Accordion title="Prüfpfad & Compliance">
+    Führen Sie einen Prüfpfad aller Änderungen an Produktdaten für Compliance-Zwecke.
+    
+    ```javascript
+    // Einen Compliance-Bericht für Produktdatenänderungen erstellen
+    async function generateComplianceReport(productId, startDate, endDate) {
+      const params = new URLSearchParams({
+        from: startDate,
+        to: endDate,
+        include_metadata: true
+      });
+      
+      const response = await fetch(
+        `https://api.productgraph.org/v1/products/${productId}/history/content?${params}`,
+        { headers: { 'X-API-Key': apiKey } }
+      );
+      
+      const historyData = await response.json();
+      
+      // Daten für Compliance-Bericht formatieren
+      const report = {
+        product_id: productId,
+        reporting_period: {
+          start: startDate,
+          end: endDate
+        },
+        total_changes: historyData.summarized_changes.total_changes,
+        changes_by_source: historyData.summarized_changes.by_source,
+        detailed_changes: historyData.content_history.map(change => ({
+          timestamp: change.timestamp,
+          field: change.field,
+          change_type: change.change_type,
+          performed_by: change.metadata.user_id || 'system',
+          change_reason: change.change_reason || 'Nicht angegeben'
+        }))
+      };
+      
+      return report;
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<Tip>
+Befolgen Sie diese Best Practices, um das Beste aus der Historische Daten-API herauszuholen:
+</Tip>
+
+1. **Verwenden Sie angemessene Zeiträume**: Fordern Sie nur die Historie an, die Sie benötigen, um große Antwort-Payloads zu vermeiden.
+
+2. **Nutzen Sie Feldfilterung**: Verwenden Sie den Parameter `fields`, um sich auf bestimmte Aspekte der Produkthistorie zu konzentrieren.
+
+3. **Erwägen Sie die Verwendung von Snapshots**: Für vollständige Daten zu einem bestimmten Zeitpunkt verwenden Sie Snapshots, anstatt aus der Historie zu rekonstruieren.
+
+4. **Cachen Sie historische Daten**: Historische Daten ändern sich nicht, sodass Sie sie sicher für längere Zeiträume cachen können.
+
+5. **Verfolgen Sie Qualitätsmetriken**: Überwachen Sie die Qualitätsmetriken im Laufe der Zeit, um zu verstehen, wie sich Ihre Produktdaten verbessern.
+
+6. **Vergleichen Sie spezifische Versionen**: Beim Analysieren von Änderungen vergleichen Sie bestimmte Versionen anstelle ganzer Historienbereiche, um Effizienz zu gewährleisten.
+
+## Nächste Schritte
+
+Erfahren Sie mehr über die Nachverfolgung von Analysen und Erkenntnissen aus Ihrer Produktdatennutzung:
+
+<Card title="Analytik-API" icon="chart-mixed" href="/de/product-graph/analytics">
+  Zugriff auf Nutzungsmetriken und Erkenntnisse über Ihre Produktdaten
+</Card>

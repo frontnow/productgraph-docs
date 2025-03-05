@@ -1,0 +1,470 @@
+---
+title: 'Webhooks'
+description: 'Erhalten Sie Echtzeitbenachrichtigungen für wichtige Ereignisse in Ihrer Product Graph-Integration'
+icon: 'bell'
+---
+
+# Webhooks
+
+Webhooks bieten eine leistungsstarke Möglichkeit, Echtzeitbenachrichtigungen über wichtige Ereignisse in Ihrer Product Graph-Integration zu erhalten. Anstatt kontinuierlich unsere API nach Updates abzufragen, senden Webhooks Benachrichtigungen an Ihre angegebenen Endpunkte, wenn Ereignisse eintreten.
+
+<Note>
+Webhooks sind ideal für den Aufbau reaktionsfähiger, ereignisgesteuerter Anwendungen, die mit Änderungen der Product Graph-Daten synchron bleiben.
+</Note>
+
+## Wie Webhooks funktionieren
+
+<Steps>
+  <Step title="Webhook konfigurieren">
+    Registrieren Sie Ihre Endpunkt-URL und geben Sie die Ereignisse an, die Sie erhalten möchten
+  </Step>
+  <Step title="Ereignis tritt ein">
+    Ein Ereignis im Product Graph-System tritt ein, das Ihren Webhook-Kriterien entspricht
+  </Step>
+  <Step title="Benachrichtigung gesendet">
+    Product Graph sendet eine HTTP POST-Anfrage mit Ereignisdetails an Ihre registrierte URL
+  </Step>
+  <Step title="Ereignis verarbeiten">
+    Ihre Anwendung empfängt und verarbeitet die Webhook-Nutzlast
+  </Step>
+</Steps>
+
+## Webhooks erstellen
+
+Registrieren Sie einen neuen Webhook-Endpunkt, um Benachrichtigungen zu erhalten.
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.productgraph.org/v1/webhooks" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://your-callback-url.com/webhook",
+    "events": ["search_completed", "product_updated", "translation_completed"],
+    "language_filters": ["de", "fr"],
+    "secret": "your-webhook-secret"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/webhooks', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    url: 'https://your-callback-url.com/webhook',
+    events: ['search_completed', 'product_updated', 'translation_completed'],
+    language_filters: ['de', 'fr'],
+    secret: 'your-webhook-secret'
+  })
+});
+
+const webhookData = await response.json();
+console.log('Webhook erstellt:', webhookData);
+```
+
+```python Python
+import requests
+import os
+
+api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+url = 'https://api.productgraph.org/v1/webhooks'
+headers = {
+    'X-API-Key': api_key,
+    'Content-Type': 'application/json'
+}
+payload = {
+    'url': 'https://your-callback-url.com/webhook',
+    'events': ['search_completed', 'product_updated', 'translation_completed'],
+    'language_filters': ['de', 'fr'],
+    'secret': 'your-webhook-secret'
+}
+
+response = requests.post(url, headers=headers, json=payload)
+webhook_data = response.json()
+print(f"Webhook erstellt: {webhook_data}")
+```
+</CodeGroup>
+
+### Anfrageparameter
+
+<ParamField body="url" type="string" required>
+  Die URL, an die Webhook-Nutzlasten gesendet werden. Muss eine gültige HTTPS-URL sein (außer für Entwicklungsumgebungen).
+</ParamField>
+
+<ParamField body="events" type="array" required>
+  Array von Ereignistypen, die abonniert werden sollen. Siehe den Abschnitt [Webhook-Ereignisse](#webhook-ereignisse) für verfügbare Ereignisse.
+</ParamField>
+
+<ParamField body="language_filters" type="array">
+  Array von Sprachcodes. Wenn angegeben, wird der Webhook nur für Ereignisse ausgelöst, die diese Sprachen betreffen.
+</ParamField>
+
+<ParamField body="secret" type="string" required>
+  Eine geheime Zeichenfolge, die zur Generierung der Signatur für Webhook-Nutzlasten verwendet wird, damit Sie deren Authentizität überprüfen können.
+</ParamField>
+
+<ParamField body="description" type="string">
+  Optionale Beschreibung, die Ihnen hilft, den Zweck dieses Webhooks zu identifizieren.
+</ParamField>
+
+### Antwort
+
+```json
+{
+  "webhook_id": "wh_34567",
+  "url": "https://your-callback-url.com/webhook",
+  "events": ["search_completed", "product_updated", "translation_completed"],
+  "language_filters": ["de", "fr"],
+  "status": "active",
+  "created_at": "2023-04-14T10:30:22Z"
+}
+```
+
+## Webhook-Ereignisse
+
+ProductGraph unterstützt die folgenden Webhook-Ereignistypen:
+
+<AccordionGroup>
+  <Accordion title="search_completed">
+    Wird ausgelöst, wenn ein asynchroner Suchvorgang abgeschlossen ist.
+    
+    ```json
+    {
+      "event": "search_completed",
+      "webhook_id": "wh_34567",
+      "job_id": "srch_12345",
+      "status": "completed",
+      "query": "wireless headphones",
+      "result_count": 42,
+      "timestamp": "2023-04-14T10:31:15Z"
+    }
+    ```
+    
+    <Tip>
+      Verwenden Sie dieses Ereignis, um Benutzer zu benachrichtigen, wenn ihre Suchergebnisse bereit sind, insbesondere für komplexe Suchen, deren Verarbeitung Zeit in Anspruch nimmt.
+    </Tip>
+  </Accordion>
+  
+  <Accordion title="product_updated">
+    Wird ausgelöst, wenn Produktdaten aktualisiert oder angereichert werden.
+    
+    ```json
+    {
+      "event": "product_updated",
+      "webhook_id": "wh_34567",
+      "product_id": "prod_98765",
+      "fields_updated": ["description", "attributes", "images"],
+      "languages_affected": ["en", "de"],
+      "update_type": "enrichment",
+      "quality_score_before": 78,
+      "quality_score_after": 92,
+      "timestamp": "2023-04-13T14:22:36Z"
+    }
+    ```
+    
+    <Tip>
+      Verwenden Sie dieses Ereignis, um Ihren Produktkatalog mit den neuesten Daten von ProductGraph synchron zu halten.
+    </Tip>
+  </Accordion>
+  
+  <Accordion title="translation_completed">
+    Wird ausgelöst, wenn ein Übersetzungsauftrag abgeschlossen ist.
+    
+    ```json
+    {
+      "event": "translation_completed",
+      "webhook_id": "wh_34567",
+      "product_id": "prod_98765",
+      "language": "de",
+      "completion_percentage": 100,
+      "fields_translated": ["description", "attributes", "seo"],
+      "timestamp": "2023-04-12T15:33:42Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="quality_score_changed">
+    Wird ausgelöst, wenn sich der Qualitätswert eines Produkts signifikant ändert.
+    
+    ```json
+    {
+      "event": "quality_score_changed",
+      "webhook_id": "wh_34567",
+      "product_id": "prod_98765",
+      "previous_score": 75,
+      "new_score": 92,
+      "change_percentage": 22.7,
+      "improvements": [
+        {"field": "images", "before": 60, "after": 95},
+        {"field": "description", "before": 80, "after": 95}
+      ],
+      "timestamp": "2023-04-11T09:28:15Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="batch_process_completed">
+    Wird ausgelöst, wenn ein Stapelverarbeitungsvorgang abgeschlossen ist.
+    
+    ```json
+    {
+      "event": "batch_process_completed",
+      "webhook_id": "wh_34567",
+      "batch_id": "batch_23456",
+      "operation_type": "bulk_import",
+      "total_items": 128,
+      "successful_items": 125,
+      "failed_items": 3,
+      "timestamp": "2023-04-10T18:45:22Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Webhooks verwalten
+
+### Alle Webhooks auflisten
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/webhooks" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/webhooks', {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const webhooks = await response.json();
+console.log('Ihre Webhooks:', webhooks);
+```
+</CodeGroup>
+
+### Einen Webhook aktualisieren
+
+<CodeGroup>
+```bash cURL
+curl -X PATCH "https://api.productgraph.org/v1/webhooks/wh_34567" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "events": ["search_completed", "product_updated"],
+    "status": "paused"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/webhooks/wh_34567', {
+  method: 'PATCH',
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    events: ['search_completed', 'product_updated'],
+    status: 'paused'
+  })
+});
+
+const updatedWebhook = await response.json();
+console.log('Aktualisierter Webhook:', updatedWebhook);
+```
+</CodeGroup>
+
+### Einen Webhook löschen
+
+<CodeGroup>
+```bash cURL
+curl -X DELETE "https://api.productgraph.org/v1/webhooks/wh_34567" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/webhooks/wh_34567', {
+  method: 'DELETE',
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+if (response.status === 204) {
+  console.log('Webhook erfolgreich gelöscht');
+}
+```
+</CodeGroup>
+
+## Webhook-Sicherheit
+
+Um zu überprüfen, ob Webhook-Nutzlasten tatsächlich von ProductGraph stammen und nicht manipuliert wurden, enthält jede Anfrage einen Signatur-Header.
+
+### Signaturüberprüfung
+
+<CodeGroup>
+```javascript Node.js
+const crypto = require('crypto');
+
+function verifyWebhookSignature(payload, signature, secret) {
+  const hmac = crypto.createHmac('sha256', secret);
+  const expectedSignature = hmac.update(JSON.stringify(payload)).digest('hex');
+  const providedSignature = signature.replace('sha256=', '');
+  
+  return crypto.timingSafeEqual(
+    Buffer.from(expectedSignature, 'hex'),
+    Buffer.from(providedSignature, 'hex')
+  );
+}
+
+// Express.js Beispiel
+app.post('/webhook', (req, res) => {
+  const signature = req.headers['x-productgraph-signature'];
+  const webhookSecret = process.env.WEBHOOK_SECRET;
+  
+  if (!verifyWebhookSignature(req.body, signature, webhookSecret)) {
+    return res.status(401).send('Ungültige Signatur');
+  }
+  
+  // Webhook-Ereignis verarbeiten
+  const event = req.body.event;
+  console.log(`Webhook-Ereignis empfangen: ${event}`);
+  
+  // 200-Statuscode zurückgeben, um den Empfang zu bestätigen
+  res.status(200).send('Webhook empfangen');
+});
+```
+
+```python Python
+import hmac
+import hashlib
+import json
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+def verify_webhook_signature(payload, signature, secret):
+    expected_signature = hmac.new(
+        secret.encode('utf-8'),
+        json.dumps(payload).encode('utf-8'),
+        hashlib.sha256
+    ).hexdigest()
+    
+    provided_signature = signature.replace('sha256=', '')
+    
+    return hmac.compare_digest(expected_signature, provided_signature)
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    signature = request.headers.get('X-ProductGraph-Signature')
+    webhook_secret = os.environ.get('WEBHOOK_SECRET')
+    
+    if not verify_webhook_signature(request.json, signature, webhook_secret):
+        return jsonify({"error": "Ungültige Signatur"}), 401
+    
+    # Webhook-Ereignis verarbeiten
+    event = request.json.get('event')
+    print(f"Webhook-Ereignis empfangen: {event}")
+    
+    # 200-Statuscode zurückgeben, um den Empfang zu bestätigen
+    return jsonify({"status": "success"}), 200
+```
+
+```php PHP
+<?php
+
+function verifyWebhookSignature($payload, $signature, $secret) {
+    $expectedSignature = hash_hmac('sha256', json_encode($payload), $secret);
+    $providedSignature = str_replace('sha256=', '', $signature);
+    
+    return hash_equals($expectedSignature, $providedSignature);
+}
+
+// Webhook-Nutzlast abrufen
+$payload = json_decode(file_get_contents('php://input'), true);
+$signature = $_SERVER['HTTP_X_PRODUCTGRAPH_SIGNATURE'];
+$webhookSecret = getenv('WEBHOOK_SECRET');
+
+if (!verifyWebhookSignature($payload, $signature, $webhookSecret)) {
+    http_response_code(401);
+    echo "Ungültige Signatur";
+    exit;
+}
+
+// Webhook-Ereignis verarbeiten
+$event = $payload['event'];
+error_log("Webhook-Ereignis empfangen: " . $event);
+
+// 200-Statuscode zurückgeben, um den Empfang zu bestätigen
+http_response_code(200);
+echo json_encode(["status" => "success"]);
+```
+</CodeGroup>
+
+## Webhook Best Practices
+
+<Tip>
+Befolgen Sie diese Best Practices, um eine zuverlässige Webhook-Verarbeitung zu gewährleisten:
+</Tip>
+
+1. **Implementieren Sie Idempotenz**: Webhooks können für dasselbe Ereignis mehrmals zugestellt werden. Gestalten Sie Ihren Webhook-Handler idempotent, um doppelte Verarbeitung zu vermeiden.
+
+2. **Bestätigen Sie den Empfang schnell**: Geben Sie so schnell wie möglich eine 2xx-Antwort zurück, um den Empfang zu bestätigen. Verarbeiten Sie den Webhook bei Bedarf asynchron.
+
+3. **Implementieren Sie Signaturverifizierung**: Überprüfen Sie immer die Webhook-Signatur, um die Authentizität zu gewährleisten.
+
+4. **Richten Sie Monitoring ein**: Überwachen Sie die Webhook-Zustellung und -Verarbeitung, um Probleme frühzeitig zu erkennen.
+
+5. **Implementieren Sie Wiederholungslogik**: Wenn Ihr Endpunkt vorübergehend nicht verfügbar ist, wird ProductGraph die Zustellung mit exponentiellem Backoff wiederholen. Stellen Sie sicher, dass Ihr System mit diesen Wiederholungen umgehen kann.
+
+6. **Verwenden Sie beschreibende Webhooks**: Erstellen Sie mehrere spezialisierte Webhooks anstelle eines generischen Webhooks, um die Verarbeitung zu vereinfachen.
+
+7. **Speichern Sie Webhook-Ereignisse**: Erwägen Sie, Webhook-Ereignisse in einer Datenbank zu speichern, für Debugging- oder Prüfzwecke.
+
+## Fehlerbehandlung
+
+<Warning>
+Wenn Ihr Endpunkt nicht mit einem 2xx-Statuscode antwortet, wird ProductGraph die Zustellung mit exponentiellem Backoff wiederholen.
+</Warning>
+
+Webhook-Zustellungsversuche folgen diesem Zeitplan:
+- 1. Wiederholung: 30 Sekunden nach initialem Fehlschlag
+- 2. Wiederholung: 5 Minuten nach der 1. Wiederholung
+- 3. Wiederholung: 30 Minuten nach der 2. Wiederholung
+- 4. Wiederholung: 2 Stunden nach der 3. Wiederholung
+- 5. Wiederholung: 5 Stunden nach der 4. Wiederholung
+
+Nach dem Scheitern aller Wiederholungsversuche gilt das Webhook-Ereignis als nicht zustellbar, und Sie erhalten eine Benachrichtigung über Ihre konfigurierten Alarmkanäle.
+
+## Webhook-Logs
+
+Sie können den Zustellungsstatus und den Verlauf Ihrer Webhooks im ProductGraph-Dashboard einsehen. Dies umfasst:
+
+- Zustellungszeitstempel
+- Antwort-Statuscodes
+- Antwortzeiten
+- Nutzlastdaten
+- Fehlermeldungen (falls vorhanden)
+
+<Steps>
+  <Step title="Melden Sie sich in Ihrem Dashboard an">
+    Besuchen Sie [dashboard.productgraph.org](https://dashboard.productgraph.org) und melden Sie sich an
+  </Step>
+  <Step title="Navigieren Sie zu Webhooks">
+    Klicken Sie im linken Navigationsmenü auf den Abschnitt "Webhooks"
+  </Step>
+  <Step title="Logs anzeigen">
+    Wählen Sie einen Webhook aus und klicken Sie auf "Logs anzeigen", um den Zustellungsverlauf zu sehen
+  </Step>
+</Steps>
+
+## Nächste Schritte
+
+Nachdem Sie nun verstehen, wie Sie Webhooks implementieren können, sehen Sie sich unsere Best Practices für die Verwendung der Product Graph API an:
+
+<Card title="Best Practices" icon="lightbulb" href="/de/product-graph/best-practices">
+  Erfahren Sie Strategien für die effiziente Nutzung der Product Graph API
+</Card>

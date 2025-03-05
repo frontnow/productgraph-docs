@@ -1,0 +1,503 @@
+---
+title: 'Mehrsprachige Unterstützung'
+description: 'Zugriff auf Produktdaten in mehreren Sprachen mit intelligenten Fallback-Ketten'
+icon: 'language'
+---
+
+# Mehrsprachige Unterstützung
+
+ProductGraph bietet eine robuste mehrsprachige Unterstützung, die es Ihnen ermöglicht, globale Kunden mit lokalisierten Produktinformationen zu bedienen und gleichzeitig die Datenkonsistenz über Sprachen hinweg zu gewährleisten.
+
+<Note>
+Unsere API unterstützt über 40 Sprachen mit automatischen Übersetzungsfunktionen und intelligenten Fallback-Ketten, um sicherzustellen, dass Sie immer die vollständigsten Produktinformationen erhalten.
+</Note>
+
+## Sprachauswahlmethoden
+
+<CardGroup cols={3}>
+  <Card title="Query-Parameter" icon="link" color="#3B82F6">
+    Anfragespezifische Sprachpräferenzen in der URL
+  </Card>
+  <Card title="Request-Header" icon="code" color="#10B981">
+    Sitzungsweite Sprachverhandlung mit HTTP-Headern
+  </Card>
+  <Card title="Kontostandard" icon="gear" color="#F59E0B">
+    Globale Präferenzen in Ihren Kontoeinstellungen
+  </Card>
+</CardGroup>
+
+### Query-Parameter (anfragespezifisch)
+
+Die einfachste Methode, Sprachpräferenzen anzugeben, ist über Query-Parameter:
+
+<CodeGroup>
+```bash Einzelne Sprache
+# Produktinformationen auf Deutsch anfordern
+curl -X GET "https://api.productgraph.org/v1/products/12345?lang=de" \
+  -H "X-API-Key: your-api-key"
+```
+
+```bash Mehrere Sprachen
+# Anfrage mit einer priorisierten Liste von Sprachen
+curl -X GET "https://api.productgraph.org/v1/products/12345?languages=de,en,fr" \
+  -H "X-API-Key: your-api-key"
+```
+</CodeGroup>
+
+### Request-Header (sitzungsspezifisch)
+
+Für konsistente Sprachpräferenzen über mehrere Anfragen hinweg verwenden Sie die standardmäßige HTTP-Sprachverhandlung:
+
+```bash
+# Verwendung des Accept-Language-Headers für die Sprachverhandlung
+curl -X GET "https://api.productgraph.org/v1/products/12345" \
+  -H "X-API-Key: your-api-key" \
+  -H "Accept-Language: de-DE, de;q=0.9, en;q=0.8"
+```
+
+<Tip>
+Der Accept-Language-Header folgt der RFC 7231-Spezifikation und ermöglicht es Ihnen, Sprachpräferenzen mit Qualitätswerten (q-Werten) anzugeben, um die Priorität zu kennzeichnen.
+</Tip>
+
+### Standardeinstellung des Kontos
+
+Konfigurieren Sie Standard-Sprachpräferenzen in Ihren Kontoeinstellungen:
+
+1. Melden Sie sich im [ProductGraph Dashboard](https://dashboard.productgraph.org) an
+2. Navigieren Sie zu **API-Einstellungen** > **Sprachpräferenzen**
+3. Richten Sie Ihre Standardsprache und Fallback-Kette ein
+
+Diese Einstellungen werden automatisch angewendet, wenn keine spezifischen Sprachparameter in der Anfrage angegeben werden.
+
+## Sprach-Fallback-Kette
+
+Die Sprach-Fallback-Kette stellt sicher, dass Sie immer den besten verfügbaren Inhalt erhalten, auch wenn Übersetzungen für Ihre bevorzugte Sprache unvollständig sind.
+
+<Tabs>
+  <Tab title="API-Anfrage">
+    ```json
+    POST /api/v1/products/search
+    {
+      "query": "wireless headphones",
+      "language": {
+        "preferred_language": "de",
+        "fallback_chain": ["en", "fr"]
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Funktionsweise">
+    <Steps>
+      <Step title="Primäre Sprachprüfung">
+        Zuerst versucht das System, Inhalte auf Deutsch (de) abzurufen
+      </Step>
+      <Step title="Erkennung fehlender Inhalte">
+        Wenn einige Felder keine deutschen Übersetzungen haben, prüft das System Englisch (en)
+      </Step>
+      <Step title="Fortgesetzte Fallback">
+        Wenn noch Inhalte fehlen, sucht es nach französischen (fr) Übersetzungen
+      </Step>
+      <Step title="Antwortszusammenstellung">
+        Die endgültige Antwort enthält die besten verfügbaren Inhalte aus allen Sprachen in der Kette
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Sprachindikatoren">
+    Die Antwort enthält eine `language_source`-Eigenschaft für jedes Feld, die angibt, welche Sprache verwendet wurde:
+    
+    ```json
+    "description": {
+      "value": "Premium-Funkkopfhörer mit branchenführender Geräuschunterdrückung...",
+      "language_source": "de"  // Inhalt aus bevorzugter Sprache
+    },
+    "technical_specs": {
+      "value": "Bluetooth 5.0, 30-hour battery life, touch controls...",
+      "language_source": "en"  // Inhalt aus Fallback-Sprache
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Übersetzungsanfragen
+
+Fordern Sie neue Übersetzungen oder Aktualisierungen bestehender Übersetzungen für bestimmte Produkte an.
+
+### Neue Übersetzungen anfordern
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.productgraph.org/v1/products/12345/translate" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "target_languages": ["de", "fr"],
+    "priority": "normal",
+    "fields": ["description", "attributes", "seo"],
+    "callback_url": "https://your-webhook.com/translation-completed"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/products/12345/translate', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    target_languages: ['de', 'fr'],
+    priority: 'normal',
+    fields: ['description', 'attributes', 'seo'],
+    callback_url: 'https://your-webhook.com/translation-completed'
+  })
+});
+
+const data = await response.json();
+console.log('Übersetzungsauftrag erstellt:', data.job_id);
+```
+
+```python Python
+import requests
+import os
+
+api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+url = 'https://api.productgraph.org/v1/products/12345/translate'
+headers = {
+    'X-API-Key': api_key,
+    'Content-Type': 'application/json'
+}
+payload = {
+    'target_languages': ['de', 'fr'],
+    'priority': 'normal',
+    'fields': ['description', 'attributes', 'seo'],
+    'callback_url': 'https://your-webhook.com/translation-completed'
+}
+
+response = requests.post(url, headers=headers, json=payload)
+data = response.json()
+print(f"Übersetzungsauftrag erstellt: {data['job_id']}")
+```
+</CodeGroup>
+
+### Übersetzungsantwort
+
+```json
+{
+  "job_id": "tr_45678",
+  "status": "queued",
+  "estimated_completion": "2023-04-15T16:00:00Z",
+  "languages": ["de", "fr"],
+  "product_id": "12345"
+}
+```
+
+### Übersetzungsprioritätsstufen
+
+<Table>
+  <Thead>
+    <Tr>
+      <Th>Priorität</Th>
+      <Th>Geschätzte Zeit</Th>
+      <Th>Guthabenkosten</Th>
+    </Tr>
+  </Thead>
+  <Tbody>
+    <Tr>
+      <Td>Niedrig</Td>
+      <Td>24-48 Stunden</Td>
+      <Td>1x</Td>
+    </Tr>
+    <Tr>
+      <Td>Normal</Td>
+      <Td>6-12 Stunden</Td>
+      <Td>2x</Td>
+    </Tr>
+    <Tr>
+      <Td>Hoch</Td>
+      <Td>1-3 Stunden</Td>
+      <Td>4x</Td>
+    </Tr>
+    <Tr>
+      <Td>Dringend</Td>
+      <Td>15-30 Minuten</Td>
+      <Td>10x</Td>
+    </Tr>
+  </Tbody>
+</Table>
+
+## Mehrsprachige Antwortstruktur
+
+ProductGraph bietet eine konsistente Struktur für mehrsprachige Inhalte über alle Produktdaten hinweg.
+
+### Textfelder & Inhaltsstrukturen
+
+<Accordion title="Einfache Textfelder">
+  Einfache Textfelder (wie Namen oder Titel) verwenden sprachverschlüsselte Objekte:
+
+  ```json
+  "name": {
+    "en": "Sony WH-1000XM4 Wireless Noise-Canceling Headphones",
+    "de": "Sony WH-1000XM4 Kabellose Noise-Cancelling-Kopfhörer",
+    "fr": "Sony WH-1000XM4 Casque sans fil à réduction de bruit"
+  }
+  ```
+</Accordion>
+
+<Accordion title="Umfangreiche Inhaltsfelder">
+  Umfangreiche Inhaltsfelder sind unter einem `content`-Objekt mit verschiedenen Formaten und Typen organisiert:
+
+  ```json
+  "content": {
+    // Verschiedene Beschreibungsformate für unterschiedliche Anwendungsfälle
+    "short_description": {
+      "en": "Premium wireless headphones with industry-leading noise cancellation and 30-hour battery life.",
+      "de": "Premium-Funkkopfhörer mit branchenführender Geräuschunterdrückung und 30 Stunden Akkulaufzeit."
+    },
+    "description": {
+      "en": "Industry-leading noise cancellation technology helps block out background noise...",
+      "de": "Branchenführende Geräuschunterdrückungstechnologie hilft, Hintergrundgeräusche auszublenden..."
+    },
+    "markdown_description": {
+      "en": "# Sony WH-1000XM4 Wireless Headphones\n\n## Industry-Leading Noise Cancellation...",
+      "de": "# Sony WH-1000XM4 Kabellose Kopfhörer\n\n## Branchenführende Geräuschunterdrückung..."
+    },
+    
+    // Array mehrsprachiger Hauptvorteile
+    "key_benefits": [
+      {
+        "en": "Industry-leading noise cancellation",
+        "de": "Branchenführende Geräuschunterdrückung"
+      },
+      {
+        "en": "Exceptional sound quality with 40mm drivers",
+        "de": "Außergewöhnliche Klangqualität mit 40-mm-Treibern"
+      }
+    ],
+    
+    // Andere spezialisierte Inhaltstypen
+    "technical_description": {
+      "en": "The WH-1000XM4 features Sony's HD Noise Canceling Processor QN1...",
+      "de": "Der WH-1000XM4 verfügt über Sonys HD Noise Canceling Processor QN1..."
+    },
+    
+    // Häufig gestellte Fragen als strukturierte Daten
+    "faq": [
+      {
+        "question": {
+          "en": "Can I connect to multiple devices simultaneously?",
+          "de": "Kann ich mich mit mehreren Geräten gleichzeitig verbinden?"
+        },
+        "answer": {
+          "en": "Yes, the WH-1000XM4 supports multipoint connection...",
+          "de": "Ja, der WH-1000XM4 unterstützt Multipoint-Verbindung..."
+        }
+      }
+    ]
+  }
+  ```
+</Accordion>
+
+<Accordion title="Attribute">
+  Attribute unterstützen lokalisierte Schlüssel und Werte, verschachtelte Hierarchien und ISO-standardisierte Messungen:
+
+  ```json
+  "attributes": {
+    "color": {
+      "en": {
+        "key": "Color",
+        "value": "Black"
+      },
+      "de": {
+        "key": "Farbe",
+        "value": "schwarz"
+      }
+    },
+    "technical": {
+      "en": {
+        "key": "Technical",
+        "value": null
+      },
+      "de": {
+        "key": "Technisch",
+        "value": null
+      },
+      "children": {
+        "connectivity": {
+          "en": {
+            "key": "Connectivity",
+            "value": "Bluetooth 5.0"
+          },
+          "de": {
+            "key": "Konnektivität",
+            "value": "Bluetooth 5.0"
+          }
+        },
+        "battery": {
+          "en": {
+            "key": "Battery",
+            "value": null
+          },
+          "de": {
+            "key": "Akku",
+            "value": null
+          },
+          "children": {
+            "battery_life": {
+              "value": 30,
+              "unit": "h",
+              "en": {
+                "key": "Battery Life",
+                "formatted_value": "30 hours"
+              },
+              "de": {
+                "key": "Akkulaufzeit",
+                "formatted_value": "30 Stunden"
+              }
+            },
+            "charging_time": {
+              "value": 3,
+              "unit": "h",
+              "en": {
+                "key": "Charging Time",
+                "formatted_value": "3 hours"
+              },
+              "de": {
+                "key": "Ladezeit", 
+                "formatted_value": "3 Stunden"
+              }
+            }
+          }
+        }
+      }
+    },
+    "weight": {
+      "value": 254,
+      "unit": "g",
+      "en": {
+        "key": "Weight",
+        "formatted_value": "254 grams"
+      },
+      "en-US": {
+        "key": "Weight",
+        "formatted_value": "8.96 ounces"
+      },
+      "de": {
+        "key": "Gewicht",
+        "formatted_value": "254 Gramm"
+      }
+    }
+  }
+  ```
+  
+  <Tip>
+    Beachten Sie, wie numerische Werte mit Einheiten regionale Formatierungsvarianten unterstützen, wie z.B. metrische vs. imperiale Einheiten.
+  </Tip>
+</Accordion>
+
+<Accordion title="Medieninhalte">
+  Medieninhalte (Bilder, Videos, Dokumente) verwenden einfache Sprachindikatoren:
+
+  ```json
+  "images": [
+    {
+      "url": "https://example.com/images/product-front.jpg",
+      "language": "neutral"  // Keine spezifische Sprache
+    }
+  ],
+  "videos": [
+    {
+      "url": "https://example.com/videos/product-overview.mp4",
+      "language": "en"  // Englisches Video
+    },
+    {
+      "url": "https://example.com/videos/product-overview-de.mp4",
+      "language": "de"  // Deutsches Video
+    }
+  ],
+  "documents": [
+    {
+      "type": "user_manual",
+      "url": "https://example.com/docs/manual-en.pdf",
+      "language": "en"
+    }
+  ]
+  ```
+</Accordion>
+
+## Übersetzungsstatus
+
+<Tabs>
+  <Tab title="Übersetzungsstatus anfordern">
+    Um den Übersetzungsstatus für ein Produkt zu sehen, fügen Sie den Parameter `include_translation_status` hinzu:
+
+    ```bash
+    curl -X GET "https://api.productgraph.org/v1/products/12345?include_translation_status=true" \
+      -H "X-API-Key: your-api-key"
+    ```
+  </Tab>
+  <Tab title="Statusantwort">
+    ```json
+    "translation_status": {
+      "en": {"completion_percentage": 100, "last_updated": "2023-04-10T14:22:31Z"},
+      "de": {"completion_percentage": 95, "last_updated": "2023-04-11T16:33:42Z"},
+      "fr": {"completion_percentage": 42, "last_updated": "2023-04-08T11:15:27Z"}
+    }
+    ```
+  </Tab>
+  <Tab title="Statusfelder">
+    <Table>
+      <Thead>
+        <Tr>
+          <Th>Feld</Th>
+          <Th>Beschreibung</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        <Tr>
+          <Td>completion_percentage</Td>
+          <Td>Prozentsatz des übersetzten Inhalts für diese Sprache (0-100)</Td>
+        </Tr>
+        <Tr>
+          <Td>last_updated</Td>
+          <Td>ISO 8601-Zeitstempel der neuesten Übersetzungsaktualisierung</Td>
+        </Tr>
+        <Tr>
+          <Td>fields_pending</Td>
+          <Td>(Optional) Array von Feldern, die noch übersetzt werden müssen</Td>
+        </Tr>
+        <Tr>
+          <Td>quality_score</Td>
+          <Td>(Optional) Übersetzungsqualitätsbewertung, wenn eine Qualitätsbewertung angefordert wurde</Td>
+        </Tr>
+      </Tbody>
+    </Table>
+  </Tab>
+</Tabs>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Sprach-Fallback-Ketten verwenden">
+    Geben Sie immer eine Fallback-Kette an, um die vollständigsten Produktinformationen zu gewährleisten, auch wenn Übersetzungen für einige Felder in Ihrer bevorzugten Sprache fehlen.
+  </Accordion>
+  <Accordion title="Nur benötigte Sprachen anfordern">
+    Um die Leistung zu optimieren und die Antwortgröße zu minimieren, fordern Sie nur die Sprachen an, die Sie für Ihren aktuellen Anwendungsfall benötigen.
+  </Accordion>
+  <Accordion title="Übersetzungen cachen">
+    Da sich Übersetzungen nicht häufig ändern, sollten Sie überlegen, übersetzte Inhalte zu cachen, um API-Aufrufe zu reduzieren und die Leistung zu verbessern.
+  </Accordion>
+  <Accordion title="Mit verschiedenen Lokalisierungen testen">
+    Denken Sie daran, dass einige Sprachen regionale Varianten haben (z.B. en-US vs. en-GB). Testen Sie Ihre Anwendung mit verschiedenen Lokalisierungen, um eine korrekte Handhabung sicherzustellen.
+  </Accordion>
+  <Accordion title="Webhooks für Übersetzungen verwenden">
+    Wenn Sie neue Übersetzungen anfordern, geben Sie immer eine Webhook-Callback-URL an, um benachrichtigt zu werden, wenn Übersetzungen abgeschlossen sind, anstatt die API abzufragen.
+  </Accordion>
+</AccordionGroup>
+
+## Nächste Schritte
+
+Nachdem Sie nun unsere mehrsprachigen Funktionen verstehen, erfahren Sie, wie Sie nach Produkten in unserer Datenbank suchen können:
+
+<Card title="Such-API" icon="magnifying-glass" href="/de/product-graph/search">
+  Entdecken Sie, wie Sie Produkte mit unserer leistungsstarken Suchmaschine finden und filtern können
+</Card>

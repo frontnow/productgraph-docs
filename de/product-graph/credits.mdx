@@ -1,0 +1,281 @@
+---
+title: 'Guthabenverwaltung'
+description: 'Verstehen des kreditbasierten Systems für die API-Nutzung'
+icon: 'credit-card'
+---
+
+# Guthabenverwaltung
+
+Die ProductGraph API verwendet ein kreditbasiertes System, um Flexibilität zu bieten und gleichzeitig eine faire Nutzung zu gewährleisten. Diese Seite erklärt, wie Guthaben funktionieren, wie sie verbraucht werden und wie man sie effektiv verwalten kann.
+
+<Note>
+Guthaben sind von Ihren API-Ratenbegrenzungen getrennt. Während Ratenbegrenzungen kontrollieren, wie viele Anfragen Sie in einem Zeitraum stellen können, bestimmt das Guthaben das Gesamtvolumen der Operationen, die Sie durchführen können.
+</Note>
+
+## Wie Guthaben funktionieren
+
+<CardGroup cols={2}>
+  <Card title="Abonnementzuteilung" icon="calendar" color="#3B82F6">
+    Guthaben werden monatlich basierend auf Ihrem Abonnementplan zugeteilt
+  </Card>
+  <Card title="Verbrauchsmodell" icon="chart-simple" color="#10B981">
+    Operationen verbrauchen unterschiedliche Mengen an Guthaben basierend auf der Komplexität
+  </Card>
+  <Card title="Übertragungsrichtlinie" icon="arrows-rotate" color="#F59E0B">
+    Ungenutztes Guthaben kann je nach Ihrem Plan in den nächsten Monat übertragen werden
+  </Card>
+  <Card title="Zusatzpakete" icon="plus" color="#8B5CF6">
+    Kaufen Sie bei Bedarf zusätzliche Guthabenpakete für Zeiten mit hohem Volumen
+  </Card>
+</CardGroup>
+
+## Guthabenverbrauch
+
+Verschiedene API-Operationen verbrauchen unterschiedliche Mengen an Guthaben, basierend auf ihrer Komplexität und den Ressourcenanforderungen. Hier ist eine Aufschlüsselung der Guthabenkosten für gängige Operationen:
+
+<Table>
+  <Thead>
+    <Tr>
+      <Th>Operation</Th>
+      <Th>Guthabenkosten</Th>
+      <Th>Hinweise</Th>
+    </Tr>
+  </Thead>
+  <Tbody>
+    <Tr>
+      <Td>Einfache Suche</Td>
+      <Td>1</Td>
+      <Td>Enthält den ersten Produktdetailabruf</Td>
+    </Tr>
+    <Tr>
+      <Td>Erweiterte Suche</Td>
+      <Td>2-5</Td>
+      <Td>Abhängig von Filtern und Komplexität</Td>
+    </Tr>
+    <Tr>
+      <Td>Produktdetailabruf</Td>
+      <Td>1</Td>
+      <Td>Pro Produkt nach dem ersten Suchergebnis</Td>
+    </Tr>
+    <Tr>
+      <Td>Bildanalyse</Td>
+      <Td>3</Td>
+      <Td>KI-gestützte Bildanreicherung</Td>
+    </Tr>
+    <Tr>
+      <Td>Mehrsprachige Übersetzung</Td>
+      <Td>2</Td>
+      <Td>Pro Sprachpaar</Td>
+    </Tr>
+    <Tr>
+      <Td>Zugriff auf historische Daten</Td>
+      <Td>1-3</Td>
+      <Td>Abhängig vom Zeitraum</Td>
+    </Tr>
+    <Tr>
+      <Td>Batch-Operationen</Td>
+      <Td>Variiert</Td>
+      <Td>Rabattiert basierend auf Volumen</Td>
+    </Tr>
+  </Tbody>
+</Table>
+
+<Tip>
+Sie können Ihren Guthabenverbrauch optimieren, indem Sie Caching-Strategien implementieren und wenn möglich Batch-Operationen verwenden.
+</Tip>
+
+## Guthabenverwaltungs-API
+
+### Guthabenstand prüfen
+
+Verwenden Sie diesen Endpunkt, um Ihren aktuellen Guthabenstand und Nutzungsstatistiken zu überprüfen.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/credits" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+async function checkCredits() {
+  const response = await fetch('https://api.productgraph.org/v1/credits', {
+    headers: {
+      'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+    }
+  });
+  
+  return await response.json();
+}
+```
+
+```python Python
+import requests
+import os
+
+def check_credits():
+    api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+    headers = {'X-API-Key': api_key}
+    
+    response = requests.get('https://api.productgraph.org/v1/credits', headers=headers)
+    return response.json()
+```
+</CodeGroup>
+
+### Antwort
+
+```json
+{
+  "total_credits": 1000,
+  "used_credits": 250,
+  "remaining_credits": 750,
+  "plan": "Startup",
+  "credits_reset_at": "2023-05-01T00:00:00Z"
+}
+```
+
+### Guthabennutzungsverlauf anzeigen
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/credits/history" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+async function getCreditHistory() {
+  const response = await fetch('https://api.productgraph.org/v1/credits/history', {
+    headers: {
+      'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+    }
+  });
+  
+  return await response.json();
+}
+```
+
+```python Python
+import requests
+import os
+
+def get_credit_history():
+    api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+    headers = {'X-API-Key': api_key}
+    
+    response = requests.get('https://api.productgraph.org/v1/credits/history', headers=headers)
+    return response.json()
+```
+</CodeGroup>
+
+### Antwort
+
+```json
+{
+  "history": [
+    {
+      "date": "2023-04-14",
+      "used_credits": 45,
+      "operations": {
+        "search": 20,
+        "product_details": 15,
+        "image_analysis": 10
+      }
+    },
+    {
+      "date": "2023-04-13",
+      "used_credits": 62,
+      "operations": {
+        "search": 25,
+        "product_details": 22,
+        "image_analysis": 15
+      }
+    }
+  ],
+  "total_pages": 10,
+  "current_page": 1
+}
+```
+
+## Abonnementpläne
+
+<Tabs>
+  <Tab title="Developer">
+    <Card>
+      - 1.000 Guthaben pro Monat
+      - Keine Übertragung
+      - 49 €/Monat
+      - Ideal für Entwicklung und Tests
+    </Card>
+  </Tab>
+  <Tab title="Startup">
+    <Card>
+      - 10.000 Guthaben pro Monat
+      - Maximal 5.000 Guthaben übertragbar
+      - 199 €/Monat
+      - Perfekt für kleine Unternehmen und Startups
+    </Card>
+  </Tab>
+  <Tab title="Business">
+    <Card>
+      - 50.000 Guthaben pro Monat
+      - Maximal 25.000 Guthaben übertragbar
+      - 499 €/Monat
+      - Konzipiert für wachsende Unternehmen mit moderatem Volumen
+    </Card>
+  </Tab>
+  <Tab title="Enterprise">
+    <Card>
+      - Individuelle Guthabenzuteilung
+      - Flexible Übertragungsrichtlinie
+      - Individuelles Preismodell
+      - Für Unternehmenskunden mit hohem Volumen
+    </Card>
+  </Tab>
+</Tabs>
+
+## Zusätzliche Guthabenpakete
+
+Benötigen Sie zusätzliches Guthaben? Sie können bei Bedarf Zusatzpakete erwerben:
+
+<CardGroup cols={3}>
+  <Card title="Kleines Paket" icon="box" color="#4F46E5">
+    5.000 Guthaben für 79 € (1,6 Cent pro Guthaben)
+  </Card>
+  <Card title="Mittleres Paket" icon="boxes-stacked" color="#4F46E5">
+    25.000 Guthaben für 299 € (1,2 Cent pro Guthaben)
+  </Card>
+  <Card title="Großes Paket" icon="warehouse" color="#4F46E5">
+    100.000 Guthaben für 999 € (1,0 Cent pro Guthaben)
+  </Card>
+</CardGroup>
+
+<Note>
+Zusatzpakete laufen nie ab, werden aber erst nach Aufbrauchen Ihrer monatlichen Zuteilung verwendet.
+</Note>
+
+## Best Practices für die Guthabenverwaltung
+
+<AccordionGroup>
+  <Accordion title="Überwachen Sie Ihren Guthabenverbrauch">
+    Überprüfen Sie regelmäßig Ihren Guthabenstand und Nutzungsmuster, um unerwarteten Verbrauch zu vermeiden. Richten Sie Benachrichtigungen ein, wenn Ihr Guthaben unter einen bestimmten Schwellenwert fällt.
+  </Accordion>
+  <Accordion title="Caching implementieren">
+    Cachen Sie API-Antworten, wenn es angemessen ist, um redundante API-Aufrufe zu reduzieren. Dies ist besonders nützlich für Produktdaten, die sich nicht häufig ändern.
+  </Accordion>
+  <Accordion title="Batch-Operationen verwenden">
+    Verwenden Sie wann immer möglich Batch-Operationen, um mehrere Elemente in einer einzigen Anfrage zu verarbeiten, was in der Regel Guthabenrabatte im Vergleich zu einzelnen Operationen bietet.
+  </Accordion>
+  <Accordion title="Suchanfragen optimieren">
+    Machen Sie Ihre Suchanfragen so spezifisch wie möglich, um die Anzahl der zu verarbeitenden Ergebnisse zu reduzieren, was auf lange Sicht Guthaben sparen kann.
+  </Accordion>
+  <Accordion title="Planung für saisonales Volumen">
+    Wenn Ihr Unternehmen saisonale Spitzen hat, erwägen Sie den Kauf von Zusatzpaketen vor Zeiten mit hohem Volumen oder ein temporäres Upgrade Ihres Abonnements.
+  </Accordion>
+</AccordionGroup>
+
+## Nächste Schritte
+
+Nachdem Sie nun verstehen, wie Guthaben funktionieren, erfahren Sie mehr über unsere mehrsprachigen Unterstützungsfunktionen:
+
+<Card title="Mehrsprachige Unterstützung" icon="language" href="/de/product-graph/multilanguage">
+  Entdecken Sie, wie Sie auf Produktdaten in mehreren Sprachen zugreifen können
+</Card>

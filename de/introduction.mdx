@@ -1,0 +1,267 @@
+---
+title: "Product Graph API Dokumentation"
+description: "Umfassende Dokumentation für die Integration mit der Product Graph API"
+icon: "house"
+---
+
+<img
+  className="block dark:hidden"
+  src="/images/hero-light.jpeg"
+  alt="Product Graph API - Light Mode"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/hero-dark.jpeg"
+  alt="Product Graph API - Dark Mode"
+/>
+
+# Willkommen bei der Product Graph API
+
+Die Product Graph API bietet ein umfassendes Set an Werkzeugen für den Zugriff, die Anreicherung und die Verwaltung von Produktdaten in mehreren Sprachen. Mit leistungsstarken Suchfunktionen, mehrsprachiger Unterstützung und fortschrittlicher Analytik hilft unsere API Ihnen, bessere E-Commerce-Erlebnisse zu schaffen.
+
+## Warum Product Graph?
+
+Produktdaten sind oft fragmentiert, inkonsistent und in Sprachsilos gefangen. Product Graph löst diese Herausforderungen durch:
+
+- **Vereinheitlichte Produktinformationen** - Zugriff auf umfassende Produktdaten aus einer einzigen Quelle
+- **Mehrsprachige Unterstützung** - Erhalten Sie Produktinformationen in mehreren Sprachen mit einem einzigen API-Aufruf
+- **Erweiterte Suche** - Finden Sie Produkte über Namen, GTINs, URLs oder eine Kombination von Parametern
+- **Historische Verfolgung** - Überwachen Sie, wie sich Produktdaten im Laufe der Zeit ändern
+- **Datenanreicherung** - Verbessern Sie Produktlisten mit hochwertigen Beschreibungen, Attributen und Medien
+
+## Kurzanleitung zur Authentifizierung
+
+```bash
+# Alle API-Anfragen erfordern einen API-Schlüssel im Header
+curl -X GET "https://api.productgraph.org/v1/credits" \
+  -H "X-API-Key: your-api-key"
+```
+
+<Note>
+  Ihr API-Schlüssel ist im [Product Graph Dashboard](https://dashboard.productgraph.org) verfügbar. 
+  Halten Sie ihn sicher und geben Sie ihn niemals im Client-seitigen Code preis!
+</Note>
+
+## Erste Schritte
+
+<CardGroup cols={2}>
+  <Card
+    title="API-Überblick"
+    icon="circle-info"
+    href="/de/product-graph/overview"
+  >
+    Erfahren Sie mehr über die Kernkonzepte und Funktionen der Product Graph API
+  </Card>
+  <Card
+    title="Authentifizierung"
+    icon="key"
+    href="/de/product-graph/authentication"
+  >
+    Verstehen Sie, wie Sie Ihre Anfragen an die API authentifizieren
+  </Card>
+  <Card
+    title="Guthabensystem"
+    icon="coins"
+    href="/de/product-graph/credits"
+  >
+    Erfahren Sie, wie unser kreditbasiertes Nutzungssystem funktioniert
+  </Card>
+  <Card
+    title="Mehrsprachige Unterstützung"
+    icon="language"
+    href="/de/product-graph/multilanguage"
+  >
+    Entdecken Sie unsere leistungsstarken mehrsprachigen Funktionen
+  </Card>
+</CardGroup>
+
+## Beispiel: Suche nach Produkten
+
+```javascript
+// Suche nach Sony-Funkkopfhörern auf Englisch und Deutsch
+const searchData = {
+  query: "wireless headphones",
+  languages: ["en", "de"],
+  filter: {
+    brand: "Sony"
+  }
+};
+
+fetch("https://api.productgraph.org/v1/search", {
+  method: "POST",
+  headers: {
+    "X-API-Key": apiKey,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(searchData)
+})
+.then(response => response.json())
+.then(data => {
+  console.log("Suchauftrag initiiert:", data);
+  // Die Suche ist asynchron, überprüfen Sie die Ergebnisse mit job_id
+})
+.catch(error => console.error("Fehler:", error));
+```
+
+## Kernfunktionen
+
+<CardGroup cols={3}>
+  <Card
+    title="Suche"
+    icon="magnifying-glass"
+    href="/de/product-graph/search"
+  >
+    Leistungsstarke Produktsuche mit mehrsprachiger Unterstützung
+  </Card>
+  <Card
+    title="Markendaten"
+    icon="tag"
+    href="/de/product-graph/brand"
+  >
+    Zugriff auf umfassende Markeninformationen
+  </Card>
+  <Card
+    title="Produktdaten"
+    icon="box"
+    href="/de/product-graph/product-data"
+  >
+    Detaillierte Produktinformationen in mehreren Sprachen
+  </Card>
+  <Card
+    title="Historische Daten"
+    icon="clock-rotate-left"
+    href="/de/product-graph/historical-data"
+  >
+    Verfolgen Sie Änderungen an Produktinformationen im Laufe der Zeit
+  </Card>
+  <Card
+    title="Analytik"
+    icon="chart-mixed"
+    href="/de/product-graph/analytics"
+  >
+    Einblicke in API-Nutzung und -Optimierung
+  </Card>
+  <Card
+    title="Webhooks"
+    icon="bell"
+    href="/de/product-graph/webhooks"
+  >
+    Echtzeit-Benachrichtigungen über wichtige Ereignisse
+  </Card>
+</CardGroup>
+
+## Asynchrone Verarbeitung
+
+Viele Product Graph API-Operationen werden aus Effizienzgründen asynchron verarbeitet:
+
+```javascript
+// Überprüfen Sie den Status eines Suchauftrags
+fetch(`https://api.productgraph.org/v1/search/${jobId}`, {
+  headers: {
+    "X-API-Key": apiKey
+  }
+})
+.then(response => response.json())
+.then(data => {
+  if (data.status === "completed") {
+    console.log("Suchergebnisse:", data.results);
+  } else {
+    console.log("Auftragsstatus:", data.status);
+  }
+})
+```
+
+Für Produktionsanwendungen verwenden Sie [Webhooks](/de/product-graph/webhooks), um Benachrichtigungen zu erhalten, wenn Aufträge abgeschlossen sind.
+
+## Implementierungsleitfäden
+
+<CardGroup cols={2}>
+  <Card
+    title="Best Practices"
+    icon="lightbulb"
+    href="/de/product-graph/best-practices"
+  >
+    Strategien für die effektive Nutzung der Product Graph API
+  </Card>
+  <Card
+    title="Fehlerbehandlung"
+    icon="triangle-exclamation"
+    href="/de/product-graph/error-handling"
+  >
+    Erfahren Sie, wie Sie API-Fehler behandeln und beheben können
+  </Card>
+</CardGroup>
+
+## Beispielantwort: Produktdaten
+
+```json
+{
+  "id": "prod_98765",
+  "name": {
+    "en": "Sony WH-1000XM4 Wireless Noise-Canceling Headphones",
+    "de": "Sony WH-1000XM4 Kabellose Noise-Cancelling-Kopfhörer"
+  },
+  "gtin": "4548736112001",
+  "url": "https://example.com/products/sony-wh1000xm4",
+  "price": 349.99,
+  "brand": {
+    "id": "brand_sony",
+    "name": "Sony"
+  },
+  "content": {
+    "description": {
+      "en": "Industry-leading noise cancellation technology...",
+      "de": "Branchenführende Geräuschunterdrückungstechnologie..."
+    }
+  }
+}
+```
+
+## API-Referenz
+
+Erkunden Sie unsere ausführliche API-Referenzdokumentation für eingehende Informationen zu allen verfügbaren Endpunkten.
+
+<Card
+  title="API-Referenz"
+  icon="code"
+  href="/de/api-reference/introduction"
+>
+  Umfassende API-Endpunkt-Dokumentation
+</Card>
+
+## Bereit zum Entwickeln?
+
+Beginnen Sie mit unserem [Schnellstartleitfaden](/de/quickstart), um in wenigen Minuten mit funktionierenden Codebeispielen einsatzbereit zu sein.
+
+## Brauchen Sie Hilfe?
+
+<CardGroup cols={2}>
+  <Card
+    title="Entwicklerportal"
+    icon="browser"
+    href="https://productgraph.org/developer"
+  >
+    Zugriff auf Entwicklertools und Ressourcen
+  </Card>
+  <Card
+    title="API-Status"
+    icon="server"
+    href="https://status.productgraph.org"
+  >
+    Überprüfen Sie den aktuellen API-Status und Vorfälle
+  </Card>
+  <Card
+    title="Support"
+    icon="headset"
+    href="https://support.productgraph.org"
+  >
+    Kontaktieren Sie unser Support-Team für Unterstützung
+  </Card>
+  <Card
+    title="API-Dashboard"
+    icon="gauge-high"
+    href="https://dashboard.productgraph.org"
+  >
+    Verwalten Sie Ihr API-Konto und Analytik
+  </Card>
+</CardGroup>

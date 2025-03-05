@@ -1,0 +1,570 @@
+---
+title: 'Marken-API'
+description: 'Zugriff auf umfassende Informationen über Produktmarken'
+icon: 'building'
+---
+
+# Marken-API
+
+Die Marken-API bietet Zugriff auf umfassende Informationen über Produktmarken, einschließlich ihrer Identität, Werte und Unternehmensdetails. Diese Daten können verwendet werden, um Produktlisten zu bereichern, markenspezifische Seiten zu erstellen und eine konsistente Markendarstellung auf Ihrer Plattform sicherzustellen.
+
+<Note>
+Markeninformationen werden regelmäßig aktualisiert, um die neuesten Unternehmensänderungen, Rebranding-Initiativen und neue Markeneinträge widerzuspiegeln.
+</Note>
+
+## Übersicht über Markeninformationen
+
+<CardGroup cols={2}>
+  <Card title="Markenidentität" icon="id-card" color="#3B82F6">
+    Offizielle Namen, Logos und visuelle Identitätselemente
+  </Card>
+  <Card title="Unternehmensdetails" icon="building" color="#10B981">
+    Hauptsitz, Gründungsdatum und Unternehmensstruktur
+  </Card>
+  <Card title="Markenwerte" icon="heart" color="#F59E0B">
+    Leitbilder, Werte und Markenpositionierung
+  </Card>
+  <Card title="Markenbeziehungen" icon="diagram-project" color="#8B5CF6">
+    Muttergesellschaften, Tochtergesellschaften und Markensparten
+  </Card>
+</CardGroup>
+
+## Markendetails abrufen
+
+Rufen Sie umfassende Informationen über eine bestimmte Marke anhand ihrer eindeutigen Kennung ab.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/brands/brand_sony" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/brands/brand_sony', {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const brandData = await response.json();
+console.log('Markendetails:', brandData);
+```
+
+```python Python
+import requests
+import os
+
+api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+url = 'https://api.productgraph.org/v1/brands/brand_sony'
+headers = {'X-API-Key': api_key}
+
+response = requests.get(url, headers=headers)
+brand_data = response.json()
+print(f"Markendetails: {brand_data}")
+```
+</CodeGroup>
+
+### Antwort
+
+<Tabs>
+  <Tab title="JSON-Antwort">
+    ```json
+    {
+      "id": "brand_sony",
+      "name": "Sony",
+      "searchable_aliases": ["sony corporation", "sony electronics"],
+      "established": 1946,
+      "display_name": {
+        "en": "Brand",
+        "de": "Marke"
+      },
+      "headquarters": {
+        "city": "Tokyo",
+        "country": "Japan"
+      },
+      "brand_values": [
+        {
+          "name": {
+            "en": "Innovation",
+            "de": "Innovation"
+          },
+          "description": {
+            "en": "Pushing the boundaries of what's possible",
+            "de": "Die Grenzen des Möglichen verschieben"
+          }
+        }
+      ],
+      "brand_identity": {
+        "logo": {
+          "primary_url": "https://example.com/logos/sony_logo_primary.svg",
+          "monochrome_url": "https://example.com/logos/sony_logo_mono.svg"
+        }
+      },
+      "divisions": [
+        {
+          "name": "Sony Electronics",
+          "products": ["TVs", "Audio", "Cameras"]
+        }
+      ]
+    }
+    ```
+  </Tab>
+  <Tab title="Feldbeschreibungen">
+    <ResponseField name="id" type="string">
+      Eindeutige Kennung für die Marke.
+    </ResponseField>
+    
+    <ResponseField name="name" type="string">
+      Offizieller Markenname.
+    </ResponseField>
+    
+    <ResponseField name="searchable_aliases" type="array">
+      Alternative Namen und häufige Variationen, die zur Suche nach dieser Marke verwendet werden.
+    </ResponseField>
+    
+    <ResponseField name="established" type="number">
+      Jahr der Markengründung.
+    </ResponseField>
+    
+    <ResponseField name="display_name" type="object">
+      Lokalisierte Anzeigebezeichnungen für das Label "Marke" in verschiedenen Sprachen.
+    </ResponseField>
+    
+    <ResponseField name="headquarters" type="object">
+      Standortinformationen für den Hauptsitz der Marke.
+      
+      <Expandable title="headquarters-Eigenschaften">
+        <ResponseField name="city" type="string">
+          Stadt, in der sich der Hauptsitz befindet.
+        </ResponseField>
+        
+        <ResponseField name="country" type="string">
+          Land, in dem sich der Hauptsitz befindet.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    
+    <ResponseField name="brand_values" type="array">
+      Kernwerte und Grundsätze der Marke in mehreren Sprachen.
+    </ResponseField>
+    
+    <ResponseField name="brand_identity" type="object">
+      Visuelle Identitätselemente für die Marke.
+      
+      <Expandable title="brand_identity-Eigenschaften">
+        <ResponseField name="logo" type="object">
+          Logo-Bilder in verschiedenen Formaten.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    
+    <ResponseField name="divisions" type="array">
+      Markensparten oder Untermarken innerhalb der Hauptmarke.
+    </ResponseField>
+  </Tab>
+</Tabs>
+
+## Marken suchen
+
+Suchen Sie nach Marken anhand verschiedener Kriterien wie Name, Land oder Gründungsjahr.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/brands/search?query=Sony&established_after=1940&country=Japan" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  query: 'Sony',
+  established_after: 1940,
+  country: 'Japan'
+});
+
+const response = await fetch(`https://api.productgraph.org/v1/brands/search?${params}`, {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const searchResults = await response.json();
+console.log(`${searchResults.total} Marken gefunden`);
+```
+
+```python Python
+import requests
+import os
+
+api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+url = 'https://api.productgraph.org/v1/brands/search'
+headers = {'X-API-Key': api_key}
+params = {
+    'query': 'Sony',
+    'established_after': 1940,
+    'country': 'Japan'
+}
+
+response = requests.get(url, headers=headers, params=params)
+search_results = response.json()
+print(f"{search_results['total']} Marken gefunden")
+```
+</CodeGroup>
+
+### Abfrageparameter
+
+<ParamField query="query" type="string">
+  Textsuche nach Markennamen und Aliassen.
+</ParamField>
+
+<ParamField query="established_after" type="number">
+  Filter für Marken, die nach dem angegebenen Jahr gegründet wurden.
+</ParamField>
+
+<ParamField query="established_before" type="number">
+  Filter für Marken, die vor dem angegebenen Jahr gegründet wurden.
+</ParamField>
+
+<ParamField query="country" type="string">
+  Filter nach Land des Hauptsitzes.
+</ParamField>
+
+<ParamField query="industry" type="string">
+  Filter nach Branchensektor (z.B. "Electronics", "Automotive").
+</ParamField>
+
+<ParamField query="page" type="number" default="1">
+  Seitennummer für paginierte Ergebnisse.
+</ParamField>
+
+<ParamField query="page_size" type="number" default="20">
+  Anzahl der Ergebnisse pro Seite (max. 100).
+</ParamField>
+
+### Antwort
+
+```json
+{
+  "results": [
+    {
+      "id": "brand_sony",
+      "name": "Sony",
+      "established": 1946,
+      "headquarters": {
+        "country": "Japan"
+      },
+      "logo_url": "https://example.com/logos/sony_logo.svg"
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "pages": 1
+}
+```
+
+<ResponseField name="results" type="array">
+  Array von Markenobjekten, die den Suchkriterien entsprechen.
+</ResponseField>
+
+<ResponseField name="total" type="number">
+  Gesamtzahl der Marken, die den Suchkriterien entsprechen.
+</ResponseField>
+
+<ResponseField name="page" type="number">
+  Aktuelle Seitennummer.
+</ResponseField>
+
+<ResponseField name="pages" type="number">
+  Gesamtzahl der Seiten.
+</ResponseField>
+
+## Markenprodukte abrufen
+
+Rufen Sie eine Liste von Produkten ab, die mit einer bestimmten Marke verbunden sind.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/brands/brand_sony/products" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/brands/brand_sony/products', {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const products = await response.json();
+console.log(`${products.total} Produkte für diese Marke gefunden`);
+```
+
+```python Python
+import requests
+import os
+
+api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+url = 'https://api.productgraph.org/v1/brands/brand_sony/products'
+headers = {'X-API-Key': api_key}
+
+response = requests.get(url, headers=headers)
+products = response.json()
+print(f"{products['total']} Produkte für diese Marke gefunden")
+```
+</CodeGroup>
+
+### Abfrageparameter
+
+<ParamField query="category" type="string">
+  Filter nach Produktkategorie.
+</ParamField>
+
+<ParamField query="sort" type="string" default="popularity">
+  Produkte sortieren nach: `popularity`, `newest` oder `name`.
+</ParamField>
+
+<ParamField query="page" type="number" default="1">
+  Seitennummer für paginierte Ergebnisse.
+</ParamField>
+
+<ParamField query="page_size" type="number" default="20">
+  Anzahl der Produkte pro Seite (max. 100).
+</ParamField>
+
+### Antwort
+
+```json
+{
+  "brand": {
+    "id": "brand_sony",
+    "name": "Sony"
+  },
+  "products": [
+    {
+      "id": "prod_98765",
+      "name": {
+        "en": "Sony WH-1000XM4 Wireless Noise-Canceling Headphones",
+        "de": "Sony WH-1000XM4 Kabellose Noise-Cancelling-Kopfhörer"
+      },
+      "gtin": "4548736112001",
+      "main_image_url": "https://example.com/images/sony-wh1000xm4.jpg",
+      "category": "Headphones"
+    }
+  ],
+  "total": 145,
+  "page": 1,
+  "pages": 8
+}
+```
+
+## Markenvergleich
+
+Vergleichen Sie mehrere Marken, um ihre Positionierung, Werte und Unterschiede zu verstehen.
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.productgraph.org/v1/brands/compare" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "brand_ids": ["brand_sony", "brand_bose"],
+    "fields": ["established", "headquarters", "brand_values"]
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/brands/compare', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    brand_ids: ['brand_sony', 'brand_bose'],
+    fields: ['established', 'headquarters', 'brand_values']
+  })
+});
+
+const comparison = await response.json();
+console.log('Markenvergleich:', comparison);
+```
+
+```python Python
+import requests
+import os
+
+api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+url = 'https://api.productgraph.org/v1/brands/compare'
+headers = {
+    'X-API-Key': api_key,
+    'Content-Type': 'application/json'
+}
+payload = {
+    'brand_ids': ['brand_sony', 'brand_bose'],
+    'fields': ['established', 'headquarters', 'brand_values']
+}
+
+response = requests.post(url, headers=headers, json=payload)
+comparison = response.json()
+print(f"Markenvergleich: {comparison}")
+```
+</CodeGroup>
+
+### Antwort
+
+```json
+{
+  "brands": [
+    {
+      "id": "brand_sony",
+      "name": "Sony",
+      "established": 1946,
+      "headquarters": {
+        "country": "Japan"
+      },
+      "brand_values": [
+        {
+          "name": {
+            "en": "Innovation"
+          }
+        }
+      ]
+    },
+    {
+      "id": "brand_bose",
+      "name": "Bose",
+      "established": 1964,
+      "headquarters": {
+        "country": "United States"
+      },
+      "brand_values": [
+        {
+          "name": {
+            "en": "Quality Sound"
+          }
+        }
+      ]
+    }
+  ],
+  "comparison": {
+    "established": {
+      "oldest": "brand_sony",
+      "youngest": "brand_bose",
+      "difference_years": 18
+    },
+    "geographic": {
+      "same_continent": false,
+      "countries": ["Japan", "United States"]
+    }
+  }
+}
+```
+
+## Häufige Anwendungsfälle
+
+<AccordionGroup>
+  <Accordion title="Markenprofilseiten">
+    Erstellen Sie dedizierte Markenprofilseiten auf Ihrer E-Commerce-Plattform, die Markengeschichte, Werte und Produkte präsentieren.
+    
+    <Steps>
+      <Step title="Markendetails abrufen">
+        Umfassende Markeninformationen mit der Marken-API abrufen
+      </Step>
+      <Step title="Markenprodukte abrufen">
+        Mit der Marke verbundene Produkte abrufen
+      </Step>
+      <Step title="Markengeschichte anzeigen">
+        Die Geschichte, Werte und Mission der Marke darstellen
+      </Step>
+      <Step title="Produktkategorien präsentieren">
+        Die Produkte der Marke nach Kategorien organisieren
+      </Step>
+    </Steps>
+  </Accordion>
+  
+  <Accordion title="Markenbasierte Filter">
+    Implementieren Sie Filteroptionen in Ihrem Produktkatalog basierend auf Markenattributen wie Herkunftsland, Gründungsjahr oder Markenwerten.
+    
+    ```javascript
+    // Beispiel: Produkte nach Marken aus einem bestimmten Land filtern
+    const japaneseBusinesses = await fetch(
+      'https://api.productgraph.org/v1/brands/search?country=Japan',
+      { headers: { 'X-API-Key': apiKey } }
+    ).then(res => res.json());
+    
+    const japaneseBusinessIds = japaneseBusinesses.results.map(brand => brand.id);
+    
+    // Dann diese IDs verwenden, um Produkte zu filtern
+    const params = new URLSearchParams({
+      brands: japaneseBusinessIds.join(',')
+    });
+    
+    const japaneseProducts = await fetch(
+      `https://api.productgraph.org/v1/products/search?${params}`,
+      { headers: { 'X-API-Key': apiKey } }
+    ).then(res => res.json());
+    ```
+  </Accordion>
+  
+  <Accordion title="Markenvergleichswerkzeuge">
+    Erstellen Sie Tools, die es Benutzern ermöglichen, verschiedene Marken in derselben Kategorie zu vergleichen und Unterschiede in Werten, Geschichte und Produktangeboten hervorzuheben.
+    
+    ```javascript
+    async function compareBrandsInCategory(category, fields) {
+      // Zuerst Marken in der Kategorie finden
+      const brandsResponse = await fetch(
+        `https://api.productgraph.org/v1/products/search?category=${category}&group_by=brand`,
+        { headers: { 'X-API-Key': apiKey } }
+      );
+      
+      const brandData = await brandsResponse.json();
+      const topBrandIds = brandData.groups.slice(0, 5).map(group => group.id);
+      
+      // Dann diese Marken vergleichen
+      const comparisonResponse = await fetch(
+        'https://api.productgraph.org/v1/brands/compare',
+        {
+          method: 'POST',
+          headers: {
+            'X-API-Key': apiKey,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            brand_ids: topBrandIds,
+            fields: fields
+          })
+        }
+      );
+      
+      return await comparisonResponse.json();
+    }
+    
+    // Beispiel: Top-Kopfhörermarken vergleichen
+    const comparison = await compareBrandsInCategory('Headphones', 
+      ['established', 'headquarters', 'brand_values']);
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<Tip>
+Hier sind einige Best Practices für die Arbeit mit der Marken-API:
+</Tip>
+
+1. **Markendaten zwischenspeichern**: Markeninformationen ändern sich selten, daher sollten Sie diese Daten cachen, um API-Aufrufe zu reduzieren.
+
+2. **Mit Produkt-API kombinieren**: Für die beste Benutzererfahrung kombinieren Sie Markeninformationen mit detaillierten Produktdaten.
+
+3. **Markenbezeichner konsistent verwenden**: Verwenden Sie bei der Referenzierung von Marken in Ihrer Anwendung durchgängig die von der API bereitgestellte konsistente `brand_id`.
+
+4. **Regionale Unterschiede berücksichtigen**: Einige Marken können in verschiedenen Regionen unterschiedliche Positionierungen oder Identitäten haben.
+
+5. **Fehlende Daten elegant behandeln**: Nicht alle Marken verfügen über vollständige Informationen für alle Felder.
+
+## Nächste Schritte
+
+Setzen Sie Ihre Erkundung unserer API mit detaillierten Informationen zu Produkten fort:
+
+<Card title="Produktdaten-API" icon="cube" href="/de/product-graph/product-data">
+  Zugriff auf umfassende Produktinformationen und Spezifikationen
+</Card>
