@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "maple",
   "name": "Product Graph API Documentation",
   "description": "Documentation for the Product Graph API",
   "colors": {
