@@ -5,23 +5,45 @@ description: 'Start integrating with the Product Graph API in minutes'
 
 # Product Graph API Quickstart
 
-This guide will help you get up and running with the Product Graph API in just a few minutes. Follow these steps to authenticate, make your first API calls, and start building your integration.
+This guide will help you get up and running with the Product Graph API in just a few minutes. Follow these steps to authenticate, make your first API calls, and start building your integration to access comprehensive product data across multiple languages.
+
+## What You Can Do with Product Graph API
+
+The ProductGraph API enables you to:
+
+- **Access unified product information** across categories and brands
+- **Retrieve product data in multiple languages** with a single API call
+- **Search for products** by name, GTIN, URL, or brand
+- **Track product data changes** over time
+- **Receive notifications** when product data is updated
 
 ## Step 1: Get API Credentials
 
 <Steps>
   <Step title="Create an account">
-    Visit the [Product Graph Dashboard](https://dashboard.productgraph.org) and sign up for an account if you don't already have one.
+    Visit the [Product Graph Dashboard](https://dashboard.productgraph.org) and sign up for an account.
+    
+    <Note>
+      During signup, you'll be asked about your primary use case. This helps us optimize your experience.
+    </Note>
   </Step>
   <Step title="Choose a plan">
-    Select a plan that fits your needs. We offer various tiers from free developer plans to enterprise solutions.
+    Select a plan that fits your needs:
+    
+    - **Free Developer**: 1,000 credits/month, 100 requests/hour
+    - **Business**: 100,000 credits/month, 1,000 requests/hour
+    - **Enterprise**: Unlimited credits, custom rate limits
+    
+    <Tip>
+      Each API operation costs a specific number of credits. For example, a basic product search costs 1 credit, while a full multilingual product enrichment might cost 10 credits.
+    </Tip>
   </Step>
   <Step title="Generate an API key">
     In your dashboard, navigate to the "API Keys" section and click "Generate New Key".
     
-    <Note>
+    <Warning>
       Keep your API key secure! Don't expose it in client-side code or public repositories.
-    </Note>
+    </Warning>
   </Step>
 </Steps>
 
@@ -65,17 +87,23 @@ You should receive a response like this:
 
 ```json
 {
+  "account_id": "acc_e7f8g9h0i1j2",
   "total_credits": 1000,
   "used_credits": 0,
   "remaining_credits": 1000,
   "plan": "Developer",
-  "credits_reset_at": "2023-05-01T00:00:00Z"
+  "credits_reset_at": "2025-04-01T00:00:00Z",
+  "usage_stats": {
+    "searches": 0,
+    "product_retrievals": 0,
+    "translations": 0
+  }
 }
 ```
 
 ## Step 3: Search for Products
 
-Now let's try something more useful - searching for products. This example shows how to perform a basic search query:
+Now let's try something more useful - searching for products in the Product Graph database. This example shows how to perform a search for Sony wireless headphones with multilanguage support:
 
 <CodeGroup>
 ```bash cURL
@@ -84,9 +112,17 @@ curl -X POST "https://api.productgraph.org/v1/search" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "wireless headphones",
-    "languages": ["en", "de"],
+    "languages": ["en", "de", "fr", "es"],
     "filter": {
-      "brand": "Sony"
+      "brand": "Sony",
+      "attributes": {
+        "noise_cancellation": true,
+        "connection_type": "bluetooth"
+      }
+    },
+    "sort": {
+      "field": "relevance",
+      "direction": "desc"
     }
   }'
 ```
@@ -94,9 +130,17 @@ curl -X POST "https://api.productgraph.org/v1/search" \
 ```javascript JavaScript
 const searchData = {
   query: "wireless headphones",
-  languages: ["en", "de"],
+  languages: ["en", "de", "fr", "es"],
   filter: {
-    brand: "Sony"
+    brand: "Sony",
+    attributes: {
+      noise_cancellation: true,
+      connection_type: "bluetooth"
+    }
+  },
+  sort: {
+    field: "relevance",
+    direction: "desc"
   }
 };
 
@@ -111,8 +155,8 @@ fetch("https://api.productgraph.org/v1/search", {
 .then(response => response.json())
 .then(data => {
   console.log("Search job initiated:", data);
-  // Note: This is an asynchronous job, you'll need to check the results later
-  // using the job_id from the response
+  // Note: Product Graph uses asynchronous processing for complex searches
+  // Save the job_id to check results later
 })
 .catch(error => console.error("Error:", error));
 ```
@@ -123,9 +167,17 @@ import json
 
 search_data = {
     "query": "wireless headphones",
-    "languages": ["en", "de"],
+    "languages": ["en", "de", "fr", "es"],
     "filter": {
-        "brand": "Sony"
+        "brand": "Sony",
+        "attributes": {
+            "noise_cancellation": True,
+            "connection_type": "bluetooth"
+        }
+    },
+    "sort": {
+        "field": "relevance",
+        "direction": "desc"
     }
 }
 
@@ -137,8 +189,8 @@ response = requests.post(
 
 data = response.json()
 print(f"Search job initiated: {data}")
-# Note: This is an asynchronous job, you'll need to check the results later
-# using the job_id from the response
+# Note: Product Graph uses asynchronous processing for complex searches
+# Save the job_id to check results later
 ```
 </CodeGroup>
 
@@ -146,24 +198,26 @@ You'll receive a response with a job ID for the search request:
 
 ```json
 {
-  "job_id": "srch_12345",
+  "job_id": "srch_7b84c5e9d3f2a1",
   "status": "queued",
-  "created_at": "2023-04-14T10:30:22Z"
+  "estimated_completion_time": "10-15 seconds",
+  "created_at": "2025-03-14T10:30:22Z",
+  "credits_used": 2
 }
 ```
 
 ## Step 4: Retrieve Search Results
 
-Since search operations are processed asynchronously for complex queries, you'll need to check the status of the job and retrieve the results:
+The Product Graph API processes search operations asynchronously for complex queries. Here's how to check the status and retrieve your results:
 
 <CodeGroup>
 ```bash cURL
-curl -X GET "https://api.productgraph.org/v1/search/srch_12345" \
+curl -X GET "https://api.productgraph.org/v1/search/srch_7b84c5e9d3f2a1" \
   -H "X-API-Key: your-api-key"
 ```
 
 ```javascript JavaScript
-const jobId = "srch_12345"; // Use the job_id from the previous response
+const jobId = "srch_7b84c5e9d3f2a1"; // Use the job_id from the previous response
 
 fetch(`https://api.productgraph.org/v1/search/${jobId}`, {
   headers: {
@@ -171,12 +225,23 @@ fetch(`https://api.productgraph.org/v1/search/${jobId}`, {
   }
 })
 .then(response => response.json())
-.then(data => console.log("Search results:", data))
+.then(data => {
+  if (data.status === "completed") {
+    // Process the product results
+    data.results.forEach(product => {
+      console.log(`Product: ${product.name.en}`);
+      console.log(`Available in languages: ${Object.keys(product.name).join(", ")}`);
+      console.log(`GTIN: ${product.gtin}`);
+    });
+  } else {
+    console.log(`Search status: ${data.status}, progress: ${data.progress}%`);
+  }
+})
 .catch(error => console.error("Error:", error));
 ```
 
 ```python Python
-job_id = "srch_12345"  # Use the job_id from the previous response
+job_id = "srch_7b84c5e9d3f2a1"  # Use the job_id from the previous response
 
 response = requests.get(
     f"https://api.productgraph.org/v1/search/{job_id}",
@@ -184,11 +249,130 @@ response = requests.get(
 )
 
 results = response.json()
-print(f"Search results: {results}")
+if results["status"] == "completed":
+    # Process the product results
+    for product in results["results"]:
+        print(f"Product: {product['name']['en']}")
+        print(f"Available in languages: {', '.join(product['name'].keys())}")
+        print(f"GTIN: {product['gtin']}")
+else:
+    print(f"Search status: {results['status']}, progress: {results['progress']}%")
 ```
 </CodeGroup>
 
-## Step 5: Implement Webhooks (Optional)
+Example completed search results:
+
+```json
+{
+  "status": "completed",
+  "job_id": "srch_7b84c5e9d3f2a1",
+  "results": [
+    {
+      "id": "prod_5e72a1b9c8d3f4",
+      "name": {
+        "en": "Sony WH-1000XM5 Wireless Noise-Canceling Headphones",
+        "de": "Sony WH-1000XM5 Kabellose Noise-Cancelling-Kopfhörer",
+        "fr": "Sony WH-1000XM5 Casque sans fil à réduction de bruit",
+        "es": "Sony WH-1000XM5 Auriculares inalámbricos con cancelación de ruido"
+      },
+      "gtin": "4548736123458",
+      "brand": {
+        "id": "brand_sony",
+        "name": "Sony"
+      },
+      "attributes": {
+        "noise_cancellation": true,
+        "connection_type": "bluetooth",
+        "battery_life": "30 hours",
+        "color": "Black"
+      },
+      "relevance_score": 0.98
+    },
+    {
+      "id": "prod_9a87b6c5d4e3f2",
+      "name": {
+        "en": "Sony WH-1000XM4 Wireless Noise-Canceling Headphones",
+        "de": "Sony WH-1000XM4 Kabellose Noise-Cancelling-Kopfhörer",
+        "fr": "Sony WH-1000XM4 Casque sans fil à réduction de bruit",
+        "es": "Sony WH-1000XM4 Auriculares inalámbricos con cancelación de ruido"
+      },
+      "gtin": "4548736112001",
+      "brand": {
+        "id": "brand_sony",
+        "name": "Sony"
+      },
+      "attributes": {
+        "noise_cancellation": true,
+        "connection_type": "bluetooth",
+        "battery_life": "30 hours",
+        "color": "Black"
+      },
+      "relevance_score": 0.95
+    }
+  ],
+  "total_results": 12,
+  "pagination": {
+    "page": 1,
+    "per_page": 10,
+    "total_pages": 2,
+    "next_page_url": "https://api.productgraph.org/v1/search/srch_7b84c5e9d3f2a1?page=2"
+  },
+  "credits_used": 2,
+  "completed_at": "2025-03-14T10:30:35Z"
+}
+```
+
+## Step 5: Get Detailed Product Information
+
+After identifying products through search, you can retrieve comprehensive information about a specific product:
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/products/prod_5e72a1b9c8d3f4" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "languages": ["en", "de"],
+    "include": ["attributes", "images", "videos", "reviews"]
+  }'
+```
+
+```javascript JavaScript
+const productId = "prod_5e72a1b9c8d3f4";
+const params = {
+  languages: ["en", "de"],
+  include: ["attributes", "images", "videos", "reviews"]
+};
+
+fetch(`https://api.productgraph.org/v1/products/${productId}?${new URLSearchParams(params)}`, {
+  headers: {
+    "X-API-Key": apiKey
+  }
+})
+.then(response => response.json())
+.then(data => console.log("Product details:", data))
+.catch(error => console.error("Error:", error));
+```
+
+```python Python
+product_id = "prod_5e72a1b9c8d3f4"
+params = {
+    "languages": ["en", "de"],
+    "include": ["attributes", "images", "videos", "reviews"]
+}
+
+response = requests.get(
+    f"https://api.productgraph.org/v1/products/{product_id}",
+    headers={"X-API-Key": api_key},
+    params=params
+)
+
+product = response.json()
+print(f"Product details: {product}")
+```
+</CodeGroup>
+
+## Step 6: Implement Webhooks (Optional)
 
 For production applications, instead of polling for search results, you can set up webhooks to be notified when asynchronous operations complete:
 
@@ -199,7 +383,9 @@ curl -X POST "https://api.productgraph.org/v1/webhooks" \
   -H "Content-Type: application/json" \
   -d '{
     "url": "https://your-callback-url.com/webhook",
-    "events": ["search_completed", "product_updated"],
+    "events": ["search.completed", "product.updated", "product.translated"],
+    "description": "My app webhook for ProductGraph updates",
+    "active": true,
     "secret": "your-webhook-secret"
   }'
 ```
@@ -207,7 +393,9 @@ curl -X POST "https://api.productgraph.org/v1/webhooks" \
 ```javascript JavaScript
 const webhookData = {
   url: "https://your-callback-url.com/webhook",
-  events: ["search_completed", "product_updated"],
+  events: ["search.completed", "product.updated", "product.translated"],
+  description: "My app webhook for ProductGraph updates",
+  active: true,
   secret: "your-webhook-secret"
 };
 
@@ -225,40 +413,97 @@ fetch("https://api.productgraph.org/v1/webhooks", {
 ```
 </CodeGroup>
 
+A successful response will include your webhook ID:
+
+```json
+{
+  "id": "wh_1a2b3c4d5e6f",
+  "url": "https://your-callback-url.com/webhook",
+  "events": ["search.completed", "product.updated", "product.translated"],
+  "description": "My app webhook for ProductGraph updates",
+  "active": true,
+  "created_at": "2025-03-14T11:45:30Z"
+}
+```
+
 Learn more about [webhook implementation](/product-graph/webhooks).
+
+## Working with Multilanguage Support
+
+One of Product Graph's key strengths is multilanguage support. Here's how to request product translation:
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.productgraph.org/v1/products/prod_5e72a1b9c8d3f4/translate" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source_language": "en",
+    "target_languages": ["it", "nl", "sv"],
+    "fields": ["name", "description", "features"]
+  }'
+```
+
+```javascript JavaScript
+const productId = "prod_5e72a1b9c8d3f4";
+const translationData = {
+  source_language: "en",
+  target_languages: ["it", "nl", "sv"],
+  fields: ["name", "description", "features"]
+};
+
+fetch(`https://api.productgraph.org/v1/products/${productId}/translate`, {
+  method: "POST",
+  headers: {
+    "X-API-Key": apiKey,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(translationData)
+})
+.then(response => response.json())
+.then(data => console.log("Translation job initiated:", data))
+.catch(error => console.error("Error:", error));
+```
+</CodeGroup>
+
+You'll receive a translation job ID that you can use to check status, similar to search results.
 
 ## Next Steps
 
-Now that you've made your first API calls, here are some suggested next steps:
+Now that you've made your first API calls with Product Graph, here are some suggested next steps:
 
 <CardGroup cols={2}>
-  <Card title="Explore Products API" icon="box" href="/product-graph/product-data">
-    Learn how to retrieve and update product information
+  <Card title="Explore Product Data API" icon="box" href="/product-graph/product-data">
+    Learn how to retrieve and enhance detailed product information
   </Card>
-  <Card title="Multilanguage Support" icon="language" href="/product-graph/multilanguage">
-    Implement multi-language capabilities in your application
+  <Card title="Advanced Multilanguage" icon="language" href="/product-graph/multilanguage">
+    Implement sophisticated multi-language capabilities in your application
   </Card>
-  <Card title="Implement Search" icon="magnifying-glass" href="/product-graph/search">
-    Add powerful search capabilities to your platform
+  <Card title="Brand Information" icon="tag" href="/product-graph/brand">
+    Access and utilize comprehensive brand data
   </Card>
-  <Card title="Read API Reference" icon="code" href="/api-reference/introduction">
-    Explore the complete API reference documentation
+  <Card title="Historical Tracking" icon="clock" href="/product-graph/historical-data">
+    Track how product data changes over time
   </Card>
 </CardGroup>
 
-## Sample Applications
-
-Looking for inspiration? Check out these sample applications built with the Product Graph API:
+## Real-World Product Graph Applications
 
 <CardGroup cols={2}>
-  <Card title="Multilingual Product Catalog" icon="globe" href="https://github.com/productgraph/sample-catalog">
-    A demo product catalog with language switching capabilities
+  <Card title="Multilingual E-commerce" icon="globe" href="https://github.com/productgraph/multilingual-catalog">
+    Enhance your online store with multilingual product information that automatically stays in sync across languages
   </Card>
-  <Card title="Search Implementation" icon="magnifying-glass" href="https://github.com/productgraph/sample-search">
-    Example of advanced search implementation with filtering
+  <Card title="Product Content Management" icon="database" href="https://github.com/productgraph/pcm-integration">
+    Integrate Product Graph with your existing PIM/PCM system to enhance and enrich product content
+  </Card>
+  <Card title="Marketplace Integration" icon="shop" href="https://github.com/productgraph/marketplace-connector">
+    Standardize and enhance product data across multiple marketplaces and sales channels
+  </Card>
+  <Card title="SEO Optimization" icon="chart-line" href="https://github.com/productgraph/seo-enhancer">
+    Improve product page SEO with enhanced, multilingual product content
   </Card>
 </CardGroup>
 
 <Note>
-  Need help? Join our [developer community](https://community.productgraph.org) or [contact support](https://support.productgraph.org) for assistance.
+  Want to discuss a specific use case? Join our [developer community](https://community.productgraph.org) or [schedule a consultation](https://productgraph.org/consultation) with our integration specialists.
 </Note>
