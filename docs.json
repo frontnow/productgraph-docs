@@ -54,12 +54,45 @@
       "pages": [
         "api-reference/introduction",
         {
-          "group": "Endpoints",
+          "group": "Products",
           "pages": [
-            "api-reference/endpoint/create",
-            "api-reference/endpoint/delete",
-            "api-reference/endpoint/get",
-            "api-reference/endpoint/webhook"
+            "api-reference/products/get-all-products",
+            "api-reference/products/create-a-new-product",
+            "api-reference/products/get-product-by-id",
+            "api-reference/products/update-product",
+            "api-reference/products/delete-product",
+            "api-reference/products/request-product-translation",
+            "api-reference/products/get-product-history"
+          ]
+        },
+        {
+          "group": "Search",
+          "pages": [
+            "api-reference/search/search-for-products",
+            "api-reference/search/get-search-results"
+          ]
+        },
+        {
+          "group": "Brands",
+          "pages": [
+            "api-reference/brands/get-brand-by-id",
+            "api-reference/brands/search-for-brands"
+          ]
+        },
+        {
+          "group": "Credits",
+          "pages": [
+            "api-reference/credits/get-credit-balance"
+          ]
+        },
+        {
+          "group": "Webhooks",
+          "pages": [
+            "api-reference/webhooks/create-webhook",
+            "api-reference/webhooks/list-webhooks",
+            "api-reference/webhooks/get-webhook-details",
+            "api-reference/webhooks/update-webhook",
+            "api-reference/webhooks/delete-webhook"
           ]
         }
       ]
