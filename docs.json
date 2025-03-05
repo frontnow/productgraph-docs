@@ -36,7 +36,7 @@
         },
         {
           "anchor": "API Status",
-          "href": "https://status.productgraph.org",
+          "href": "https://status.frontnow.com",
           "icon": "server"
         },
         {
@@ -49,6 +49,7 @@
     "groups": [
       {
         "group": "Overview",
+        "icon": "book-open",
         "pages": [
           "introduction",
           "quickstart",
@@ -57,9 +58,11 @@
       },
       {
         "group": "Product Graph API",
+        "icon": "cube",
         "pages": [
           {
             "group": "Getting Started",
+            "icon": "play",
             "pages": [
               "product-graph/index",
               "product-graph/overview",
@@ -70,6 +73,7 @@
           },
           {
             "group": "Core API",
+            "icon": "code",
             "pages": [
               "product-graph/search",
               "product-graph/brand",
@@ -79,6 +83,7 @@
           },
           {
             "group": "Advanced Features",
+            "icon": "rocket",
             "pages": [
               "product-graph/analytics",
               "product-graph/webhooks",
@@ -90,10 +95,12 @@
       },
       {
         "group": "API Reference",
+        "icon": "book",
         "pages": [
           "api-reference/introduction",
           {
             "group": "Products",
+            "icon": "box",
             "pages": [
               "api-reference/products/get-all-products",
               "api-reference/products/create-a-new-product",
@@ -106,6 +113,7 @@
           },
           {
             "group": "Search",
+            "icon": "magnifying-glass",
             "pages": [
               "api-reference/search/search-for-products",
               "api-reference/search/get-search-results"
@@ -113,6 +121,7 @@
           },
           {
             "group": "Brands",
+            "icon": "building",
             "pages": [
               "api-reference/brands/get-brand-by-id",
               "api-reference/brands/search-for-brands"
@@ -120,12 +129,14 @@
           },
           {
             "group": "Credits",
+            "icon": "credit-card",
             "pages": [
               "api-reference/credits/get-credit-balance"
             ]
           },
           {
             "group": "Webhooks",
+            "icon": "bell",
             "pages": [
               "api-reference/webhooks/create-webhook",
               "api-reference/webhooks/list-webhooks",
