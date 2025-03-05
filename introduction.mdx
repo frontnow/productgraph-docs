@@ -5,18 +5,41 @@ description: "Comprehensive documentation for integrating with the Product Graph
 
 <img
   className="block dark:hidden"
-  src="/images/hero-light.jpg"
+  src="/images/hero-light.jpeg"
   alt="Product Graph API - Light Mode"
 />
 <img
   className="hidden dark:block"
-  src="/images/hero-dark.jpg"
+  src="/images/hero-dark.jpeg"
   alt="Product Graph API - Dark Mode"
 />
 
 # Welcome to Product Graph API
 
 The Product Graph API provides a comprehensive set of tools for accessing, enriching, and managing product data across multiple languages. With powerful search capabilities, multilingual support, and advanced analytics, our API helps you build better e-commerce experiences.
+
+## Why Product Graph?
+
+Product data is often fragmented, inconsistent, and locked in language silos. Product Graph solves these challenges by providing:
+
+- **Unified Product Information** - Access comprehensive product data from a single source
+- **Multilingual Support** - Get product information in multiple languages with one API call
+- **Advanced Search** - Find products using names, GTINs, URLs, or a combination of parameters
+- **Historical Tracking** - Monitor how product data changes over time
+- **Data Enrichment** - Enhance product listings with high-quality descriptions, attributes, and media
+
+## Quick Authentication Guide
+
+```bash
+# All API requests require an API key in the header
+curl -X GET "https://api.productgraph.org/v1/credits" \
+  -H "X-API-Key: your-api-key"
+```
+
+<Note>
+  Your API key is available in the [Product Graph Dashboard](https://dashboard.productgraph.org). 
+  Keep it secure and never expose it in client-side code!
+</Note>
 
 ## Getting Started
 
@@ -50,6 +73,34 @@ The Product Graph API provides a comprehensive set of tools for accessing, enric
     Discover our powerful multilingual capabilities
   </Card>
 </CardGroup>
+
+## Example: Search for Products
+
+```javascript
+// Search for Sony wireless headphones in English and German
+const searchData = {
+  query: "wireless headphones",
+  languages: ["en", "de"],
+  filter: {
+    brand: "Sony"
+  }
+};
+
+fetch("https://api.productgraph.org/v1/search", {
+  method: "POST",
+  headers: {
+    "X-API-Key": apiKey,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(searchData)
+})
+.then(response => response.json())
+.then(data => {
+  console.log("Search job initiated:", data);
+  // The search is asynchronous, check results using the job_id
+})
+.catch(error => console.error("Error:", error));
+```
 
 ## Core Features
 
@@ -98,6 +149,29 @@ The Product Graph API provides a comprehensive set of tools for accessing, enric
   </Card>
 </CardGroup>
 
+## Asynchronous Processing
+
+Many Product Graph API operations process asynchronously for efficiency:
+
+```javascript
+// Check the status of a search job
+fetch(`https://api.productgraph.org/v1/search/${jobId}`, {
+  headers: {
+    "X-API-Key": apiKey
+  }
+})
+.then(response => response.json())
+.then(data => {
+  if (data.status === "completed") {
+    console.log("Search results:", data.results);
+  } else {
+    console.log("Job status:", data.status);
+  }
+})
+```
+
+For production applications, use [webhooks](/product-graph/webhooks) to receive notifications when jobs complete.
+
 ## Implementation Guides
 
 <CardGroup cols={2}>
@@ -117,6 +191,31 @@ The Product Graph API provides a comprehensive set of tools for accessing, enric
   </Card>
 </CardGroup>
 
+## Sample Response: Product Data
+
+```json
+{
+  "id": "prod_98765",
+  "name": {
+    "en": "Sony WH-1000XM4 Wireless Noise-Canceling Headphones",
+    "de": "Sony WH-1000XM4 Kabellose Noise-Cancelling-Kopfhörer"
+  },
+  "gtin": "4548736112001",
+  "url": "https://example.com/products/sony-wh1000xm4",
+  "price": 349.99,
+  "brand": {
+    "id": "brand_sony",
+    "name": "Sony"
+  },
+  "content": {
+    "description": {
+      "en": "Industry-leading noise cancellation technology...",
+      "de": "Branchenführende Geräuschunterdrückungstechnologie..."
+    }
+  }
+}
+```
+
 ## API Reference
 
 Explore our detailed API reference documentation for in-depth information about all available endpoints.
@@ -128,6 +227,10 @@ Explore our detailed API reference documentation for in-depth information about 
 >
   Comprehensive API endpoint documentation
 </Card>
+
+## Ready to Build?
+
+Start with our [Quickstart Guide](/quickstart) to be up and running in minutes with functional code examples.
 
 ## Need Help?
 
