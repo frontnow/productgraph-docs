@@ -254,7 +254,7 @@
           },
           {
             "dropdown": "Schnittstellen",
-            "description": "API-Endpunkte und Definitionen",
+            "description": "Endpunkte und Definitionen",
             "icon": "book",
             "groups": [
               {
