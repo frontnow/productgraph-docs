@@ -49,9 +49,10 @@
     "languages": [
       {
         "language": "en",
-        "tabs": [
+        "dropdowns": [
           {
-            "tab": "Product Graph API",
+            "dropdown": "Product Graph API",
+            "description": "Guides and concepts for the Product Graph API",
             "icon": "cube",
             "groups": [
               {
@@ -115,7 +116,8 @@
             ]
           },
           {
-            "tab": "API Reference",
+            "dropdown": "API Reference",
+            "description": "Comprehensive API endpoint documentation",
             "icon": "book",
             "groups": [
               {
@@ -179,15 +181,24 @@
                 ]
               }
             ]
+          },
+          {
+            "dropdown": "Blog",
+            "description": "Product Graph news and updates",
+            "icon": "newspaper",
+            "title": "Blog",
+            "href": "https://blog.productgraph.org"
           }
         ]
       },
       {
         "language": "de",
-        "tabs": [
+        "dropdowns": [
           {
-            "tab": "Product Graph API",
+            "dropdown": "Product Graph API",
+            "description": "Anleitungen und Konzepte für die Product Graph API",
             "icon": "cube",
+            "title": "Docs",
             "groups": [
               {
                 "group": "Erste Schritte",
@@ -250,8 +261,10 @@
             ]
           },
           {
-            "tab": "API-Referenz",
+            "dropdown": "API-Referenz",
+            "description": "Umfassende Dokumentation der API-Endpunkte",
             "icon": "book",
+            "title": "API",
             "groups": [
               {
                 "group": "Überblick",
@@ -314,6 +327,13 @@
                 ]
               }
             ]
+          },
+          {
+            "dropdown": "Blog",
+            "description": "Product Graph Neuigkeiten und Updates",
+            "icon": "newspaper",
+            "title": "Blog",
+            "href": "https://blog.productgraph.org"
           }
         ]
       }
