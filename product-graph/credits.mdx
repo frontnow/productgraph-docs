@@ -1,0 +1,281 @@
+---
+title: 'Credits Management'
+description: 'Understanding the credit-based system for API usage'
+icon: 'credit-card'
+---
+
+# Credits Management
+
+The ProductGraph API uses a credit-based system to provide flexibility while maintaining fair usage. This page explains how credits work, how they're consumed, and how to manage them effectively.
+
+<Note>
+Credits are separate from your API rate limits. While rate limits control how many requests you can make in a time period, credits determine the total volume of operations you can perform.
+</Note>
+
+## How Credits Work
+
+<CardGroup cols={2}>
+  <Card title="Subscription Allocation" icon="calendar" color="#3B82F6">
+    Credits are allocated monthly based on your subscription plan
+  </Card>
+  <Card title="Consumption Model" icon="chart-simple" color="#10B981">
+    Operations consume different amounts of credits based on complexity
+  </Card>
+  <Card title="Rollover Policy" icon="arrows-rotate" color="#F59E0B">
+    Unused credits may roll over to the next month, depending on your plan
+  </Card>
+  <Card title="Add-On Packs" icon="plus" color="#8B5CF6">
+    Purchase additional credit packs when needed for high-volume periods
+  </Card>
+</CardGroup>
+
+## Credit Consumption
+
+Different API operations consume varying amounts of credits based on their complexity and resource requirements. Here's a breakdown of credit costs for common operations:
+
+<Table>
+  <Thead>
+    <Tr>
+      <Th>Operation</Th>
+      <Th>Credit Cost</Th>
+      <Th>Notes</Th>
+    </Tr>
+  </Thead>
+  <Tbody>
+    <Tr>
+      <Td>Basic Search</Td>
+      <Td>1</Td>
+      <Td>Includes first product detail retrieval</Td>
+    </Tr>
+    <Tr>
+      <Td>Advanced Search</Td>
+      <Td>2-5</Td>
+      <Td>Depends on filters and complexity</Td>
+    </Tr>
+    <Tr>
+      <Td>Product Detail Retrieval</Td>
+      <Td>1</Td>
+      <Td>Per product after first search result</Td>
+    </Tr>
+    <Tr>
+      <Td>Image Analysis</Td>
+      <Td>3</Td>
+      <Td>AI-powered image enrichment</Td>
+    </Tr>
+    <Tr>
+      <Td>Multi-language Translation</Td>
+      <Td>2</Td>
+      <Td>Per language pair</Td>
+    </Tr>
+    <Tr>
+      <Td>Historical Data Access</Td>
+      <Td>1-3</Td>
+      <Td>Depends on time range</Td>
+    </Tr>
+    <Tr>
+      <Td>Batch Operations</Td>
+      <Td>Varies</Td>
+      <Td>Discounted based on volume</Td>
+    </Tr>
+  </Tbody>
+</Table>
+
+<Tip>
+You can optimize your credit usage by implementing caching strategies and using batch operations where possible.
+</Tip>
+
+## Credit Management API
+
+### Check Credit Balance
+
+Use this endpoint to check your current credit balance and usage statistics.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/credits" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+async function checkCredits() {
+  const response = await fetch('https://api.productgraph.org/v1/credits', {
+    headers: {
+      'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+    }
+  });
+  
+  return await response.json();
+}
+```
+
+```python Python
+import requests
+import os
+
+def check_credits():
+    api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+    headers = {'X-API-Key': api_key}
+    
+    response = requests.get('https://api.productgraph.org/v1/credits', headers=headers)
+    return response.json()
+```
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "total_credits": 1000,
+  "used_credits": 250,
+  "remaining_credits": 750,
+  "plan": "Startup",
+  "credits_reset_at": "2023-05-01T00:00:00Z"
+}
+```
+
+### View Credit Usage History
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/credits/history" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+async function getCreditHistory() {
+  const response = await fetch('https://api.productgraph.org/v1/credits/history', {
+    headers: {
+      'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+    }
+  });
+  
+  return await response.json();
+}
+```
+
+```python Python
+import requests
+import os
+
+def get_credit_history():
+    api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+    headers = {'X-API-Key': api_key}
+    
+    response = requests.get('https://api.productgraph.org/v1/credits/history', headers=headers)
+    return response.json()
+```
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "history": [
+    {
+      "date": "2023-04-14",
+      "used_credits": 45,
+      "operations": {
+        "search": 20,
+        "product_details": 15,
+        "image_analysis": 10
+      }
+    },
+    {
+      "date": "2023-04-13",
+      "used_credits": 62,
+      "operations": {
+        "search": 25,
+        "product_details": 22,
+        "image_analysis": 15
+      }
+    }
+  ],
+  "total_pages": 10,
+  "current_page": 1
+}
+```
+
+## Subscription Plans
+
+<Tabs>
+  <Tab title="Developer">
+    <Card>
+      - 1,000 credits per month
+      - No rollover
+      - $49/month
+      - Ideal for development and testing
+    </Card>
+  </Tab>
+  <Tab title="Startup">
+    <Card>
+      - 10,000 credits per month
+      - 5,000 credit rollover max
+      - $199/month
+      - Perfect for small businesses and startups
+    </Card>
+  </Tab>
+  <Tab title="Business">
+    <Card>
+      - 50,000 credits per month
+      - 25,000 credit rollover max
+      - $499/month
+      - Designed for growing businesses with moderate volume
+    </Card>
+  </Tab>
+  <Tab title="Enterprise">
+    <Card>
+      - Custom credit allocation
+      - Flexible rollover policy
+      - Custom pricing
+      - For high-volume enterprise customers
+    </Card>
+  </Tab>
+</Tabs>
+
+## Credit Add-On Packs
+
+Need additional credits? You can purchase add-on packs as needed:
+
+<CardGroup cols={3}>
+  <Card title="Small Pack" icon="box" color="#4F46E5">
+    5,000 credits for $79 (1.6¢ per credit)
+  </Card>
+  <Card title="Medium Pack" icon="boxes-stacked" color="#4F46E5">
+    25,000 credits for $299 (1.2¢ per credit)
+  </Card>
+  <Card title="Large Pack" icon="warehouse" color="#4F46E5">
+    100,000 credits for $999 (1.0¢ per credit)
+  </Card>
+</CardGroup>
+
+<Note>
+Add-on packs never expire, but are used only after your monthly allocation is depleted.
+</Note>
+
+## Best Practices for Credit Management
+
+<AccordionGroup>
+  <Accordion title="Monitor Your Credit Usage">
+    Regularly check your credit balance and usage patterns to avoid unexpected depletion. Set up alerts when your credits fall below a certain threshold.
+  </Accordion>
+  <Accordion title="Implement Caching">
+    Cache API responses when appropriate to reduce redundant API calls. This is especially useful for product data that doesn't change frequently.
+  </Accordion>
+  <Accordion title="Use Batch Operations">
+    Whenever possible, use batch operations to process multiple items in a single request, which typically offers credit discounts compared to individual operations.
+  </Accordion>
+  <Accordion title="Optimize Search Queries">
+    Make your search queries as specific as possible to reduce the number of results that need processing, which can save credits in the long run.
+  </Accordion>
+  <Accordion title="Plan for Seasonal Volume">
+    If your business has seasonal spikes, consider purchasing add-on packs before high-volume periods or temporarily upgrading your subscription.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+Now that you understand how credits work, learn more about our multi-language support capabilities:
+
+<Card title="Multi-language Support" icon="language" href="/product-graph/multilanguage">
+  Discover how to access product data in multiple languages
+</Card>

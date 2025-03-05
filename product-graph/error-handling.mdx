@@ -1,0 +1,620 @@
+---
+title: 'Error Handling'
+description: 'How to handle and troubleshoot API errors effectively'
+icon: 'triangle-exclamation'
+---
+
+# Error Handling
+
+The Product Graph API uses standard HTTP status codes and provides detailed error messages to help you troubleshoot issues quickly. This guide explains our error format and provides strategies for handling different types of errors effectively.
+
+<Note>
+All error responses include a structured error object with a code, message, and documentation URL to help you identify and resolve issues efficiently.
+</Note>
+
+## Error Response Format
+
+When an error occurs, the API returns an error response with a corresponding HTTP status code and a structured error object in the body:
+
+```json
+{
+  "error": {
+    "code": "invalid_language",
+    "message": "The requested language 'xyz' is not supported.",
+    "documentation_url": "https://productgraph.org/docs/errors#invalid_language",
+    "request_id": "req_7a8b9c0d1e2f",
+    "details": {
+      "supported_languages": ["en", "de", "fr", "es", "it"]
+    }
+  }
+}
+```
+
+<ResponseField name="error" type="object">
+  The error object containing detailed information about the error.
+  
+  <Expandable title="error properties">
+    <ResponseField name="code" type="string">
+      A machine-readable code that identifies the error type.
+    </ResponseField>
+    
+    <ResponseField name="message" type="string">
+      A human-readable description of the error.
+    </ResponseField>
+    
+    <ResponseField name="documentation_url" type="string">
+      A URL to the documentation page explaining this error and how to resolve it.
+    </ResponseField>
+    
+    <ResponseField name="request_id" type="string">
+      A unique identifier for the request, useful when contacting support.
+    </ResponseField>
+    
+    <ResponseField name="details" type="object">
+      Additional error-specific details that may help with troubleshooting.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## HTTP Status Codes
+
+The Product Graph API uses standard HTTP status codes to indicate the success or failure of an API request:
+
+<Table>
+  <Thead>
+    <Tr>
+      <Th>Status Code</Th>
+      <Th>Description</Th>
+    </Tr>
+  </Thead>
+  <Tbody>
+    <Tr>
+      <Td>200 - OK</Td>
+      <Td>The request was successful.</Td>
+    </Tr>
+    <Tr>
+      <Td>201 - Created</Td>
+      <Td>The request was successful and a resource was created.</Td>
+    </Tr>
+    <Tr>
+      <Td>202 - Accepted</Td>
+      <Td>The request has been accepted for processing but is not yet complete.</Td>
+    </Tr>
+    <Tr>
+      <Td>400 - Bad Request</Td>
+      <Td>The request was invalid or cannot be served.</Td>
+    </Tr>
+    <Tr>
+      <Td>401 - Unauthorized</Td>
+      <Td>Authentication failed or was not provided.</Td>
+    </Tr>
+    <Tr>
+      <Td>403 - Forbidden</Td>
+      <Td>The authenticated user does not have permission to access the requested resource.</Td>
+    </Tr>
+    <Tr>
+      <Td>404 - Not Found</Td>
+      <Td>The requested resource could not be found.</Td>
+    </Tr>
+    <Tr>
+      <Td>429 - Too Many Requests</Td>
+      <Td>The client has sent too many requests in a given amount of time.</Td>
+    </Tr>
+    <Tr>
+      <Td>500 - Internal Server Error</Td>
+      <Td>An error occurred on the server.</Td>
+    </Tr>
+    <Tr>
+      <Td>503 - Service Unavailable</Td>
+      <Td>The server is temporarily unavailable, typically due to maintenance or overload.</Td>
+    </Tr>
+  </Tbody>
+</Table>
+
+## Common Error Codes
+
+Here are the most common error codes you may encounter and how to handle them:
+
+<AccordionGroup>
+  <Accordion title="Authentication Errors">
+    <Table>
+      <Thead>
+        <Tr>
+          <Th>Error Code</Th>
+          <Th>Description</Th>
+          <Th>Troubleshooting</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        <Tr>
+          <Td>invalid_credentials</Td>
+          <Td>Authentication failed due to invalid API key or token.</Td>
+          <Td>Check your API key for typos. Ensure you're using the correct key for the environment (test/production).</Td>
+        </Tr>
+        <Tr>
+          <Td>expired_token</Td>
+          <Td>The provided authentication token has expired.</Td>
+          <Td>Obtain a new token using the authorization endpoint.</Td>
+        </Tr>
+        <Tr>
+          <Td>missing_authentication</Td>
+          <Td>No authentication credentials were provided.</Td>
+          <Td>Ensure you're including the X-API-Key header in your requests.</Td>
+        </Tr>
+      </Tbody>
+    </Table>
+  </Accordion>
+  
+  <Accordion title="Rate Limiting Errors">
+    <Table>
+      <Thead>
+        <Tr>
+          <Th>Error Code</Th>
+          <Th>Description</Th>
+          <Th>Troubleshooting</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        <Tr>
+          <Td>rate_limit_exceeded</Td>
+          <Td>You've exceeded the allowed number of requests per time period.</Td>
+          <Td>Implement backoff strategies using the Retry-After header. Consider upgrading your plan if you consistently hit limits.</Td>
+        </Tr>
+        <Tr>
+          <Td>concurrent_requests_exceeded</Td>
+          <Td>Too many requests are being processed simultaneously.</Td>
+          <Td>Limit the number of concurrent requests from your application.</Td>
+        </Tr>
+      </Tbody>
+    </Table>
+    
+    <Warning>
+      When you receive a rate limit error, the response will include a `Retry-After` header indicating the number of seconds to wait before retrying.
+    </Warning>
+  </Accordion>
+  
+  <Accordion title="Resource Errors">
+    <Table>
+      <Thead>
+        <Tr>
+          <Th>Error Code</Th>
+          <Th>Description</Th>
+          <Th>Troubleshooting</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        <Tr>
+          <Td>resource_not_found</Td>
+          <Td>The requested resource could not be found.</Td>
+          <Td>Check the ID or path of the resource for typos. Verify the resource exists.</Td>
+        </Tr>
+        <Tr>
+          <Td>invalid_resource_id</Td>
+          <Td>The provided resource ID format is invalid.</Td>
+          <Td>Ensure your IDs follow the required format (e.g., 'prod_' prefix for products).</Td>
+        </Tr>
+      </Tbody>
+    </Table>
+  </Accordion>
+  
+  <Accordion title="Input Validation Errors">
+    <Table>
+      <Thead>
+        <Tr>
+          <Th>Error Code</Th>
+          <Th>Description</Th>
+          <Th>Troubleshooting</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        <Tr>
+          <Td>invalid_parameter</Td>
+          <Td>One or more request parameters are invalid.</Td>
+          <Td>Check the error details object for specific parameter issues.</Td>
+        </Tr>
+        <Tr>
+          <Td>missing_required_parameter</Td>
+          <Td>A required parameter is missing from the request.</Td>
+          <Td>Include all required parameters as specified in the API documentation.</Td>
+        </Tr>
+        <Tr>
+          <Td>invalid_language</Td>
+          <Td>The requested language is not supported.</Td>
+          <Td>Use one of the supported language codes (e.g., 'en', 'de', 'fr').</Td>
+        </Tr>
+      </Tbody>
+    </Table>
+  </Accordion>
+  
+  <Accordion title="Credit and Billing Errors">
+    <Table>
+      <Thead>
+        <Tr>
+          <Th>Error Code</Th>
+          <Th>Description</Th>
+          <Th>Troubleshooting</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        <Tr>
+          <Td>insufficient_credits</Td>
+          <Td>Not enough credits to complete the operation.</Td>
+          <Td>Purchase additional credits or adjust your request to use fewer credits.</Td>
+        </Tr>
+        <Tr>
+          <Td>payment_required</Td>
+          <Td>Your account requires payment before proceeding.</Td>
+          <Td>Update your billing information in the dashboard.</Td>
+        </Tr>
+      </Tbody>
+    </Table>
+  </Accordion>
+  
+  <Accordion title="Server Errors">
+    <Table>
+      <Thead>
+        <Tr>
+          <Th>Error Code</Th>
+          <Th>Description</Th>
+          <Th>Troubleshooting</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        <Tr>
+          <Td>internal_error</Td>
+          <Td>An unexpected error occurred on the server.</Td>
+          <Td>Retry the request after a short delay. If the issue persists, contact support with the request_id.</Td>
+        </Tr>
+        <Tr>
+          <Td>service_unavailable</Td>
+          <Td>The service is temporarily unavailable.</Td>
+          <Td>Retry the request after a short delay using an exponential backoff strategy.</Td>
+        </Tr>
+      </Tbody>
+    </Table>
+    
+    <Note>
+      For server errors (5xx), we recommend implementing retry logic with exponential backoff to handle temporary service disruptions.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+## Error Handling Examples
+
+Here are examples of how to handle errors in different programming languages:
+
+<CodeGroup>
+```javascript JavaScript
+async function fetchProduct(productId) {
+  try {
+    const response = await fetch(`https://api.productgraph.org/v1/products/${productId}`, {
+      headers: {
+        'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+      }
+    });
+    
+    // Check if the request was successful
+    if (!response.ok) {
+      const errorData = await response.json();
+      
+      // Handle specific error types
+      switch (errorData.error.code) {
+        case 'resource_not_found':
+          console.error(`Product ${productId} not found`);
+          // Implement fallback logic or show user-friendly message
+          break;
+        
+        case 'rate_limit_exceeded':
+          const retryAfter = response.headers.get('Retry-After') || 60;
+          console.warn(`Rate limit exceeded. Retrying after ${retryAfter} seconds`);
+          // Implement retry logic with delay
+          await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+          return fetchProduct(productId); // Retry
+        
+        case 'invalid_credentials':
+          console.error('Authentication failed. Please check your API key');
+          // Handle authentication issues (e.g., prompt user to re-authenticate)
+          break;
+        
+        default:
+          console.error(`API Error (${response.status}):`, errorData.error.message);
+          // Generic error handling
+      }
+      
+      // Throw error for caller to handle if needed
+      throw new Error(errorData.error.message);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    throw error;
+  }
+}
+```
+
+```python Python
+import requests
+import time
+import os
+
+def fetch_product(product_id):
+    api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+    url = f'https://api.productgraph.org/v1/products/{product_id}'
+    headers = {'X-API-Key': api_key}
+    
+    try:
+        response = requests.get(url, headers=headers)
+        
+        # Check if the request was successful
+        if response.status_code != 200:
+            error_data = response.json()
+            error = error_data.get('error', {})
+            
+            # Handle specific error types
+            if error.get('code') == 'resource_not_found':
+                print(f"Product {product_id} not found")
+                # Implement fallback logic or show user-friendly message
+                
+            elif error.get('code') == 'rate_limit_exceeded':
+                retry_after = int(response.headers.get('Retry-After', 60))
+                print(f"Rate limit exceeded. Retrying after {retry_after} seconds")
+                # Implement retry logic with delay
+                time.sleep(retry_after)
+                return fetch_product(product_id)  # Retry
+                
+            elif error.get('code') == 'invalid_credentials':
+                print("Authentication failed. Please check your API key")
+                # Handle authentication issues
+                
+            else:
+                print(f"API Error ({response.status_code}): {error.get('message')}")
+                # Generic error handling
+            
+            # Raise exception for caller to handle if needed
+            response.raise_for_status()
+        
+        return response.json()
+        
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching product: {e}")
+        raise
+```
+
+```php PHP
+<?php
+
+function fetchProduct($productId) {
+    $apiKey = getenv('PRODUCT_GRAPH_API_KEY');
+    $url = "https://api.productgraph.org/v1/products/{$productId}";
+    
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "X-API-Key: {$apiKey}",
+        "Accept: application/json"
+    ]);
+    
+    $response = curl_exec($ch);
+    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    
+    if (curl_errno($ch)) {
+        $error = curl_error($ch);
+        curl_close($ch);
+        throw new Exception("cURL Error: {$error}");
+    }
+    
+    curl_close($ch);
+    $data = json_decode($response, true);
+    
+    // Check if the request was successful
+    if ($statusCode != 200) {
+        $error = $data['error'] ?? ['code' => 'unknown', 'message' => 'Unknown error'];
+        
+        // Handle specific error types
+        switch ($error['code']) {
+            case 'resource_not_found':
+                error_log("Product {$productId} not found");
+                // Implement fallback logic or show user-friendly message
+                break;
+            
+            case 'rate_limit_exceeded':
+                $retryAfter = 60; // Default to 60 seconds if header is not present
+                if (isset($http_response_header)) {
+                    foreach ($http_response_header as $header) {
+                        if (strpos($header, 'Retry-After:') === 0) {
+                            $retryAfter = intval(trim(substr($header, 13)));
+                            break;
+                        }
+                    }
+                }
+                
+                error_log("Rate limit exceeded. Retrying after {$retryAfter} seconds");
+                // Implement retry logic with delay
+                sleep($retryAfter);
+                return fetchProduct($productId); // Retry
+            
+            case 'invalid_credentials':
+                error_log("Authentication failed. Please check your API key");
+                // Handle authentication issues
+                break;
+            
+            default:
+                error_log("API Error ({$statusCode}): {$error['message']}");
+                // Generic error handling
+        }
+        
+        throw new Exception($error['message'], $statusCode);
+    }
+    
+    return $data;
+}
+```
+</CodeGroup>
+
+## Best Practices for Error Handling
+
+<Tip>
+Following these best practices will help you build more resilient applications that gracefully handle API errors.
+</Tip>
+
+### Implement Retry Logic for Transient Errors
+
+For transient errors like rate limits or temporary service unavailability, implement retry logic with exponential backoff:
+
+```javascript
+async function fetchWithRetry(url, options = {}, maxRetries = 3) {
+  let retries = 0;
+  
+  while (retries < maxRetries) {
+    try {
+      const response = await fetch(url, options);
+      
+      if (response.ok) {
+        return await response.json();
+      }
+      
+      const errorData = await response.json();
+      
+      // Check if error is retryable
+      if (response.status === 429 || response.status >= 500) {
+        const retryAfter = response.headers.get('Retry-After') || Math.pow(2, retries);
+        console.warn(`Request failed. Retrying in ${retryAfter} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+        retries++;
+        continue;
+      }
+      
+      // Non-retryable error
+      throw new Error(errorData.error.message);
+    } catch (error) {
+      if (retries >= maxRetries - 1) {
+        throw error;
+      }
+      
+      const backoffTime = Math.pow(2, retries) * 1000;
+      await new Promise(resolve => setTimeout(resolve, backoffTime));
+      retries++;
+    }
+  }
+}
+```
+
+### Graceful Degradation
+
+When the API is unavailable or returns errors, implement fallback strategies to provide a degraded but functional experience:
+
+- Fall back to cached data
+- Display default content
+- Disable advanced features while keeping core functionality
+
+### Implement Circuit Breakers
+
+Use the circuit breaker pattern to prevent cascading failures when the API is experiencing issues:
+
+```javascript
+class CircuitBreaker {
+  constructor(failureThreshold = 5, resetTimeout = 30000) {
+    this.failureThreshold = failureThreshold;
+    this.resetTimeout = resetTimeout;
+    this.failureCount = 0;
+    this.state = 'CLOSED'; // CLOSED, OPEN, HALF_OPEN
+    this.lastFailureTime = null;
+  }
+  
+  async execute(fn) {
+    if (this.state === 'OPEN') {
+      if (Date.now() - this.lastFailureTime > this.resetTimeout) {
+        this.state = 'HALF_OPEN';
+      } else {
+        throw new Error('Circuit breaker is open');
+      }
+    }
+    
+    try {
+      const result = await fn();
+      this.reset();
+      return result;
+    } catch (error) {
+      this.trackFailure();
+      throw error;
+    }
+  }
+  
+  trackFailure() {
+    this.failureCount++;
+    this.lastFailureTime = Date.now();
+    
+    if (this.failureCount >= this.failureThreshold || this.state === 'HALF_OPEN') {
+      this.state = 'OPEN';
+    }
+  }
+  
+  reset() {
+    this.failureCount = 0;
+    this.state = 'CLOSED';
+  }
+}
+```
+
+### Improved Error Logging
+
+Log API errors with sufficient context to aid troubleshooting:
+
+```javascript
+function logApiError(error, context = {}) {
+  console.error({
+    message: error.message,
+    code: error.code,
+    request_id: error.request_id,
+    endpoint: context.endpoint,
+    parameters: context.parameters,
+    timestamp: new Date().toISOString()
+  });
+}
+```
+
+## Troubleshooting Common Issues
+
+<AccordionGroup>
+  <Accordion title="Authentication Issues">
+    - Verify your API key is correct and has not expired
+    - Ensure you're using the key for the correct environment (test vs. production)
+    - Check if your account is active and in good standing
+    - Verify that your API key has the necessary permissions for the endpoint you're accessing
+  </Accordion>
+  
+  <Accordion title="Rate Limiting">
+    - Implement proper retry logic with exponential backoff
+    - Consider caching responses to reduce API calls
+    - Batch operations where possible
+    - If you're consistently hitting rate limits, consider upgrading your plan or optimizing your API usage
+  </Accordion>
+  
+  <Accordion title="Resource Not Found">
+    - Check for typos in resource IDs
+    - Verify the resource exists in your account
+    - Ensure you're calling the correct API endpoint
+    - Remember that deleted resources cannot be retrieved
+  </Accordion>
+  
+  <Accordion title="Server Errors">
+    - Check the [ProductGraph Status Page](https://status.productgraph.org) for service disruptions
+    - Retry the request with exponential backoff
+    - If issues persist, contact support with your request_id
+  </Accordion>
+</AccordionGroup>
+
+## Getting Help
+
+If you're unable to resolve an error, you can:
+
+1. **Check our documentation**: Visit our [comprehensive documentation](https://productgraph.org/docs) for detailed guidance.
+
+2. **Check system status**: Visit our [status page](https://status.productgraph.org) to check if there are any known issues.
+
+3. **Contact support**: [Contact our support team](https://productgraph.org/support) with the `request_id` from the error response for faster resolution.
+
+<Card title="Dashboard Support" icon="headset" href="https://dashboard.productgraph.org/support">
+  Submit a support ticket with your request ID for personalized assistance
+</Card>

@@ -1,0 +1,546 @@
+---
+title: 'Best Practices'
+description: 'Strategies for using the Product Graph API effectively and efficiently'
+icon: 'lightbulb'
+---
+
+# API Best Practices
+
+This guide outlines recommended strategies for getting the most out of the Product Graph API, addressing common scenarios and providing practical tips for optimal implementation.
+
+<Note>
+Following these best practices will help you optimize performance, reduce costs, and build more reliable applications that leverage our API effectively.
+</Note>
+
+## Language Handling
+
+<CardGroup cols={2}>
+  <Card title="Language Specification" icon="language" color="#3B82F6">
+    Always specify which languages you need to minimize response size and optimize performance.
+  </Card>
+  <Card title="Fallback Chains" icon="arrow-right-arrow-left" color="#10B981">
+    Use language priority lists to ensure sensible fallbacks when translations are incomplete.
+  </Card>
+  <Card title="Localized Display" icon="globe" color="#F59E0B">
+    Use localized keys and values for a better user experience across languages.
+  </Card>
+  <Card title="Translation Management" icon="pen-to-square" color="#8B5CF6">
+    Prioritize translation of the most important fields first (name, description, key attributes).
+  </Card>
+</CardGroup>
+
+### Specifying Languages
+
+Always be explicit about which languages you need in your API requests:
+
+<CodeGroup>
+```bash Single Language
+# Request data in German only
+curl -X GET "https://api.productgraph.org/v1/products/prod_98765?lang=de" \
+  -H "X-API-Key: your-api-key"
+```
+
+```bash Language Priority Chain
+# Request with language priority (German preferred, fallback to English, then French)
+curl -X GET "https://api.productgraph.org/v1/products/prod_98765?languages=de,en,fr" \
+  -H "X-API-Key: your-api-key"
+```
+</CodeGroup>
+
+<Tip>
+By specifying only the languages you need, you can significantly reduce response size and improve API performance, especially for products with many translated fields.
+</Tip>
+
+### Handling Multiple Languages in Your UI
+
+Follow these best practices when displaying multi-language content:
+
+<Steps>
+  <Step title="Determine user's preferred language">
+    Either from browser settings, user profile, or explicit selection
+  </Step>
+  <Step title="Create a fallback chain">
+    Starting with the user's preferred language, followed by common languages like English
+  </Step>
+  <Step title="Request data with the language chain">
+    Use the `languages` parameter with your prioritized list
+  </Step>
+  <Step title="Display the best available content">
+    Show content in the highest-priority language available
+  </Step>
+  <Step title="Indicate source language">
+    Optionally show the source language when falling back to a different language
+  </Step>
+</Steps>
+
+<CodeGroup>
+```javascript JavaScript
+// Helper function to get best available translation
+function getBestTranslation(field, preferredLanguages) {
+  if (!field) return null;
+  
+  // Try each language in the preference order
+  for (const lang of preferredLanguages) {
+    if (field[lang]) return field[lang];
+  }
+  
+  // If no preferred translation found, return any available translation
+  const availableLanguages = Object.keys(field);
+  return availableLanguages.length > 0 ? field[availableLanguages[0]] : null;
+}
+
+// Usage example
+const userLanguages = ['de', 'en', 'fr']; // German preferred, then English, then French
+const productName = getBestTranslation(product.name, userLanguages);
+const productDescription = getBestTranslation(product.content.description, userLanguages);
+```
+
+```python Python
+def get_best_translation(field, preferred_languages):
+    if not field:
+        return None
+    
+    # Try each language in the preference order
+    for lang in preferred_languages:
+        if lang in field and field[lang]:
+            return field[lang]
+    
+    # If no preferred translation found, return any available translation
+    available_languages = list(field.keys())
+    return field[available_languages[0]] if available_languages else None
+    
+# Usage example
+user_languages = ['de', 'en', 'fr']  # German preferred, then English, then French
+product_name = get_best_translation(product['name'], user_languages)
+product_description = get_best_translation(product['content']['description'], user_languages)
+```
+</CodeGroup>
+
+## Performance Optimization
+
+<AccordionGroup>
+  <Accordion title="Selective Field Loading">
+    Use the `fields` parameter to request only the specific data you need for each use case:
+    
+    ```bash
+    # Only retrieve basic product information
+    curl -X GET "https://api.productgraph.org/v1/products/prod_98765?fields=name,gtin,brand,main_image_url" \
+      -H "X-API-Key: your-api-key"
+    ```
+    
+    Common field selection patterns:
+    
+    <Table>
+      <Thead>
+        <Tr>
+          <Th>Use Case</Th>
+          <Th>Recommended Fields</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        <Tr>
+          <Td>Search Results</Td>
+          <Td>`name,gtin,brand,main_image_url,summary,price`</Td>
+        </Tr>
+        <Tr>
+          <Td>Product Detail Page</Td>
+          <Td>`name,gtin,brand,content,attributes,images`</Td>
+        </Tr>
+        <Tr>
+          <Td>Quick Preview</Td>
+          <Td>`name,main_image_url,content.short_description`</Td>
+        </Tr>
+      </Tbody>
+    </Table>
+    
+    <Tip>
+      When requesting nested fields, use dot notation like `content.short_description` to retrieve specific nested properties.
+    </Tip>
+  </Accordion>
+  
+  <Accordion title="Effective Caching Strategies">
+    Implement caching to reduce API calls and improve performance:
+    
+    1. **Cache based on `updated_at` timestamps**:
+       ```javascript
+       // Check if cached data is still fresh
+       function isDataFresh(cachedData) {
+         if (!cachedData || !cachedData.updated_at) return false;
+         
+         const cachedDate = new Date(cachedData.updated_at);
+         const cacheExpiry = new Date(cachedDate.getTime() + (24 * 60 * 60 * 1000)); // 24 hours
+         return cacheExpiry > new Date();
+       }
+       ```
+    
+    2. **Use conditional requests with `If-Modified-Since` headers**:
+       ```bash
+       curl -X GET "https://api.productgraph.org/v1/products/prod_98765" \
+         -H "X-API-Key: your-api-key" \
+         -H "If-Modified-Since: Wed, 12 Apr 2023 09:45:33 GMT"
+       ```
+    
+    3. **Set appropriate cache durations**:
+       - Product basic info: 24 hours
+       - Images and static assets: 7 days
+       - Search results: 1 hour
+       - Analytics data: 15 minutes
+    
+    <Warning>
+      Don't cache authentication tokens or sensitive data on client-side. Always store these securely on the server.
+    </Warning>
+  </Accordion>
+  
+  <Accordion title="Asynchronous Processing">
+    For resource-intensive operations, use our asynchronous APIs:
+    
+    1. **Initiate the operation**:
+       ```javascript
+       // Start an asynchronous search
+       const response = await fetch('https://api.productgraph.org/v1/search', {
+         method: 'POST',
+         headers: {
+           'X-API-Key': apiKey,
+           'Content-Type': 'application/json'
+         },
+         body: JSON.stringify({
+           query: 'wireless headphones',
+           // Other search parameters...
+         })
+       });
+       
+       const { job_id } = await response.json();
+       ```
+    
+    2. **Check status or use webhooks**:
+       ```javascript
+       // Option 1: Poll for results
+       async function checkJobStatus(jobId) {
+         const response = await fetch(`https://api.productgraph.org/v1/search/${jobId}`, {
+           headers: { 'X-API-Key': apiKey }
+         });
+         
+         return await response.json();
+       }
+       
+       // Option 2: Use webhooks (recommended for production)
+       // Set up a webhook to receive notification when the job completes
+       ```
+    
+    <Tip>
+      For production environments, webhooks are more efficient than polling. Set up a webhook endpoint to receive notifications when asynchronous jobs complete.
+    </Tip>
+  </Accordion>
+  
+  <Accordion title="Batch Operations">
+    When working with multiple products, use batch operations instead of multiple individual requests:
+    
+    ```bash
+    # Retrieve multiple products in a single request
+    curl -X GET "https://api.productgraph.org/v1/products?ids=prod_98765,prod_98766,prod_98767" \
+      -H "X-API-Key: your-api-key"
+    ```
+    
+    <Table>
+      <Thead>
+        <Tr>
+          <Th>Operation</Th>
+          <Th>Individual Approach</Th>
+          <Th>Batch Approach</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        <Tr>
+          <Td>Product Retrieval</Td>
+          <Td>Multiple GET requests to `/products/{id}`</Td>
+          <Td>Single GET request to `/products?ids=id1,id2,id3`</Td>
+        </Tr>
+        <Tr>
+          <Td>Translation</Td>
+          <Td>Multiple POST requests to `/products/{id}/translate`</Td>
+          <Td>Single POST request to `/products/translate`</Td>
+        </Tr>
+      </Tbody>
+    </Table>
+  </Accordion>
+</AccordionGroup>
+
+## Managing Translations
+
+<Tabs>
+  <Tab title="Translation Priorities">
+    Prioritize translations in this order for the best user experience:
+    
+    1. **Essential fields** (highest priority):
+       - Product name
+       - Short description
+       - Main category
+       - Key attributes (e.g., size, color)
+    
+    2. **Important content** (medium priority):
+       - Full description
+       - Key benefits
+       - Technical specifications
+       - Usage instructions
+    
+    3. **Additional content** (lower priority):
+       - Detailed attributes
+       - Marketing content
+       - SEO descriptions
+       - Related content
+  </Tab>
+  
+  <Tab title="Translation Status Monitoring">
+    Track translation status for important products:
+    
+    ```javascript
+    // Check translation status for a product
+    async function checkTranslationStatus(productId) {
+      const response = await fetch(
+        `https://api.productgraph.org/v1/products/${productId}?include_translation_status=true`,
+        { headers: { 'X-API-Key': apiKey } }
+      );
+      
+      const product = await response.json();
+      
+      // Check translation completeness
+      if (product.translation_status) {
+        const languages = Object.keys(product.translation_status);
+        
+        for (const lang of languages) {
+          const status = product.translation_status[lang];
+          console.log(`${lang}: ${status.completion_percentage}% complete`);
+          
+          // Alert if any important language is below threshold
+          if (important_languages.includes(lang) && status.completion_percentage < 90) {
+            console.warn(`Warning: ${lang} translation is incomplete (${status.completion_percentage}%)`);
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Webhook Notifications">
+    Set up webhooks to be notified when translations are completed:
+    
+    ```javascript
+    // Register a webhook for translation events
+    async function setupTranslationWebhook() {
+      const response = await fetch('https://api.productgraph.org/v1/webhooks', {
+        method: 'POST',
+        headers: {
+          'X-API-Key': apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          url: 'https://your-app.com/webhooks/translation',
+          events: ['translation_completed'],
+          language_filters: ['de', 'fr', 'es'],  // Only notify for these languages
+          secret: webhookSecret
+        })
+      });
+      
+      return await response.json();
+    }
+    ```
+    
+    <Note>
+      Your webhook endpoint should update your cache or database when translations are completed to ensure your users always see the latest content.
+    </Note>
+  </Tab>
+</Tabs>
+
+## Error Handling and Reliability
+
+<AccordionGroup>
+  <Accordion title="Handling API Errors">
+    Implement robust error handling for all API calls:
+    
+    ```javascript
+    async function makeApiRequest(endpoint, options = {}) {
+      try {
+        const response = await fetch(`https://api.productgraph.org/v1/${endpoint}`, {
+          headers: {
+            'X-API-Key': apiKey,
+            ...options.headers
+          },
+          ...options
+        });
+        
+        // Handle HTTP errors
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          
+          // Handle rate limiting
+          if (response.status === 429) {
+            const retryAfter = response.headers.get('Retry-After') || 60;
+            console.warn(`Rate limit exceeded. Retry after ${retryAfter} seconds.`);
+            
+            // Implement retry logic here
+            return new Promise(resolve => {
+              setTimeout(() => resolve(makeApiRequest(endpoint, options)), retryAfter * 1000);
+            });
+          }
+          
+          // Handle other errors
+          throw new Error(errorData.message || `API error (${response.status})`);
+        }
+        
+        return await response.json();
+      } catch (error) {
+        // Handle network errors
+        console.error('API request failed:', error);
+        
+        // Implement appropriate fallback strategy
+        // e.g., return cached data, retry, or show user-friendly error
+        throw error;
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Implementing Retries">
+    Implement exponential backoff for failed requests:
+    
+    ```javascript
+    async function fetchWithRetry(url, options = {}, maxRetries = 3) {
+      let retries = 0;
+      
+      while (retries < maxRetries) {
+        try {
+          const response = await fetch(url, options);
+          
+          if (response.ok) {
+            return await response.json();
+          }
+          
+          if (response.status === 429) {
+            // Rate limit - use the Retry-After header if available
+            const retryAfter = parseInt(response.headers.get('Retry-After') || '1', 10);
+            await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+            retries++;
+            continue;
+          }
+          
+          if (response.status >= 500) {
+            // Server error - retry with exponential backoff
+            const backoffTime = Math.pow(2, retries) * 1000 + Math.random() * 1000;
+            await new Promise(resolve => setTimeout(resolve, backoffTime));
+            retries++;
+            continue;
+          }
+          
+          // Client error (4xx) - don't retry
+          const error = await response.json().catch(() => ({}));
+          throw new Error(error.message || `API error (${response.status})`);
+        } catch (error) {
+          if (retries >= maxRetries - 1) {
+            throw error;
+          }
+          
+          // Network error - retry with exponential backoff
+          const backoffTime = Math.pow(2, retries) * 1000 + Math.random() * 1000;
+          await new Promise(resolve => setTimeout(resolve, backoffTime));
+          retries++;
+        }
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Circuit Breaker Pattern">
+    Implement a circuit breaker to prevent cascade failures:
+    
+    ```javascript
+    class CircuitBreaker {
+      constructor(failureThreshold = 5, resetTimeout = 30000) {
+        this.failureThreshold = failureThreshold;
+        this.resetTimeout = resetTimeout;
+        this.failureCount = 0;
+        this.state = 'CLOSED'; // CLOSED, OPEN, HALF_OPEN
+        this.lastFailureTime = null;
+      }
+      
+      async execute(fn) {
+        if (this.state === 'OPEN') {
+          // Check if it's time to try again
+          if (Date.now() - this.lastFailureTime > this.resetTimeout) {
+            this.state = 'HALF_OPEN';
+          } else {
+            throw new Error('Circuit breaker is open');
+          }
+        }
+        
+        try {
+          const result = await fn();
+          
+          // If successful and in HALF_OPEN, reset the circuit
+          if (this.state === 'HALF_OPEN') {
+            this.reset();
+          }
+          
+          return result;
+        } catch (error) {
+          this.failureCount++;
+          this.lastFailureTime = Date.now();
+          
+          // If we've hit the threshold, open the circuit
+          if (this.failureCount >= this.failureThreshold || this.state === 'HALF_OPEN') {
+            this.state = 'OPEN';
+          }
+          
+          throw error;
+        }
+      }
+      
+      reset() {
+        this.failureCount = 0;
+        this.state = 'CLOSED';
+      }
+    }
+    
+    // Usage
+    const productGraphBreaker = new CircuitBreaker();
+    
+    async function getProduct(productId) {
+      return productGraphBreaker.execute(async () => {
+        const response = await fetch(`https://api.productgraph.org/v1/products/${productId}`, {
+          headers: { 'X-API-Key': apiKey }
+        });
+        
+        if (!response.ok) throw new Error(`API error: ${response.status}`);
+        return await response.json();
+      });
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Security Best Practices
+
+<Steps>
+  <Step title="Protect Your API Key">
+    Never expose your API key in client-side code. Store it securely in environment variables or a secrets manager.
+  </Step>
+  <Step title="Use HTTPS for All Requests">
+    Always use HTTPS to ensure data is encrypted in transit.
+  </Step>
+  <Step title="Implement Proper Authentication">
+    If you're building a customer-facing application, implement proper authentication and authorization to ensure users can only access data they're allowed to see.
+  </Step>
+  <Step title="Validate Webhook Signatures">
+    Always verify webhook signatures to ensure they came from ProductGraph.
+  </Step>
+  <Step title="Sanitize User Input">
+    If your application passes user input to our API (e.g., search queries), sanitize the input to prevent injection attacks.
+  </Step>
+</Steps>
+
+## Next Steps
+
+Now that you're familiar with best practices for using the Product Graph API, learn how to handle errors gracefully:
+
+<Card title="Error Handling" icon="triangle-exclamation" href="/product-graph/error-handling">
+  Understand common error types and how to handle them
+</Card>

@@ -1,0 +1,570 @@
+---
+title: 'Brand API'
+description: 'Access comprehensive information about product brands'
+icon: 'building'
+---
+
+# Brand API
+
+The Brand API provides access to comprehensive information about product brands, including their identity, values, and corporate details. This data can be used to enrich product listings, create brand-specific pages, and ensure consistent brand representation across your platform.
+
+<Note>
+Brand information is updated regularly to reflect the latest corporate changes, rebranding initiatives, and new brand entries.
+</Note>
+
+## Brand Information Overview
+
+<CardGroup cols={2}>
+  <Card title="Brand Identity" icon="id-card" color="#3B82F6">
+    Official names, logos, and visual identity elements
+  </Card>
+  <Card title="Corporate Details" icon="building" color="#10B981">
+    Headquarters, founding date, and company structure
+  </Card>
+  <Card title="Brand Values" icon="heart" color="#F59E0B">
+    Mission statements, values, and brand positioning
+  </Card>
+  <Card title="Brand Relationships" icon="diagram-project" color="#8B5CF6">
+    Parent companies, subsidiaries, and brand divisions
+  </Card>
+</CardGroup>
+
+## Get Brand Details
+
+Retrieve comprehensive information about a specific brand using its unique identifier.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/brands/brand_sony" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/brands/brand_sony', {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const brandData = await response.json();
+console.log('Brand details:', brandData);
+```
+
+```python Python
+import requests
+import os
+
+api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+url = 'https://api.productgraph.org/v1/brands/brand_sony'
+headers = {'X-API-Key': api_key}
+
+response = requests.get(url, headers=headers)
+brand_data = response.json()
+print(f"Brand details: {brand_data}")
+```
+</CodeGroup>
+
+### Response
+
+<Tabs>
+  <Tab title="JSON Response">
+    ```json
+    {
+      "id": "brand_sony",
+      "name": "Sony",
+      "searchable_aliases": ["sony corporation", "sony electronics"],
+      "established": 1946,
+      "display_name": {
+        "en": "Brand",
+        "de": "Marke"
+      },
+      "headquarters": {
+        "city": "Tokyo",
+        "country": "Japan"
+      },
+      "brand_values": [
+        {
+          "name": {
+            "en": "Innovation",
+            "de": "Innovation"
+          },
+          "description": {
+            "en": "Pushing the boundaries of what's possible",
+            "de": "Die Grenzen des Möglichen verschieben"
+          }
+        }
+      ],
+      "brand_identity": {
+        "logo": {
+          "primary_url": "https://example.com/logos/sony_logo_primary.svg",
+          "monochrome_url": "https://example.com/logos/sony_logo_mono.svg"
+        }
+      },
+      "divisions": [
+        {
+          "name": "Sony Electronics",
+          "products": ["TVs", "Audio", "Cameras"]
+        }
+      ]
+    }
+    ```
+  </Tab>
+  <Tab title="Field Descriptions">
+    <ResponseField name="id" type="string">
+      Unique identifier for the brand.
+    </ResponseField>
+    
+    <ResponseField name="name" type="string">
+      Official brand name.
+    </ResponseField>
+    
+    <ResponseField name="searchable_aliases" type="array">
+      Alternative names and common variations used to search for this brand.
+    </ResponseField>
+    
+    <ResponseField name="established" type="number">
+      Year the brand was established.
+    </ResponseField>
+    
+    <ResponseField name="display_name" type="object">
+      Localized display names for the "Brand" label in different languages.
+    </ResponseField>
+    
+    <ResponseField name="headquarters" type="object">
+      Location information for the brand's headquarters.
+      
+      <Expandable title="headquarters properties">
+        <ResponseField name="city" type="string">
+          City where the headquarters is located.
+        </ResponseField>
+        
+        <ResponseField name="country" type="string">
+          Country where the headquarters is located.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    
+    <ResponseField name="brand_values" type="array">
+      Core brand values and principles in multiple languages.
+    </ResponseField>
+    
+    <ResponseField name="brand_identity" type="object">
+      Visual identity assets for the brand.
+      
+      <Expandable title="brand_identity properties">
+        <ResponseField name="logo" type="object">
+          Logo images in various formats.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    
+    <ResponseField name="divisions" type="array">
+      Brand divisions or sub-brands within the main brand.
+    </ResponseField>
+  </Tab>
+</Tabs>
+
+## Search Brands
+
+Search for brands using various criteria such as name, country, or establishment year.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/brands/search?query=Sony&established_after=1940&country=Japan" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  query: 'Sony',
+  established_after: 1940,
+  country: 'Japan'
+});
+
+const response = await fetch(`https://api.productgraph.org/v1/brands/search?${params}`, {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const searchResults = await response.json();
+console.log(`Found ${searchResults.total} brands`);
+```
+
+```python Python
+import requests
+import os
+
+api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+url = 'https://api.productgraph.org/v1/brands/search'
+headers = {'X-API-Key': api_key}
+params = {
+    'query': 'Sony',
+    'established_after': 1940,
+    'country': 'Japan'
+}
+
+response = requests.get(url, headers=headers, params=params)
+search_results = response.json()
+print(f"Found {search_results['total']} brands")
+```
+</CodeGroup>
+
+### Query Parameters
+
+<ParamField query="query" type="string">
+  Text search for brand name and aliases.
+</ParamField>
+
+<ParamField query="established_after" type="number">
+  Filter for brands established after the specified year.
+</ParamField>
+
+<ParamField query="established_before" type="number">
+  Filter for brands established before the specified year.
+</ParamField>
+
+<ParamField query="country" type="string">
+  Filter by headquarters country.
+</ParamField>
+
+<ParamField query="industry" type="string">
+  Filter by industry sector (e.g., "Electronics", "Automotive").
+</ParamField>
+
+<ParamField query="page" type="number" default="1">
+  Page number for paginated results.
+</ParamField>
+
+<ParamField query="page_size" type="number" default="20">
+  Number of results per page (max 100).
+</ParamField>
+
+### Response
+
+```json
+{
+  "results": [
+    {
+      "id": "brand_sony",
+      "name": "Sony",
+      "established": 1946,
+      "headquarters": {
+        "country": "Japan"
+      },
+      "logo_url": "https://example.com/logos/sony_logo.svg"
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "pages": 1
+}
+```
+
+<ResponseField name="results" type="array">
+  Array of brand objects matching the search criteria.
+</ResponseField>
+
+<ResponseField name="total" type="number">
+  Total number of brands matching the search criteria.
+</ResponseField>
+
+<ResponseField name="page" type="number">
+  Current page number.
+</ResponseField>
+
+<ResponseField name="pages" type="number">
+  Total number of pages.
+</ResponseField>
+
+## Get Brand Products
+
+Retrieve a list of products associated with a specific brand.
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.productgraph.org/v1/brands/brand_sony/products" \
+  -H "X-API-Key: your-api-key"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/brands/brand_sony/products', {
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY
+  }
+});
+
+const products = await response.json();
+console.log(`Found ${products.total} products for this brand`);
+```
+
+```python Python
+import requests
+import os
+
+api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+url = 'https://api.productgraph.org/v1/brands/brand_sony/products'
+headers = {'X-API-Key': api_key}
+
+response = requests.get(url, headers=headers)
+products = response.json()
+print(f"Found {products['total']} products for this brand")
+```
+</CodeGroup>
+
+### Query Parameters
+
+<ParamField query="category" type="string">
+  Filter by product category.
+</ParamField>
+
+<ParamField query="sort" type="string" default="popularity">
+  Sort products by: `popularity`, `newest`, or `name`.
+</ParamField>
+
+<ParamField query="page" type="number" default="1">
+  Page number for paginated results.
+</ParamField>
+
+<ParamField query="page_size" type="number" default="20">
+  Number of products per page (max 100).
+</ParamField>
+
+### Response
+
+```json
+{
+  "brand": {
+    "id": "brand_sony",
+    "name": "Sony"
+  },
+  "products": [
+    {
+      "id": "prod_98765",
+      "name": {
+        "en": "Sony WH-1000XM4 Wireless Noise-Canceling Headphones",
+        "de": "Sony WH-1000XM4 Kabellose Noise-Cancelling-Kopfhörer"
+      },
+      "gtin": "4548736112001",
+      "main_image_url": "https://example.com/images/sony-wh1000xm4.jpg",
+      "category": "Headphones"
+    }
+  ],
+  "total": 145,
+  "page": 1,
+  "pages": 8
+}
+```
+
+## Brand Comparison
+
+Compare multiple brands to understand their positioning, values, and differences.
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.productgraph.org/v1/brands/compare" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "brand_ids": ["brand_sony", "brand_bose"],
+    "fields": ["established", "headquarters", "brand_values"]
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.productgraph.org/v1/brands/compare', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': process.env.PRODUCT_GRAPH_API_KEY,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    brand_ids: ['brand_sony', 'brand_bose'],
+    fields: ['established', 'headquarters', 'brand_values']
+  })
+});
+
+const comparison = await response.json();
+console.log('Brand comparison:', comparison);
+```
+
+```python Python
+import requests
+import os
+
+api_key = os.environ.get('PRODUCT_GRAPH_API_KEY')
+url = 'https://api.productgraph.org/v1/brands/compare'
+headers = {
+    'X-API-Key': api_key,
+    'Content-Type': 'application/json'
+}
+payload = {
+    'brand_ids': ['brand_sony', 'brand_bose'],
+    'fields': ['established', 'headquarters', 'brand_values']
+}
+
+response = requests.post(url, headers=headers, json=payload)
+comparison = response.json()
+print(f"Brand comparison: {comparison}")
+```
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "brands": [
+    {
+      "id": "brand_sony",
+      "name": "Sony",
+      "established": 1946,
+      "headquarters": {
+        "country": "Japan"
+      },
+      "brand_values": [
+        {
+          "name": {
+            "en": "Innovation"
+          }
+        }
+      ]
+    },
+    {
+      "id": "brand_bose",
+      "name": "Bose",
+      "established": 1964,
+      "headquarters": {
+        "country": "United States"
+      },
+      "brand_values": [
+        {
+          "name": {
+            "en": "Quality Sound"
+          }
+        }
+      ]
+    }
+  ],
+  "comparison": {
+    "established": {
+      "oldest": "brand_sony",
+      "youngest": "brand_bose",
+      "difference_years": 18
+    },
+    "geographic": {
+      "same_continent": false,
+      "countries": ["Japan", "United States"]
+    }
+  }
+}
+```
+
+## Common Use Cases
+
+<AccordionGroup>
+  <Accordion title="Brand Profile Pages">
+    Create dedicated brand profile pages on your e-commerce platform, showcasing brand history, values, and products.
+    
+    <Steps>
+      <Step title="Fetch Brand Details">
+        Get comprehensive brand information using the Brand API
+      </Step>
+      <Step title="Retrieve Brand Products">
+        Fetch products associated with the brand
+      </Step>
+      <Step title="Display Brand Story">
+        Present the brand's history, values, and mission
+      </Step>
+      <Step title="Showcase Product Categories">
+        Organize the brand's products by category
+      </Step>
+    </Steps>
+  </Accordion>
+  
+  <Accordion title="Brand-Based Filters">
+    Implement filtering options in your product catalog based on brand attributes such as country of origin, establishment year, or brand values.
+    
+    ```javascript
+    // Example: Filter products by brands from a specific country
+    const japaneseBusinesses = await fetch(
+      'https://api.productgraph.org/v1/brands/search?country=Japan',
+      { headers: { 'X-API-Key': apiKey } }
+    ).then(res => res.json());
+    
+    const japaneseBusinessIds = japaneseBusinesses.results.map(brand => brand.id);
+    
+    // Then use these IDs to filter products
+    const params = new URLSearchParams({
+      brands: japaneseBusinessIds.join(',')
+    });
+    
+    const japaneseProducts = await fetch(
+      `https://api.productgraph.org/v1/products/search?${params}`,
+      { headers: { 'X-API-Key': apiKey } }
+    ).then(res => res.json());
+    ```
+  </Accordion>
+  
+  <Accordion title="Brand Comparison Tools">
+    Build tools that allow users to compare different brands in the same category, highlighting differences in values, history, and product offerings.
+    
+    ```javascript
+    async function compareBrandsInCategory(category, fields) {
+      // First, find brands in the category
+      const brandsResponse = await fetch(
+        `https://api.productgraph.org/v1/products/search?category=${category}&group_by=brand`,
+        { headers: { 'X-API-Key': apiKey } }
+      );
+      
+      const brandData = await brandsResponse.json();
+      const topBrandIds = brandData.groups.slice(0, 5).map(group => group.id);
+      
+      // Then compare these brands
+      const comparisonResponse = await fetch(
+        'https://api.productgraph.org/v1/brands/compare',
+        {
+          method: 'POST',
+          headers: {
+            'X-API-Key': apiKey,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            brand_ids: topBrandIds,
+            fields: fields
+          })
+        }
+      );
+      
+      return await comparisonResponse.json();
+    }
+    
+    // Example: Compare top headphone brands
+    const comparison = await compareBrandsInCategory('Headphones', 
+      ['established', 'headquarters', 'brand_values']);
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<Tip>
+Here are some best practices for working with the Brand API:
+</Tip>
+
+1. **Cache brand data**: Brand information changes infrequently, so cache this data to reduce API calls.
+
+2. **Combine with Product API**: For the best user experience, combine brand information with detailed product data.
+
+3. **Use brand identifiers consistently**: When referencing brands across your application, use the consistent `brand_id` provided by the API.
+
+4. **Consider regional differences**: Some brands may have different positioning or identities in different regions.
+
+5. **Handle missing data gracefully**: Not all brands will have complete information for all fields.
+
+## Next Steps
+
+Continue exploring our API with detailed information about products:
+
+<Card title="Product Data API" icon="cube" href="/product-graph/product-data">
+  Access comprehensive product information and specifications
+</Card>
