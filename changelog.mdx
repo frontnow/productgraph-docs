@@ -1,0 +1,265 @@
+---
+title: 'Changelog'
+description: 'Notable changes and updates to the Product Graph API'
+icon: 'clock-rotate-left'
+---
+
+# Product Graph API Changelog
+
+This page documents significant updates and changes to the Product Graph API. We're constantly improving our API to provide better functionality, performance, and developer experience.
+
+<Note>
+  For backward compatibility information and deprecation policies, please refer to our [API Versioning Policy](/product-graph/best-practices#api-versioning).
+</Note>
+
+## Version 1.6.0
+
+<Update>
+  ### Multilingual Content Quality Scoring
+  
+  We've added quality scoring for multilingual content, allowing you to identify which translated content needs improvement.
+  
+  ```json
+  {
+    "name": {
+      "en": {
+        "value": "Wireless Bluetooth Headphones",
+        "quality_score": 0.98
+      },
+      "de": {
+        "value": "Kabellose Bluetooth-Kopfhörer",
+        "quality_score": 0.95
+      },
+      "fr": {
+        "value": "Écouteurs Bluetooth sans fil",
+        "quality_score": 0.92
+      }
+    }
+  }
+  ```
+  
+  Quality scores range from 0.0 to 1.0, with higher values indicating better quality.
+</Update>
+
+<Update>
+  ### Advanced Filter Operators in Search API
+  
+  Search filters now support advanced operators including range queries, negation, and OR conditions.
+  
+  ```javascript
+  // Search for products between $50-$200, excluding specific brands
+  const searchData = {
+    query: "bluetooth speaker",
+    filter: {
+      price: {
+        $gte: 50,
+        $lte: 200
+      },
+      brand: {
+        $nin: ["BrandX", "BrandY"]
+      },
+      attributes: {
+        $or: [
+          { waterproof: true },
+          { water_resistant: true }
+        ]
+      }
+    }
+  };
+  ```
+  
+  This enables much more precise filtering for complex product searches.
+</Update>
+
+## Version 1.5.0
+
+<Update>
+  ### Historical Data API
+  
+  Introducing our new Historical Data API that allows you to track changes to product information over time.
+  
+  ```bash
+  # Get historical versions of a product
+  curl -X GET "https://api.productgraph.org/v1/products/prod_123/history" \
+    -H "X-API-Key: your-api-key"
+  ```
+  
+  You can now retrieve previous versions of product data, compare changes between versions, and access product data as it existed at a specific point in time.
+</Update>
+
+<Update>
+  ### Brand Analytics and Insights
+  
+  The Brand API now provides analytics and insights about brands in our database.
+  
+  ```json
+  {
+    "id": "brand_sony",
+    "name": "Sony",
+    "analytics": {
+      "product_count": 1245,
+      "average_quality_score": 0.87,
+      "language_coverage": ["en", "de", "fr", "es", "it", "ja"],
+      "top_categories": [
+        {"name": "Audio", "count": 432},
+        {"name": "Televisions", "count": 185},
+        {"name": "Cameras", "count": 126}
+      ]
+    }
+  }
+  ```
+  
+  This data can help you understand brand presence and product coverage across categories.
+</Update>
+
+## Version 1.4.0
+
+<Update>
+  ### Enhanced Webhook Reliability
+  
+  We've completely rebuilt our webhook delivery system with:
+  
+  - Guaranteed delivery with automatic retries
+  - Delivery metrics and logs in the dashboard
+  - Event filtering for more precise notifications
+  - Webhook signature verification for enhanced security
+  
+  ```bash
+  # Create a webhook with event filtering
+  curl -X POST "https://api.productgraph.org/v1/webhooks" \
+    -H "X-API-Key: your-api-key" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "url": "https://your-server.com/webhook",
+      "events": ["product.created", "product.updated.description"],
+      "secret": "your-signing-secret"
+    }'
+  ```
+  
+  Webhooks now show delivery status and history in the dashboard.
+</Update>
+
+<Update>
+  ### Bulk Operations API
+  
+  New endpoints for high-volume operations:
+  
+  ```bash
+  # Bulk fetch products
+  curl -X POST "https://api.productgraph.org/v1/products/bulk/get" \
+    -H "X-API-Key: your-api-key" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "ids": ["prod_123", "prod_456", "prod_789"],
+      "languages": ["en", "de"]
+    }'
+  ```
+  
+  Bulk operations are processed asynchronously and significantly reduce API call overhead for large datasets. Available for product retrieval, search operations, and translations.
+</Update>
+
+## Version 1.3.0
+
+<Update>
+  ### AI-Powered Product Categorization
+  
+  We've added AI-powered categorization that automatically assigns products to the correct category hierarchies.
+  
+  ```json
+  {
+    "categories": {
+      "primary": {
+        "id": "cat_electronics_audio_headphones",
+        "name": "Headphones",
+        "path": ["Electronics", "Audio", "Headphones"],
+        "confidence": 0.97
+      },
+      "secondary": [
+        {
+          "id": "cat_electronics_accessories",
+          "name": "Accessories",
+          "path": ["Electronics", "Accessories"],
+          "confidence": 0.82
+        }
+      ]
+    }
+  }
+  ```
+  
+  This feature improves product browsing, filtering, and discovery.
+</Update>
+
+<Update>
+  ### Performance Improvements
+  
+  **50% faster search response times** and **30% reduction in API latency** across all endpoints.
+  
+  We've completely reengineered our infrastructure with:
+  
+  - Distributed search indexing for faster responses
+  - Enhanced caching strategies
+  - Optimized database queries
+  - Global CDN integration
+  
+  These improvements are automatically available to all API users with no integration changes required.
+</Update>
+
+## Version 1.2.0
+
+<Update>
+  ### Image Analysis API
+  
+  New Image Analysis capabilities that provide detailed information about product images:
+  
+  ```json
+  {
+    "images": [
+      {
+        "url": "https://example.com/headphones.jpg",
+        "analysis": {
+          "dominant_colors": ["#121212", "#F5F5F5"],
+          "background_type": "solid",
+          "subject_position": "center",
+          "quality_score": 0.94,
+          "detected_objects": [
+            {"label": "headphones", "confidence": 0.99, "bounding_box": {...}},
+            {"label": "usb cable", "confidence": 0.87, "bounding_box": {...}}
+          ]
+        }
+      }
+    ]
+  }
+  ```
+  
+  This feature helps create better product listings with accurate color information and quality assessment.
+</Update>
+
+## Version 1.1.0
+
+<Update>
+  ### Expanded Language Support
+  
+  We've added support for 15 new languages, bringing our total to 30 languages:
+  
+  - Added: Arabic, Turkish, Dutch, Swedish, Norwegian, Finnish, Danish, Polish, Czech, Hungarian, Greek, Romanian, Thai, Indonesian, and Malaysian
+  - Existing: English, German, French, Spanish, Italian, Portuguese, Russian, Japanese, Korean, Chinese (Simplified), Chinese (Traditional), Hindi, Vietnamese, Ukrainian, and Hebrew
+  
+  All product data endpoints now support these additional languages through the `languages` parameter.
+</Update>
+
+## Version 1.0.0
+
+<Update>
+  ### Initial Public Release
+  
+  The first public release of the Product Graph API includes:
+  
+  - Product Search API with filtering and sorting
+  - Product Data API with multilingual support
+  - Brand Information API
+  - User authentication and API key management
+  - Basic webhooks for real-time notifications
+  - Credits system for usage tracking
+  
+  This stable release follows our extensive beta testing period. Thanks to all our beta testers for their valuable feedback!
+</Update>
