@@ -51,8 +51,8 @@
         "language": "en",
         "dropdowns": [
           {
-            "dropdown": "Product Graph API",
-            "description": "Guides and concepts for the Product Graph API",
+            "dropdown": "Documentation",
+            "description": "Guides and concepts",
             "icon": "cube",
             "groups": [
               {
@@ -117,7 +117,7 @@
           },
           {
             "dropdown": "API Reference",
-            "description": "Comprehensive API endpoint documentation",
+            "description": "Endpoints and definitions",
             "icon": "book",
             "groups": [
               {
@@ -181,13 +181,6 @@
                 ]
               }
             ]
-          },
-          {
-            "dropdown": "Blog",
-            "description": "Product Graph news and updates",
-            "icon": "newspaper",
-            "title": "Blog",
-            "href": "https://blog.productgraph.org"
           }
         ]
       },
@@ -195,10 +188,9 @@
         "language": "de",
         "dropdowns": [
           {
-            "dropdown": "Product Graph API",
-            "description": "Anleitungen und Konzepte für die Product Graph API",
+            "dropdown": "Dokumentation",
+            "description": "Anleitungen und Konzepte",
             "icon": "cube",
-            "title": "Docs",
             "groups": [
               {
                 "group": "Erste Schritte",
@@ -261,10 +253,9 @@
             ]
           },
           {
-            "dropdown": "API-Referenz",
-            "description": "Umfassende Dokumentation der API-Endpunkte",
+            "dropdown": "Schnittstellen",
+            "description": "API-Endpunkte und Definitionen",
             "icon": "book",
-            "title": "API",
             "groups": [
               {
                 "group": "Überblick",
@@ -327,13 +318,6 @@
                 ]
               }
             ]
-          },
-          {
-            "dropdown": "Blog",
-            "description": "Product Graph Neuigkeiten und Updates",
-            "icon": "newspaper",
-            "title": "Blog",
-            "href": "https://blog.productgraph.org"
           }
         ]
       }
