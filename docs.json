@@ -69,6 +69,7 @@
                 "pages": [
                   {
                     "group": "Fundamentals",
+                    "icon": "diagram-project",
                     "pages": [
                       "product-graph/index",
                       "product-graph/overview",
@@ -78,6 +79,7 @@
                   },
                   {
                     "group": "Data Access",
+                    "icon": "database",
                     "pages": [
                       "product-graph/multilanguage",
                       "product-graph/search",
@@ -94,6 +96,7 @@
                 "pages": [
                   {
                     "group": "Integrations",
+                    "icon": "plug",
                     "pages": [
                       "product-graph/analytics",
                       "product-graph/webhooks"
@@ -101,6 +104,7 @@
                   },
                   {
                     "group": "Development",
+                    "icon": "code-branch",
                     "pages": [
                       "product-graph/best-practices",
                       "product-graph/error-handling"
@@ -116,6 +120,7 @@
             "groups": [
               {
                 "group": "Overview",
+                "icon": "compass",
                 "pages": [
                   "api-reference/introduction"
                 ]
@@ -199,6 +204,7 @@
                 "pages": [
                   {
                     "group": "Grundlagen",
+                    "icon": "diagram-project",
                     "pages": [
                       "de/product-graph/index",
                       "de/product-graph/overview",
@@ -208,6 +214,7 @@
                   },
                   {
                     "group": "Datenzugriff",
+                    "icon": "database",
                     "pages": [
                       "de/product-graph/multilanguage",
                       "de/product-graph/search",
@@ -224,6 +231,7 @@
                 "pages": [
                   {
                     "group": "Integrationen",
+                    "icon": "plug",
                     "pages": [
                       "de/product-graph/analytics",
                       "de/product-graph/webhooks"
@@ -231,6 +239,7 @@
                   },
                   {
                     "group": "Entwicklung",
+                    "icon": "code-branch",
                     "pages": [
                       "de/product-graph/best-practices",
                       "de/product-graph/error-handling"
@@ -246,6 +255,7 @@
             "groups": [
               {
                 "group": "Überblick",
+                "icon": "compass",
                 "pages": [
                   "de/api-reference/introduction"
                 ]
