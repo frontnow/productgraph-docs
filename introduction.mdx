@@ -4,16 +4,11 @@ description: "Comprehensive documentation for integrating with the Product Graph
 icon: "house"
 ---
 
-<img
-  className="block dark:hidden"
-  src="/images/hero-light.jpeg"
-  alt="Product Graph API - Light Mode"
-/>
-<img
-  className="hidden dark:block"
-  src="/images/hero-dark.jpeg"
-  alt="Product Graph API - Dark Mode"
-/>
+<Frame caption="Product Graph – Web Interface">
+  <img className="block dark:hidden" src="/images/hero-light.jpeg" alt="Product Graph API - Light Mode" />
+
+  <img className="hidden dark:block" src="/images/hero-dark.jpeg" alt="Product Graph API - Dark Mode" />
+</Frame>
 
 # Welcome to Product Graph API
 
@@ -23,11 +18,15 @@ The Product Graph API provides a comprehensive set of tools for accessing, enric
 
 Product data is often fragmented, inconsistent, and locked in language silos. Product Graph solves these challenges by providing:
 
-- **Unified Product Information** - Access comprehensive product data from a single source
-- **Multilingual Support** - Get product information in multiple languages with one API call
-- **Advanced Search** - Find products using names, GTINs, URLs, or a combination of parameters
-- **Historical Tracking** - Monitor how product data changes over time
-- **Data Enrichment** - Enhance product listings with high-quality descriptions, attributes, and media
+* **Unified Product Information** - Access comprehensive product data from a single source
+
+* **Multilingual Support** - Get product information in multiple languages with one API call
+
+* **Advanced Search** - Find products using names, GTINs, URLs, or a combination of parameters
+
+* **Historical Tracking** - Monitor how product data changes over time
+
+* **Data Enrichment** - Enhance product listings with high-quality descriptions, attributes, and media
 
 ## Quick Authentication Guide
 
@@ -38,39 +37,26 @@ curl -X GET "https://api.productgraph.org/v1/credits" \
 ```
 
 <Note>
-  Your API key is available in the [Product Graph Dashboard](https://dashboard.productgraph.org). 
+  Your API key is available in the [Product Graph Dashboard](https://dashboard.productgraph.org).
   Keep it secure and never expose it in client-side code!
 </Note>
 
 ## Getting Started
 
 <CardGroup cols={2}>
-  <Card
-    title="API Overview"
-    icon="circle-info"
-    href="/product-graph/overview"
-  >
+  <Card title="API Overview" icon="circle-info" href="/product-graph/overview">
     Learn about the core concepts and capabilities of the Product Graph API
   </Card>
-  <Card
-    title="Authentication"
-    icon="key"
-    href="/product-graph/authentication"
-  >
+
+  <Card title="Authentication" icon="key" href="/product-graph/authentication">
     Understand how to authenticate your requests to the API
   </Card>
-  <Card
-    title="Credits System"
-    icon="coins"
-    href="/product-graph/credits"
-  >
+
+  <Card title="Credits System" icon="coins" href="/product-graph/credits">
     Learn how our credit-based usage system works
   </Card>
-  <Card
-    title="Multilanguage Support"
-    icon="language"
-    href="/product-graph/multilanguage"
-  >
+
+  <Card title="Multilanguage Support" icon="language" href="/product-graph/multilanguage">
     Discover our powerful multilingual capabilities
   </Card>
 </CardGroup>
@@ -106,46 +92,27 @@ fetch("https://api.productgraph.org/v1/search", {
 ## Core Features
 
 <CardGroup cols={3}>
-  <Card
-    title="Search"
-    icon="magnifying-glass"
-    href="/product-graph/search"
-  >
+  <Card title="Search" icon="magnifying-glass" href="/product-graph/search">
     Powerful product search with multilingual support
   </Card>
-  <Card
-    title="Brand Data"
-    icon="tag"
-    href="/product-graph/brand"
-  >
+
+  <Card title="Brand Data" icon="tag" href="/product-graph/brand">
     Access comprehensive brand information
   </Card>
-  <Card
-    title="Product Data"
-    icon="box"
-    href="/product-graph/product-data"
-  >
+
+  <Card title="Product Data" icon="box" href="/product-graph/product-data">
     Detailed product information in multiple languages
   </Card>
-  <Card
-    title="Historical Data"
-    icon="clock-rotate-left"
-    href="/product-graph/historical-data"
-  >
+
+  <Card title="Historical Data" icon="clock-rotate-left" href="/product-graph/historical-data">
     Track changes to product information over time
   </Card>
-  <Card
-    title="Analytics"
-    icon="chart-mixed"
-    href="/product-graph/analytics"
-  >
+
+  <Card title="Analytics" icon="chart-mixed" href="/product-graph/analytics">
     Insights into API usage and optimization
   </Card>
-  <Card
-    title="Webhooks"
-    icon="bell"
-    href="/product-graph/webhooks"
-  >
+
+  <Card title="Webhooks" icon="bell" href="/product-graph/webhooks">
     Real-time notifications about important events
   </Card>
 </CardGroup>
@@ -176,18 +143,11 @@ For production applications, use [webhooks](/product-graph/webhooks) to receive 
 ## Implementation Guides
 
 <CardGroup cols={2}>
-  <Card
-    title="Best Practices"
-    icon="lightbulb"
-    href="/product-graph/best-practices"
-  >
+  <Card title="Best Practices" icon="lightbulb" href="/product-graph/best-practices">
     Strategies for using the Product Graph API effectively
   </Card>
-  <Card
-    title="Error Handling"
-    icon="triangle-exclamation"
-    href="/product-graph/error-handling"
-  >
+
+  <Card title="Error Handling" icon="triangle-exclamation" href="/product-graph/error-handling">
     Learn how to handle and troubleshoot API errors
   </Card>
 </CardGroup>
@@ -221,11 +181,7 @@ For production applications, use [webhooks](/product-graph/webhooks) to receive 
 
 Explore our detailed API reference documentation for in-depth information about all available endpoints.
 
-<Card
-  title="API Reference"
-  icon="code"
-  href="/api-reference/introduction"
->
+<Card title="API Reference" icon="code" href="/api-reference/introduction">
   Comprehensive API endpoint documentation
 </Card>
 
@@ -236,32 +192,19 @@ Start with our [Quickstart Guide](/quickstart) to be up and running in minutes w
 ## Need Help?
 
 <CardGroup cols={2}>
-  <Card
-    title="Developer Portal"
-    icon="browser"
-    href="https://productgraph.org/developer"
-  >
+  <Card title="Developer Portal" icon="browser" href="https://productgraph.org/developer">
     Access developer tools and resources
   </Card>
-  <Card
-    title="API Status"
-    icon="server"
-    href="https://status.productgraph.org"
-  >
+
+  <Card title="API Status" icon="server" href="https://status.productgraph.org">
     Check the current API status and incidents
   </Card>
-  <Card
-    title="Support"
-    icon="headset"
-    href="https://support.productgraph.org"
-  >
+
+  <Card title="Support" icon="headset" href="https://support.productgraph.org">
     Contact our support team for assistance
   </Card>
-  <Card
-    title="API Dashboard"
-    icon="gauge-high"
-    href="https://dashboard.productgraph.org"
-  >
+
+  <Card title="API Dashboard" icon="gauge-high" href="https://dashboard.productgraph.org">
     Manage your API account and analytics
   </Card>
 </CardGroup>
