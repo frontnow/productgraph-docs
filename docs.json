@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "maple",
   "name": "Product Graph API Documentation",
   "description": "Documentation for the Product Graph API",
   "colors": {
@@ -49,103 +49,128 @@
     "languages": [
       {
         "language": "en",
-        "groups": [
+        "tabs": [
           {
-            "group": "Overview",
-            "icon": "book-open",
-            "pages": [
-              "introduction",
-              "quickstart",
-              "changelog"
-            ]
-          },
-          {
-            "group": "Product Graph API",
+            "tab": "Product Graph API",
             "icon": "cube",
-            "pages": [
+            "groups": [
               {
                 "group": "Getting Started",
-                "icon": "play",
+                "icon": "book-open",
                 "pages": [
-                  "product-graph/index",
-                  "product-graph/overview",
-                  "product-graph/authentication",
-                  "product-graph/credits",
-                  "product-graph/multilanguage"
+                  "introduction",
+                  "quickstart",
+                  "changelog"
                 ]
               },
               {
-                "group": "Core API",
-                "icon": "code",
+                "group": "Core Concepts",
+                "icon": "lightbulb",
                 "pages": [
-                  "product-graph/search",
-                  "product-graph/brand",
-                  "product-graph/product-data",
-                  "product-graph/historical-data"
+                  {
+                    "group": "Fundamentals",
+                    "pages": [
+                      "product-graph/index",
+                      "product-graph/overview",
+                      "product-graph/authentication",
+                      "product-graph/credits"
+                    ]
+                  },
+                  {
+                    "group": "Data Access",
+                    "pages": [
+                      "product-graph/multilanguage",
+                      "product-graph/search",
+                      "product-graph/brand",
+                      "product-graph/product-data",
+                      "product-graph/historical-data"
+                    ]
+                  }
                 ]
               },
               {
                 "group": "Advanced Features",
                 "icon": "rocket",
                 "pages": [
-                  "product-graph/analytics",
-                  "product-graph/webhooks",
-                  "product-graph/best-practices",
-                  "product-graph/error-handling"
+                  {
+                    "group": "Integrations",
+                    "pages": [
+                      "product-graph/analytics",
+                      "product-graph/webhooks"
+                    ]
+                  },
+                  {
+                    "group": "Development",
+                    "pages": [
+                      "product-graph/best-practices",
+                      "product-graph/error-handling"
+                    ]
+                  }
                 ]
               }
             ]
           },
           {
-            "group": "API Reference",
+            "tab": "API Reference",
             "icon": "book",
-            "pages": [
-              "api-reference/introduction",
+            "groups": [
               {
-                "group": "Products",
-                "icon": "box",
+                "group": "Overview",
                 "pages": [
-                  "api-reference/products/get-all-products",
-                  "api-reference/products/create-a-new-product",
-                  "api-reference/products/get-product-by-id",
-                  "api-reference/products/update-product",
-                  "api-reference/products/delete-product",
-                  "api-reference/products/request-product-translation",
-                  "api-reference/products/get-product-history"
+                  "api-reference/introduction"
                 ]
               },
               {
-                "group": "Search",
-                "icon": "magnifying-glass",
+                "group": "Endpoints",
+                "icon": "code",
                 "pages": [
-                  "api-reference/search/search-for-products",
-                  "api-reference/search/get-search-results"
-                ]
-              },
-              {
-                "group": "Brands",
-                "icon": "building",
-                "pages": [
-                  "api-reference/brands/get-brand-by-id",
-                  "api-reference/brands/search-for-brands"
-                ]
-              },
-              {
-                "group": "Credits",
-                "icon": "credit-card",
-                "pages": [
-                  "api-reference/credits/get-credit-balance"
-                ]
-              },
-              {
-                "group": "Webhooks",
-                "icon": "bell",
-                "pages": [
-                  "api-reference/webhooks/create-webhook",
-                  "api-reference/webhooks/list-webhooks",
-                  "api-reference/webhooks/get-webhook-details",
-                  "api-reference/webhooks/update-webhook",
-                  "api-reference/webhooks/delete-webhook"
+                  {
+                    "group": "Products",
+                    "icon": "box",
+                    "pages": [
+                      "api-reference/products/get-all-products",
+                      "api-reference/products/create-a-new-product",
+                      "api-reference/products/get-product-by-id",
+                      "api-reference/products/update-product",
+                      "api-reference/products/delete-product",
+                      "api-reference/products/request-product-translation",
+                      "api-reference/products/get-product-history"
+                    ]
+                  },
+                  {
+                    "group": "Search",
+                    "icon": "magnifying-glass",
+                    "pages": [
+                      "api-reference/search/search-for-products",
+                      "api-reference/search/get-search-results"
+                    ]
+                  },
+                  {
+                    "group": "Brands",
+                    "icon": "building",
+                    "pages": [
+                      "api-reference/brands/get-brand-by-id",
+                      "api-reference/brands/search-for-brands"
+                    ]
+                  },
+                  {
+                    "group": "Credits",
+                    "icon": "credit-card",
+                    "pages": [
+                      "api-reference/credits/get-credit-balance"
+                    ]
+                  },
+                  {
+                    "group": "Webhooks",
+                    "icon": "bell",
+                    "pages": [
+                      "api-reference/webhooks/create-webhook",
+                      "api-reference/webhooks/list-webhooks",
+                      "api-reference/webhooks/get-webhook-details",
+                      "api-reference/webhooks/update-webhook",
+                      "api-reference/webhooks/delete-webhook"
+                    ]
+                  }
                 ]
               }
             ]
@@ -154,103 +179,128 @@
       },
       {
         "language": "de",
-        "groups": [
+        "tabs": [
           {
-            "group": "Überblick",
-            "icon": "book-open",
-            "pages": [
-              "de/introduction",
-              "de/quickstart",
-              "de/changelog"
-            ]
-          },
-          {
-            "group": "Product Graph API",
+            "tab": "Product Graph API",
             "icon": "cube",
-            "pages": [
+            "groups": [
               {
                 "group": "Erste Schritte",
-                "icon": "play",
+                "icon": "book-open",
                 "pages": [
-                  "de/product-graph/index",
-                  "de/product-graph/overview",
-                  "de/product-graph/authentication",
-                  "de/product-graph/credits",
-                  "de/product-graph/multilanguage"
+                  "de/introduction",
+                  "de/quickstart",
+                  "de/changelog"
                 ]
               },
               {
-                "group": "Kern-API",
-                "icon": "code",
+                "group": "Kernkonzepte",
+                "icon": "lightbulb",
                 "pages": [
-                  "de/product-graph/search",
-                  "de/product-graph/brand",
-                  "de/product-graph/product-data",
-                  "de/product-graph/historical-data"
+                  {
+                    "group": "Grundlagen",
+                    "pages": [
+                      "de/product-graph/index",
+                      "de/product-graph/overview",
+                      "de/product-graph/authentication",
+                      "de/product-graph/credits"
+                    ]
+                  },
+                  {
+                    "group": "Datenzugriff",
+                    "pages": [
+                      "de/product-graph/multilanguage",
+                      "de/product-graph/search",
+                      "de/product-graph/brand",
+                      "de/product-graph/product-data",
+                      "de/product-graph/historical-data"
+                    ]
+                  }
                 ]
               },
               {
                 "group": "Erweiterte Funktionen",
                 "icon": "rocket",
                 "pages": [
-                  "de/product-graph/analytics",
-                  "de/product-graph/webhooks",
-                  "de/product-graph/best-practices",
-                  "de/product-graph/error-handling"
+                  {
+                    "group": "Integrationen",
+                    "pages": [
+                      "de/product-graph/analytics",
+                      "de/product-graph/webhooks"
+                    ]
+                  },
+                  {
+                    "group": "Entwicklung",
+                    "pages": [
+                      "de/product-graph/best-practices",
+                      "de/product-graph/error-handling"
+                    ]
+                  }
                 ]
               }
             ]
           },
           {
-            "group": "API-Referenz",
+            "tab": "API-Referenz",
             "icon": "book",
-            "pages": [
-              "de/api-reference/introduction",
+            "groups": [
               {
-                "group": "Produkte",
-                "icon": "box",
+                "group": "Überblick",
                 "pages": [
-                  "de/api-reference/products/get-all-products",
-                  "de/api-reference/products/create-a-new-product",
-                  "de/api-reference/products/get-product-by-id",
-                  "de/api-reference/products/update-product",
-                  "de/api-reference/products/delete-product",
-                  "de/api-reference/products/request-product-translation",
-                  "de/api-reference/products/get-product-history"
+                  "de/api-reference/introduction"
                 ]
               },
               {
-                "group": "Suche",
-                "icon": "magnifying-glass",
+                "group": "Endpunkte",
+                "icon": "code",
                 "pages": [
-                  "de/api-reference/search/search-for-products",
-                  "de/api-reference/search/get-search-results"
-                ]
-              },
-              {
-                "group": "Marken",
-                "icon": "building",
-                "pages": [
-                  "de/api-reference/brands/get-brand-by-id",
-                  "de/api-reference/brands/search-for-brands"
-                ]
-              },
-              {
-                "group": "Guthaben",
-                "icon": "credit-card",
-                "pages": [
-                  "de/api-reference/credits/get-credit-balance"
-                ]
-              },
-              {
-                "group": "Webhooks",
-                "icon": "bell",
-                "pages": [
-                  "de/api-reference/webhooks/create-webhook",
-                  "de/api-reference/webhooks/list-webhooks",
-                  "de/api-reference/webhooks/get-webhook-details",
-                  "de/api-reference/webhooks/update-webhook",
-                  "de/api-reference/webhooks/delete-webhook"
+                  {
+                    "group": "Produkte",
+                    "icon": "box",
+                    "pages": [
+                      "de/api-reference/products/get-all-products",
+                      "de/api-reference/products/create-a-new-product",
+                      "de/api-reference/products/get-product-by-id",
+                      "de/api-reference/products/update-product",
+                      "de/api-reference/products/delete-product",
+                      "de/api-reference/products/request-product-translation",
+                      "de/api-reference/products/get-product-history"
+                    ]
+                  },
+                  {
+                    "group": "Suche",
+                    "icon": "magnifying-glass",
+                    "pages": [
+                      "de/api-reference/search/search-for-products",
+                      "de/api-reference/search/get-search-results"
+                    ]
+                  },
+                  {
+                    "group": "Marken",
+                    "icon": "building",
+                    "pages": [
+                      "de/api-reference/brands/get-brand-by-id",
+                      "de/api-reference/brands/search-for-brands"
+                    ]
+                  },
+                  {
+                    "group": "Guthaben",
+                    "icon": "credit-card",
+                    "pages": [
+                      "de/api-reference/credits/get-credit-balance"
+                    ]
+                  },
+                  {
+                    "group": "Webhooks",
+                    "icon": "bell",
+                    "pages": [
+                      "de/api-reference/webhooks/create-webhook",
+                      "de/api-reference/webhooks/list-webhooks",
+                      "de/api-reference/webhooks/get-webhook-details",
+                      "de/api-reference/webhooks/update-webhook",
+                      "de/api-reference/webhooks/delete-webhook"
+                    ]
+                  }
                 ]
               }
             ]
